@@ -29,12 +29,16 @@
         "typescript-eslint": "^8.23.0"
     },
     "dependencies": {
+        "@headlessui/react": "^2.2.10",
         "@inertiajs/react": "^3.0.0",
         "@inertiajs/vite": "^3.0.0",
+        "@popperjs/core": "^2.11.8",
         "@tailwindcss/vite": "^4.1.11",
         "@types/react": "^19.2.0",
         "@types/react-dom": "^19.2.0",
         "@vitejs/plugin-react": "^5.2.0",
+        "axios": "^1.17.0",
+        "bootstrap": "^5.3.8",
         "clsx": "^2.1.1",
         "concurrently": "^9.0.1",
         "globals": "^15.14.0",
