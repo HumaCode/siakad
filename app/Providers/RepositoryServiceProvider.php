@@ -5,6 +5,8 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\Interfaces\MahasiswaRepositoryInterface;
 use App\Repositories\MahasiswaRepository;
+use App\Repositories\Interfaces\DosenRepositoryInterface;
+use App\Repositories\DosenRepository;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -14,7 +16,7 @@ class RepositoryServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(MahasiswaRepositoryInterface::class, MahasiswaRepository::class);
-        // bind repository lainnya di sini...
+        $this->app->bind(DosenRepositoryInterface::class, DosenRepository::class);
     }
 
     /**
