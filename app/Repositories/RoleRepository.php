@@ -100,9 +100,7 @@ class RoleRepository implements RoleRepositoryInterface
             'guard_name' => $data['guard_name'] ?? 'web',
         ]);
 
-        if (isset($data['permissions'])) {
-            $role->syncPermissions($data['permissions']);
-        }
+        $role->syncPermissions($data['permissions'] ?? []);
 
         return $role;
     }
@@ -127,9 +125,7 @@ class RoleRepository implements RoleRepositoryInterface
             'guard_name' => $data['guard_name'] ?? 'web',
         ]);
 
-        if (isset($data['permissions'])) {
-            $role->syncPermissions($data['permissions']);
-        }
+        $role->syncPermissions($data['permissions'] ?? []);
 
         return $role;
     }
@@ -142,6 +138,9 @@ class RoleRepository implements RoleRepositoryInterface
         if (!$role instanceof Role) {
             $role = Role::findOrFail($role);
         }
+
+        // Detach all permissions before deleting to prevent database integrity constraint errors
+        $role->syncPermissions([]);
 
         return (bool) $role->delete();
     }
