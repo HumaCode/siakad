@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import Modal from '@/Components/Modal';
+import FormModal from '@/Components/FormModal';
 
 interface Permission {
     id: number;
@@ -96,20 +96,16 @@ export default function RoleFormModal({
     };
 
     return (
-        <Modal show={isOpen} onClose={onClose} maxWidth="5xl">
-            <div className="border border-slate-100 dark:border-slate-800 shadow-2xl rounded-2xl bg-white dark:bg-slate-900 overflow-hidden">
-                <div className="modal-header p-5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
-                    <div>
-                        <h5 className="modal-title font-bold text-slate-800 dark:text-slate-100">
-                            {mode === 'add' ? 'Tambah Role Baru' : `Edit Role: ${selectedRole?.name.replace('_', ' ').toUpperCase()}`}
-                        </h5>
-                        <div className="text-xs text-slate-400 mt-1">Konfigurasi role dan permission yang diberikan</div>
-                    </div>
-                    <button type="button" className="btn-close text-lg text-slate-400 hover:text-slate-600 bg-none border-none cursor-pointer" onClick={onClose}>
-                        <i className="bi bi-x-lg" />
-                    </button>
-                </div>
-                <div className="modal-body p-5 space-y-4 max-h-[60vh] overflow-y-auto">
+        <FormModal
+            show={isOpen}
+            onClose={onClose}
+            onSave={onSave}
+            processing={processing}
+            maxWidth="5xl"
+            title={mode === 'add' ? 'Tambah Role Baru' : `Edit Role: ${selectedRole?.name.replace('_', ' ').toUpperCase()}`}
+            subtitle="Konfigurasi role dan permission yang diberikan"
+            saveText={mode === 'add' ? 'Simpan Role' : 'Simpan Perubahan'}
+        >
                     {/* First Row: Name & Slug */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
@@ -256,25 +252,6 @@ export default function RoleFormModal({
                             );
                         })}
                     </div>
-                </div>
-                <div className="modal-footer p-4 border-t border-slate-100 dark:border-slate-800 flex justify-between">
-                    <button type="button" className="btn-outline-sm font-poppins" onClick={onClose} disabled={processing}>
-                        <i className="bi bi-x-lg" /> Batal
-                    </button>
-                    <button type="button" className="btn-primary-sm font-poppins flex items-center gap-2" onClick={onSave} disabled={processing}>
-                        {processing ? (
-                            <>
-                                <span className="animate-spin inline-block w-4 h-4 border-2 rounded-full border-t-transparent border-white" role="status" aria-hidden="true" />
-                                Sedang proses...
-                            </>
-                        ) : (
-                            <>
-                                <i className="bi bi-check-lg" /> Simpan Role
-                            </>
-                        )}
-                    </button>
-                </div>
-            </div>
-        </Modal>
+        </FormModal>
     );
 }
