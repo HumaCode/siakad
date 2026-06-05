@@ -333,6 +333,26 @@
   background: linear-gradient(90deg, #16a34a, #4ade80);
 }
 
+.role-card.rc-inactive {
+  background: rgba(241, 245, 249, 0.6) !important;
+  border-color: #e2e8f0 !important;
+  opacity: 0.7;
+}
+
+.dark .role-card.rc-inactive {
+  background: rgba(30, 41, 59, 0.4) !important;
+  border-color: rgba(255, 255, 255, 0.03) !important;
+  opacity: 0.6;
+}
+
+.role-card.rc-inactive .role-icon-bg {
+  background: linear-gradient(135deg, #94a3b8, #cbd5e1) !important;
+}
+
+.role-card.rc-inactive::before {
+  background: linear-gradient(90deg, #94a3b8, #cbd5e1) !important;
+}
+
 .role-icon-bg {
   width: 46px;
   height: 46px;

@@ -136,6 +136,7 @@ export default function RolesIndex({ roles, permissions, users, filters, stats }
     const [processing, setProcessing] = useState(false);
 
     const [assignModalOpen, setAssignModalOpen] = useState(false);
+    const [assignProcessing, setAssignProcessing] = useState(false);
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [deleteRoleName, setDeleteRoleName] = useState('');
 
@@ -215,7 +216,7 @@ export default function RolesIndex({ roles, permissions, users, filters, stats }
         setRoleFormPriority(role.priority || 0);
         setRoleFormActive(role.is_active !== false);
         setRoleFormGuard(role.guard_name || 'web');
-        setSelectedPermissionIds(Array.isArray(role.permissions) ? role.permissions.map(p => p.id) : []);
+        setSelectedPermissionIds(Array.isArray(role.permissions) ? role.permissions.map(p => Number(p.id)) : []);
         setRoleModalOpen(true);
     };
 
@@ -299,8 +300,12 @@ export default function RolesIndex({ roles, permissions, users, filters, stats }
     };
 
     const saveAssign = () => {
-        setAssignModalOpen(false);
-        triggerToast('Role berhasil di-assign ke pengguna');
+        setAssignProcessing(true);
+        setTimeout(() => {
+            setAssignProcessing(false);
+            setAssignModalOpen(false);
+            triggerToast('Role berhasil di-assign ke pengguna', 'success');
+        }, 1200);
     };
 
     // Role dynamic colors and icons
@@ -479,7 +484,22 @@ export default function RolesIndex({ roles, permissions, users, filters, stats }
                                 {roles.map(role => {
                                     const config = getRoleConfig(role.name);
                                     return (
-                                        <div key={role.id} className={`role-card ${config.class}`}>
+                                        <div key={role.id} className={`role-card ${role.is_active ? config.class : 'rc-inactive'}`}>
+                                            {/* Status Badge */}
+                                            <div className="absolute top-4 right-4">
+                                                {role.is_active ? (
+                                                    <span className="inline-flex items-center gap-1 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800/50">
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                                        Aktif
+                                                    </span>
+                                                ) : (
+                                                    <span className="inline-flex items-center gap-1 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-slate-200 dark:border-slate-700">
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+                                                        Tidak Aktif
+                                                    </span>
+                                                )}
+                                            </div>
+
                                             <div className="role-icon-bg">
                                                 <i className={`bi ${config.icon}`} />
                                             </div>
@@ -597,7 +617,7 @@ export default function RolesIndex({ roles, permissions, users, filters, stats }
                                                                         </div>
                                                                     </td>
                                                                     {roles.map(role => {
-                                                                        const hasPerm = Array.isArray(role.permissions) && role.permissions.some(rp => rp.id === perm.id);
+                                                                        const hasPerm = Array.isArray(role.permissions) && role.permissions.some(rp => Number(rp.id) === Number(perm.id));
                                                                         return (
                                                                             <td key={role.id} className="perm-check text-center">
                                                                                 <span className={`chk ${hasPerm ? 'yes' : 'no'}`}>
@@ -672,7 +692,7 @@ export default function RolesIndex({ roles, permissions, users, filters, stats }
                                         </thead>
                                         <tbody>
                                             {users.data.map((u, i) => {
-                                                const initials = u.name.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
+                                                const initials = (u.name || '').split(' ').slice(0, 2).filter(Boolean).map(w => w[0] || '').join('').toUpperCase() || 'U';
                                                 const academicStatus = u.mahasiswa ? u.mahasiswa.status_akademik : (u.dosen ? 'aktif' : 'aktif');
                                                 
                                                 return (
@@ -684,8 +704,8 @@ export default function RolesIndex({ roles, permissions, users, filters, stats }
                                                                     {initials}
                                                                 </div>
                                                                 <div>
-                                                                    <div className="font-bold text-slate-800 dark:text-slate-100">{u.name}</div>
-                                                                    <div className="text-xs text-slate-400">{u.email}</div>
+                                                                    <div className="font-bold text-slate-800 dark:text-slate-100">{u.name || 'User'}</div>
+                                                                    <div className="text-xs text-slate-400">{u.email || ''}</div>
                                                                 </div>
                                                             </div>
                                                         </td>
@@ -694,9 +714,9 @@ export default function RolesIndex({ roles, permissions, users, filters, stats }
                                                         </td>
                                                         <td>
                                                             <div className="flex flex-wrap gap-1">
-                                                                {u.roles.map(r => (
+                                                                {(u.roles || []).map(r => (
                                                                     <span key={r.id} className="role-pill bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
-                                                                        {r.name.replace('_', ' ').toUpperCase()}
+                                                                        {r.name ? r.name.replace('_', ' ').toUpperCase() : ''}
                                                                     </span>
                                                                 ))}
                                                             </div>
@@ -809,6 +829,7 @@ export default function RolesIndex({ roles, permissions, users, filters, stats }
             <AssignUserModal
                 isOpen={assignModalOpen}
                 roles={roles}
+                processing={assignProcessing}
                 onClose={() => setAssignModalOpen(false)}
                 onSave={saveAssign}
             />

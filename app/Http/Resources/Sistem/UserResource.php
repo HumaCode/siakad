@@ -18,7 +18,9 @@ class UserResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'roles' => RoleResource::collection($this->whenLoaded('roles')),
+            'roles' => $this->relationLoaded('roles')
+                ? RoleResource::collection($this->roles)->resolve()
+                : [],
             'mahasiswa' => $this->mahasiswa ? [
                 'nim' => $this->mahasiswa->nim,
                 'status_akademik' => $this->mahasiswa->status_akademik,

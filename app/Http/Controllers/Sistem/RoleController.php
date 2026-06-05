@@ -43,7 +43,7 @@ class RoleController extends Controller
 
         // Transform paginated users while keeping paginator's root attributes
         $users = $data['users']->through(function ($user) {
-            return new UserResource($user);
+            return (new UserResource($user))->resolve();
         });
 
         return Inertia::render('Sistem/Roles', [

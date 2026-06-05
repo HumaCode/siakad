@@ -1,4 +1,8 @@
-import Modal from '@/Components/Modal';
+import { useState, useEffect } from 'react';
+import FormModal from '@/Components/FormModal';
+import FormInput from '@/Components/FormInput';
+import FormSelect from '@/Components/FormSelect';
+import FormTextarea from '@/Components/FormTextarea';
 
 interface Role {
     id: number;
@@ -10,6 +14,7 @@ interface Role {
 interface AssignUserModalProps {
     isOpen: boolean;
     roles: Role[];
+    processing: boolean;
     onClose: () => void;
     onSave: () => void;
 }
@@ -17,55 +22,70 @@ interface AssignUserModalProps {
 export default function AssignUserModal({
     isOpen,
     roles,
+    processing,
     onClose,
     onSave,
 }: AssignUserModalProps) {
+    const [searchUser, setSearchUser] = useState('');
+    const [selectedRole, setSelectedRole] = useState('');
+    const [notes, setNotes] = useState('');
+
+    useEffect(() => {
+        if (!isOpen) {
+            setSearchUser('');
+            setSelectedRole('');
+            setNotes('');
+        }
+    }, [isOpen]);
+
     return (
-        <Modal show={isOpen} onClose={onClose} maxWidth="md">
-            <div className="border border-slate-100 dark:border-slate-800 shadow-2xl rounded-2xl bg-white dark:bg-slate-900 overflow-hidden">
-                <div className="modal-header p-5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
-                    <div>
-                        <h5 className="modal-title font-bold text-slate-850 dark:text-slate-100">Assign Role ke User</h5>
-                        <div className="text-xs text-slate-400 mt-1">Cari pengguna dan tentukan role-nya</div>
-                    </div>
-                    <button type="button" className="btn-close text-lg text-slate-400 hover:text-slate-600 bg-none border-none cursor-pointer" onClick={onClose}>
-                        <i className="bi bi-x-lg" />
-                    </button>
-                </div>
-                <div className="modal-body p-5 space-y-4">
-                    <div>
-                        <label className="form-label-custom mb-1 font-bold text-xs">Cari Pengguna</label>
-                        <input type="text" className="form-ctrl" placeholder="Nama, NIM, NIDN, atau email..." />
-                    </div>
-                    <div>
-                        <label className="form-label-custom mb-1 font-bold text-xs">Assign Role</label>
-                        <select className="form-ctrl">
-                            <option value="">-- Pilih Role --</option>
-                            {roles.map(r => (
-                                <option key={r.id} value={r.name}>{r.name.replace('_', ' ').toUpperCase()}</option>
-                            ))}
-                        </select>
-                    </div>
-                    <div>
-                        <label className="form-label-custom mb-1 font-bold text-xs">Keterangan (opsional)</label>
-                        <textarea className="form-ctrl" rows={2} placeholder="Alasan penugasan role ini..." />
-                    </div>
-                    <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/40 rounded-xl p-3 flex gap-2">
-                        <i className="bi bi-exclamation-triangle-fill text-amber-600 dark:text-amber-500 mt-0.5 shrink-0" />
-                        <div className="text-xs text-amber-800 dark:text-amber-400 leading-normal font-semibold">
-                            Perubahan role akan langsung berlaku. Pastikan pengguna yang dipilih memiliki hak akses yang sesuai.
-                        </div>
-                    </div>
-                </div>
-                <div className="modal-footer p-4 border-t border-slate-100 dark:border-slate-800 flex justify-between">
-                    <button type="button" className="btn-outline-sm font-poppins" onClick={onClose}>
-                        <i className="bi bi-x-lg" /> Batal
-                    </button>
-                    <button type="button" className="btn-primary-sm font-poppins" onClick={onSave}>
-                        <i className="bi bi-person-check" /> Assign Role
-                    </button>
+        <FormModal
+            show={isOpen}
+            title="Assign Role ke User"
+            subtitle="Cari pengguna dan tentukan role-nya"
+            onClose={onClose}
+            onSave={onSave}
+            processing={processing}
+            maxWidth="xl"
+            saveText="Assign Role"
+            cancelText="Batal"
+        >
+            <FormInput
+                label="Cari Pengguna"
+                value={searchUser}
+                onChange={e => setSearchUser(e.target.value)}
+                placeholder="Nama, NIM, NIDN, atau email..."
+                required
+            />
+            
+            <FormSelect
+                label="Assign Role"
+                value={selectedRole}
+                onChange={e => setSelectedRole(e.target.value)}
+                required
+                options={[
+                    { value: '', label: '-- Pilih Role --' },
+                    ...roles.map(r => ({
+                        value: r.name,
+                        label: r.name.replace('_', ' ').toUpperCase()
+                    }))
+                ]}
+            />
+
+            <FormTextarea
+                label="Keterangan (opsional)"
+                value={notes}
+                onChange={e => setNotes(e.target.value)}
+                placeholder="Alasan penugasan role ini..."
+                rows={2}
+            />
+
+            <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/40 rounded-xl p-3 flex gap-2">
+                <i className="bi bi-exclamation-triangle-fill text-amber-600 dark:text-amber-500 mt-0.5 shrink-0" />
+                <div className="text-xs text-amber-800 dark:text-amber-400 leading-normal font-semibold">
+                    Perubahan role akan langsung berlaku. Pastikan pengguna yang dipilih memiliki hak akses yang sesuai.
                 </div>
             </div>
-        </Modal>
+        </FormModal>
     );
 }
