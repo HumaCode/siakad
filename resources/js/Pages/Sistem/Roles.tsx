@@ -818,6 +818,7 @@ export default function RolesIndex({ roles, permissions, users, filters, stats }
                 roleName={deleteRoleName}
                 onClose={() => setDeleteModalOpen(false)}
                 onConfirm={doDelete}
+                processing={processing}
             />
 
             {/* Custom Toast Notification */}

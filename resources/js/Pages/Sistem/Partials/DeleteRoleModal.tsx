@@ -5,6 +5,7 @@ interface DeleteRoleModalProps {
     roleName: string;
     onClose: () => void;
     onConfirm: () => void;
+    processing: boolean;
 }
 
 export default function DeleteRoleModal({
@@ -12,6 +13,7 @@ export default function DeleteRoleModal({
     roleName,
     onClose,
     onConfirm,
+    processing,
 }: DeleteRoleModalProps) {
     return (
         <Modal show={isOpen} onClose={onClose} maxWidth="md">
@@ -35,7 +37,7 @@ export default function DeleteRoleModal({
                         border: 1px solid rgba(148, 163, 184, 0.1);
                         background: rgba(15, 23, 42, 0.3);
                     }
-                    .btn-neon-cancel:hover {
+                    .btn-neon-cancel:hover:not(:disabled) {
                         border-color: rgba(148, 163, 184, 0.5);
                         background: rgba(148, 163, 184, 0.08);
                         transform: translateY(-2px);
@@ -45,12 +47,12 @@ export default function DeleteRoleModal({
                         box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
                         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                     }
-                    .btn-neon-delete:hover {
+                    .btn-neon-delete:hover:not(:disabled) {
                         background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
                         box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5), 0 0 30px rgba(239, 68, 68, 0.2);
                         transform: translateY(-2px);
                     }
-                    .btn-neon-delete:active {
+                    .btn-neon-delete:active:not(:disabled) {
                         transform: translateY(1px);
                     }
                 `}} />
@@ -58,7 +60,8 @@ export default function DeleteRoleModal({
                 {/* Top Close Button */}
                 <button 
                     onClick={onClose} 
-                    className="absolute top-4 right-4 text-slate-400 hover:text-slate-650 dark:hover:text-slate-250 transition-colors duration-200 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"
+                    disabled={processing}
+                    className="absolute top-4 right-4 text-slate-400 hover:text-slate-650 dark:hover:text-slate-250 transition-colors duration-200 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                     <i className="bi bi-x-lg text-sm" />
                 </button>
@@ -112,15 +115,26 @@ export default function DeleteRoleModal({
                 <div className="flex items-center justify-center gap-4">
                     <button 
                         onClick={onClose} 
-                        className="btn-neon-cancel px-6 py-3 rounded-2xl text-slate-600 dark:text-slate-350 font-poppins font-bold text-sm tracking-wide flex items-center gap-2"
+                        disabled={processing}
+                        className="btn-neon-cancel px-6 py-3 rounded-2xl text-slate-600 dark:text-slate-350 font-poppins font-bold text-sm tracking-wide flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
                     >
                         Batal
                     </button>
                     <button 
                         onClick={onConfirm} 
-                        className="btn-neon-delete px-6 py-3 rounded-2xl text-white font-poppins font-bold text-sm tracking-wide flex items-center gap-2"
+                        disabled={processing}
+                        className="btn-neon-delete px-6 py-3 rounded-2xl text-white font-poppins font-bold text-sm tracking-wide flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                     >
-                        <i className="bi bi-trash-fill" /> Ya, Hapus Role
+                        {processing ? (
+                            <>
+                                <span className="spinner-border spinner-border-sm animate-spin inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full mr-1" />
+                                Sedang proses...
+                            </>
+                        ) : (
+                            <>
+                                <i className="bi bi-trash-fill" /> Ya, Hapus Role
+                            </>
+                        )}
                     </button>
                 </div>
             </div>
