@@ -1,0 +1,8 @@
+/* ============================================================
+   SIAKAD DASHBOARD PAGE STYLES
+   ============================================================ */
+
+.welcome-banner {
+    background: linear-gradient(135deg, #1a56db 0%, #2563eb 50%, #1d4ed8 100%) !important;
+    box-shadow: 0 8px 32px rgba(26, 86, 219, 0.25) !important;
+}

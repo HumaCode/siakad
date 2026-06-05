@@ -2,6 +2,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import { PageProps } from '@/types/index';
+import '../../css/dashboard.css';
 
 // Animated Counter Component to emulate the jQuery counter animation in siakad-dashboard.html
 function AnimatedCounter({ value }: { value: number }) {
