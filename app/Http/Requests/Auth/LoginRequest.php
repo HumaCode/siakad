@@ -28,7 +28,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
+            'email' => ['required', 'string'],
             'password' => ['required', 'string'],
         ];
     }
@@ -42,7 +42,25 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        $loginInput = $this->string('email');
+        $email = $loginInput;
+
+        // If it's not a valid email, check if it's a NIM or NIDN
+        if (!filter_var($loginInput, FILTER_VALIDATE_EMAIL)) {
+            // Check Mahasiswa
+            $mahasiswa = \App\Models\Mahasiswa::where('nim', $loginInput)->first();
+            if ($mahasiswa) {
+                $email = $mahasiswa->user->email;
+            } else {
+                // Check Dosen
+                $dosen = \App\Models\Dosen::where('nidn', $loginInput)->first();
+                if ($dosen) {
+                    $email = $dosen->user->email;
+                }
+            }
+        }
+
+        if (! Auth::attempt(['email' => $email, 'password' => $this->string('password')], $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
