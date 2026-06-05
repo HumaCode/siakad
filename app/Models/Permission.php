@@ -15,4 +15,9 @@ class Permission extends SpatiePermission
     protected $casts = [
         'is_active' => 'boolean',
     ];
+
+    public function menus(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(\App\Models\Konfigurasi\Menu::class, 'menu_permission');
+    }
 }
