@@ -102,3 +102,29 @@ test('authenticated user can update an existing role', function () {
         'is_active' => false,
     ]);
 });
+
+test('authenticated user can delete a role', function () {
+    $this->withoutMiddleware();
+
+    $user = User::factory()->create();
+    $adminRole = Role::firstOrCreate(['name' => 'super_admin', 'guard_name' => 'web']);
+    $user->assignRole($adminRole);
+
+    $targetRole = Role::create([
+        'name' => 'temporary role',
+        'slug' => 'temporary-role',
+        'type_role' => 'lainnya',
+        'color' => 'slate',
+        'priority' => 10,
+        'is_active' => true,
+        'guard_name' => 'web'
+    ]);
+
+    $this->actingAs($user)
+        ->delete("/sistem/roles/{$targetRole->id}")
+        ->assertRedirect('/sistem/roles');
+
+    $this->assertDatabaseMissing('roles', [
+        'id' => $targetRole->id
+    ]);
+});

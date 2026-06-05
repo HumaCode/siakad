@@ -271,13 +271,27 @@ export default function RolesIndex({ roles, permissions, users, filters, stats }
     };
 
     const openDeleteRole = (role: Role) => {
+        setSelectedRole(role);
         setDeleteRoleName(role.name);
         setDeleteModalOpen(true);
     };
 
     const doDelete = () => {
-        setDeleteModalOpen(false);
-        triggerToast('Role berhasil dihapus');
+        if (!selectedRole) return;
+        router.delete(`/sistem/roles/${selectedRole.id}`, {
+            onStart: () => setProcessing(true),
+            onFinish: () => {
+                setProcessing(false);
+                setDeleteModalOpen(false);
+            },
+            onSuccess: () => {
+                triggerToast('Role berhasil dihapus');
+            },
+            onError: (errors) => {
+                const firstError = Object.values(errors)[0] as string;
+                triggerToast(firstError || 'Gagal menghapus role', 'danger');
+            }
+        });
     };
 
     const openAssignUser = () => {

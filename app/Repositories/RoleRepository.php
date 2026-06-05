@@ -133,4 +133,16 @@ class RoleRepository implements RoleRepositoryInterface
 
         return $role;
     }
+
+    /**
+     * Delete an existing role.
+     */
+    public function deleteRole($role): bool
+    {
+        if (!$role instanceof Role) {
+            $role = Role::findOrFail($role);
+        }
+
+        return (bool) $role->delete();
+    }
 }

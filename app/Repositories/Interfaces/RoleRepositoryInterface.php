@@ -41,4 +41,9 @@ interface RoleRepositoryInterface
      * Update an existing role.
      */
     public function updateRole($role, array $data): \App\Models\Role;
+
+    /**
+     * Delete an existing role.
+     */
+    public function deleteRole($role): bool;
 }

@@ -67,4 +67,12 @@ class RoleService
     {
         return $this->roleRepository->updateRole($role, $data);
     }
+
+    /**
+     * Delete an existing role.
+     */
+    public function deleteRole($role): bool
+    {
+        return $this->roleRepository->deleteRole($role);
+    }
 }

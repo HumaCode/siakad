@@ -84,4 +84,27 @@ class RoleController extends Controller
         return redirect()->route('sistem.roles.index')
             ->with('success', 'Perubahan role berhasil disimpan');
     }
+
+    /**
+     * Remove the specified role from storage.
+     */
+    public function destroy(Role $role): RedirectResponse
+    {
+        // Handle route model binding fallback for testing environments
+        if (!$role->exists) {
+            $roleId = request()->route('role');
+            $role = is_object($roleId) ? $roleId : Role::findOrFail($roleId);
+        }
+
+        // Prevent deleting crucial roles (super_admin)
+        if ($role->name === 'super_admin') {
+            return redirect()->route('sistem.roles.index')
+                ->with('error', 'Role super_admin tidak dapat dihapus');
+        }
+
+        $this->roleService->deleteRole($role);
+
+        return redirect()->route('sistem.roles.index')
+            ->with('success', 'Role berhasil dihapus');
+    }
 }
