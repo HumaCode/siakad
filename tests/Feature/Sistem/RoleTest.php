@@ -38,8 +38,8 @@ test('authenticated user can create a new role', function () {
 
     $this->actingAs($user)
         ->post('/sistem/roles', [
-            'name' => 'akademik_staff',
-            'slug' => 'akademik_staff',
+            'name' => 'akademik staff',
+            'slug' => 'akademik-staff',
             'type_role' => 'akademik',
             'color' => 'blue',
             'priority' => 2,
@@ -51,8 +51,8 @@ test('authenticated user can create a new role', function () {
         ->assertRedirect('/sistem/roles');
 
     $this->assertDatabaseHas('roles', [
-        'name' => 'akademik_staff',
-        'slug' => 'akademik_staff',
+        'name' => 'akademik staff',
+        'slug' => 'akademik-staff',
         'type_role' => 'akademik',
         'color' => 'blue',
         'priority' => 2,
@@ -79,8 +79,8 @@ test('authenticated user can update an existing role', function () {
 
     $this->actingAs($user)
         ->put("/sistem/roles/{$targetRole->id}", [
-            'name' => 'editor_update',
-            'slug' => 'editor_update',
+            'name' => 'editor update',
+            'slug' => 'editor-update',
             'type_role' => 'akademik',
             'color' => 'rose',
             'priority' => 5,
@@ -94,8 +94,8 @@ test('authenticated user can update an existing role', function () {
 
     $this->assertDatabaseHas('roles', [
         'id' => $targetRole->id,
-        'name' => 'editor_update',
-        'slug' => 'editor_update',
+        'name' => 'editor update',
+        'slug' => 'editor-update',
         'type_role' => 'akademik',
         'color' => 'rose',
         'priority' => 5,

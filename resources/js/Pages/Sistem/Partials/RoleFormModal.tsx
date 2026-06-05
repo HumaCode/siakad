@@ -82,8 +82,8 @@ export default function RoleFormModal({
     useEffect(() => {
         const generatedSlug = name
             .toLowerCase()
-            .replace(/[^a-z0-9_]+/g, '_')
-            .replace(/^_+|_+$/g, '');
+            .replace(/[^a-z0-9-]+/g, '-')
+            .replace(/^-+|-+$/g, '');
         setSlug(generatedSlug);
     }, [name, setSlug]);
 
