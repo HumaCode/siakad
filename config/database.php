@@ -17,7 +17,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'sqlite'),
+    'default' => (isset($_ENV['APP_ENV']) && $_ENV['APP_ENV'] === 'testing') || (isset($_SERVER['APP_ENV']) && $_SERVER['APP_ENV'] === 'testing') ? 'sqlite' : env('DB_CONNECTION', 'sqlite'),
 
     /*
     |--------------------------------------------------------------------------
@@ -35,7 +35,7 @@ return [
         'sqlite' => [
             'driver' => 'sqlite',
             'url' => env('DB_URL'),
-            'database' => env('DB_DATABASE', database_path('database.sqlite')),
+            'database' => (isset($_ENV['APP_ENV']) && $_ENV['APP_ENV'] === 'testing') || (isset($_SERVER['APP_ENV']) && $_SERVER['APP_ENV'] === 'testing') ? ':memory:' : env('DB_DATABASE', database_path('database.sqlite')),
             'prefix' => '',
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
             'busy_timeout' => null,

@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIAKAD — Roles & Akses</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+<style>
+/* ===== TOKENS ===== */
+:root {
+  --primary:#1a56db;--primary-dark:#1344b8;--primary-light:#e8f0fe;--primary-mid:#4f83f0;
+  --accent:#f59e0b;--accent-light:#fef3c7;
+  --teal:#0d9488;--teal-light:#ccfbf1;
+  --rose:#e11d48;--rose-light:#ffe4e6;
+  --purple:#7c3aed;--purple-light:#ede9fe;
+  --green:#16a34a;--green-light:#dcfce7;
+  --soft-bg:#f0f4ff;
+  --sidebar-bg:#0f1e45;
+  --sidebar-w:260px;--sidebar-w-col:72px;--topbar-h:64px;
+  --white:#ffffff;--text-dark:#1e2a4a;--text-muted:#64748b;
+  --border:rgba(26,86,219,0.10);
+  --radius-lg:18px;--radius-md:12px;--radius-sm:8px;
+  --shadow-card:0 2px 20px rgba(26,86,219,0.07),0 1px 4px rgba(0,0,0,0.04);
+  --shadow-hover:0 8px 32px rgba(26,86,219,0.14),0 2px 8px rgba(0,0,0,0.06);
+  --transition:all 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--soft-bg);color:var(--text-dark);overflow-x:hidden;}
+
+/* ===== BG ===== */
+.bg-anim{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;
+  background:linear-gradient(135deg,#e8f0fe 0%,#f0f4ff 50%,#e0f2fe 100%);}
+.dot-grid{position:absolute;inset:0;
+  background-image:radial-gradient(circle,rgba(26,86,219,0.06) 1.5px,transparent 1.5px);
+  background-size:30px 30px;}
+.bg-orb{position:absolute;border-radius:50%;filter:blur(60px);animation:orbFloat linear infinite;opacity:0.3;}
+.bg-orb-1{width:450px;height:450px;background:#bfdbfe;top:-160px;right:-120px;animation-duration:22s;}
+.bg-orb-2{width:300px;height:300px;background:#a7f3d0;bottom:-80px;left:80px;animation-duration:28s;animation-delay:-10s;}
+.bg-orb-3{width:200px;height:200px;background:#fde68a;top:50%;left:45%;animation-duration:18s;animation-delay:-6s;opacity:0.18;}
+@keyframes orbFloat{0%{transform:translate(0,0) scale(1);}33%{transform:translate(35px,-25px) scale(1.04);}66%{transform:translate(-25px,20px) scale(0.96);}100%{transform:translate(0,0) scale(1);}}
+
+/* ===== SIDEBAR ===== */
+.sidebar{position:fixed;top:0;left:0;bottom:0;width:var(--sidebar-w);background:var(--sidebar-bg);z-index:1040;display:flex;flex-direction:column;transition:width .3s cubic-bezier(.4,0,.2,1),transform .3s cubic-bezier(.4,0,.2,1);overflow:hidden;}
+.sidebar::before{content:'';position:absolute;width:240px;height:240px;border-radius:50%;background:rgba(79,131,240,.1);top:-80px;right:-80px;pointer-events:none;}
+.sidebar::after{content:'';position:absolute;width:160px;height:160px;border-radius:50%;background:rgba(13,148,136,.07);bottom:60px;left:-50px;pointer-events:none;}
+.sidebar-collapsed .sidebar{width:var(--sidebar-w-col);}
+.sidebar-collapsed .sidebar .nav-label,.sidebar-collapsed .sidebar .nav-section-title,
+.sidebar-collapsed .sidebar .sidebar-user-info,.sidebar-collapsed .sidebar .brand-text{opacity:0;pointer-events:none;width:0;overflow:hidden;}
+.sidebar-collapsed .sidebar .nav-item-link{justify-content:center;padding:11px 0;}
+.sidebar-collapsed .sidebar .nav-item-link .nav-icon{margin-right:0;}
+.sidebar-collapsed .sidebar .sidebar-brand{justify-content:center;padding:0 16px;}
+.sidebar-collapsed .main-wrapper{margin-left:var(--sidebar-w-col);}
+.sidebar-collapsed .topbar{left:var(--sidebar-w-col);}
+.sidebar-brand{height:var(--topbar-h);display:flex;align-items:center;gap:11px;padding:0 20px;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0;transition:var(--transition);}
+.brand-icon{width:38px;height:38px;background:linear-gradient(135deg,#1a56db,#4f83f0);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-size:18px;flex-shrink:0;box-shadow:0 4px 12px rgba(26,86,219,.4);}
+.brand-text h6{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:800;color:#fff;margin:0;line-height:1.2;white-space:nowrap;}
+.brand-text small{font-size:.65rem;color:rgba(255,255,255,.45);font-weight:500;white-space:nowrap;}
+.sidebar-nav{flex:1;overflow-y:auto;overflow-x:hidden;padding:16px 0;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent;}
+.sidebar-nav::-webkit-scrollbar{width:3px;}
+.sidebar-nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px;}
+.nav-section-title{font-size:.6rem;font-weight:700;color:rgba(255,255,255,.3);letter-spacing:.1em;text-transform:uppercase;padding:14px 20px 6px;white-space:nowrap;transition:var(--transition);}
+.nav-item-link{display:flex;align-items:center;padding:10px 20px;color:rgba(255,255,255,.6);text-decoration:none;transition:var(--transition);position:relative;cursor:pointer;border:none;background:none;width:100%;text-align:left;}
+.nav-item-link::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:0;background:var(--primary-mid);border-radius:0 3px 3px 0;transition:height .25s ease;}
+.nav-item-link:hover{color:rgba(255,255,255,.9);background:rgba(255,255,255,.05);}
+.nav-item-link.active{color:#fff;background:rgba(79,131,240,.18);}
+.nav-item-link.active::before{height:28px;}
+.nav-icon{font-size:17px;width:32px;flex-shrink:0;margin-right:8px;transition:margin .3s;display:flex;align-items:center;justify-content:center;}
+.nav-label{font-size:.85rem;font-weight:500;white-space:nowrap;transition:var(--transition);flex:1;}
+.nav-badge{background:var(--primary-mid);color:#fff;font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:100px;flex-shrink:0;}
+.sidebar-user{padding:14px 16px;border-top:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.user-avatar-sm{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#f87171);display:flex;align-items:center;justify-content:center;color:#fff;font-size:.8rem;font-weight:700;flex-shrink:0;}
+.sidebar-user-info{transition:var(--transition);overflow:hidden;}
+.sidebar-user-info .name{font-size:.82rem;font-weight:700;color:#fff;white-space:nowrap;}
+.sidebar-user-info .role{font-size:.68rem;color:rgba(255,255,255,.45);white-space:nowrap;}
+.nav-submenu{background:rgba(0,0,0,.12);overflow:hidden;max-height:0;transition:max-height .3s ease;}
+.nav-submenu.open{max-height:300px;}
+.nav-subitem{display:flex;align-items:center;padding:8px 20px 8px 56px;color:rgba(255,255,255,.45);text-decoration:none;font-size:.8rem;font-weight:500;transition:var(--transition);}
+.nav-subitem::before{content:'·';margin-right:8px;color:rgba(255,255,255,.25);}
+.nav-subitem:hover{color:rgba(255,255,255,.8);}
+
+/* ===== TOPBAR ===== */
+.topbar{position:fixed;top:0;left:var(--sidebar-w);right:0;height:var(--topbar-h);background:rgba(240,244,255,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border);z-index:1030;display:flex;align-items:center;padding:0 24px;gap:16px;transition:left .3s cubic-bezier(.4,0,.2,1);}
+.topbar-toggle{background:none;border:none;color:var(--text-muted);font-size:20px;padding:6px;border-radius:8px;cursor:pointer;transition:var(--transition);line-height:1;}
+.topbar-toggle:hover{background:var(--primary-light);color:var(--primary);}
+.topbar-breadcrumb{flex:1;}
+.topbar-breadcrumb .page-title{font-size:1rem;font-weight:700;color:var(--text-dark);margin:0;line-height:1.2;}
+.topbar-breadcrumb .breadcrumb-trail{font-size:.72rem;color:var(--text-muted);margin:0;}
+.topbar-search{position:relative;}
+.topbar-search input{width:200px;padding:8px 14px 8px 36px;border:1.5px solid var(--border);border-radius:100px;font-size:.82rem;font-family:'Plus Jakarta Sans',sans-serif;background:rgba(255,255,255,.8);color:var(--text-dark);outline:none;transition:var(--transition);}
+.topbar-search input:focus{width:260px;border-color:var(--primary);background:#fff;box-shadow:0 0 0 3px rgba(26,86,219,.08);}
+.topbar-search .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:14px;pointer-events:none;}
+.topbar-actions{display:flex;align-items:center;gap:6px;}
+.topbar-btn{position:relative;width:38px;height:38px;border:1.5px solid var(--border);background:rgba(255,255,255,.8);border-radius:10px;color:var(--text-muted);font-size:17px;cursor:pointer;transition:var(--transition);display:flex;align-items:center;justify-content:center;}
+.topbar-btn:hover{background:var(--primary-light);color:var(--primary);border-color:var(--primary-mid);}
+.topbar-badge{position:absolute;top:5px;right:5px;width:8px;height:8px;background:var(--rose);border-radius:50%;border:1.5px solid white;}
+.topbar-user{display:flex;align-items:center;gap:9px;padding:5px 10px;border-radius:12px;cursor:pointer;transition:var(--transition);border:1.5px solid transparent;}
+.topbar-user:hover{background:rgba(255,255,255,.9);border-color:var(--border);}
+.topbar-avatar{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--primary),var(--primary-mid));display:flex;align-items:center;justify-content:center;color:#fff;font-size:.75rem;font-weight:700;}
+.topbar-user-text .name{font-size:.82rem;font-weight:700;color:var(--text-dark);display:block;line-height:1.1;}
+.topbar-user-text .role{font-size:.68rem;color:var(--text-muted);}
+
+/* ===== MAIN ===== */
+.main-wrapper{margin-left:var(--sidebar-w);padding-top:var(--topbar-h);min-height:100vh;transition:margin-left .3s cubic-bezier(.4,0,.2,1);}
+.main-content{padding:28px 24px 48px;}
+
+/* ===== CARD ===== */
+.card-custom{background:rgba(255,255,255,.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.9);border-radius:var(--radius-lg);box-shadow:var(--shadow-card);transition:var(--transition);overflow:hidden;}
+.card-custom:hover{box-shadow:var(--shadow-hover);}
+
+/* ===== PAGE HEADER ===== */
+.page-header{background:linear-gradient(135deg,#1a56db 0%,#2563eb 55%,#1d4ed8 100%);border-radius:var(--radius-lg);padding:24px 28px;color:#fff;position:relative;overflow:hidden;margin-bottom:24px;box-shadow:0 8px 32px rgba(26,86,219,.22);}
+.page-header::before{content:'';position:absolute;width:280px;height:280px;border-radius:50%;background:rgba(255,255,255,.06);top:-100px;right:-60px;}
+.page-header::after{content:'';position:absolute;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,.04);bottom:-50px;right:30%;}
+.page-header h4{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:800;margin-bottom:4px;position:relative;z-index:1;}
+.page-header p{font-size:.83rem;color:rgba(255,255,255,.7);margin:0;position:relative;z-index:1;}
+.ph-actions{position:absolute;right:28px;top:50%;transform:translateY(-50%);display:flex;gap:10px;z-index:1;}
+.btn-ph{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:10px;font-size:.82rem;font-weight:700;cursor:pointer;transition:var(--transition);font-family:'Plus Jakarta Sans',sans-serif;border:none;}
+.btn-ph-white{background:rgba(255,255,255,.2);color:#fff;border:1.5px solid rgba(255,255,255,.3);}
+.btn-ph-white:hover{background:rgba(255,255,255,.32);}
+.btn-ph-solid{background:#fff;color:var(--primary);}
+.btn-ph-solid:hover{background:#f0f4ff;}
+
+/* ===== ROLE CARDS ===== */
+.role-card{background:rgba(255,255,255,.88);border:1.5px solid var(--border);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-card);transition:var(--transition);cursor:pointer;position:relative;overflow:hidden;}
+.role-card::before{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;border-radius:0 0 var(--radius-lg) var(--radius-lg);opacity:0;transition:opacity .25s;}
+.role-card:hover{box-shadow:var(--shadow-hover);transform:translateY(-3px);}
+.role-card:hover::before{opacity:1;}
+.role-card.selected{border-color:var(--primary);background:var(--primary-light);}
+
+.role-card.rc-super_admin .role-icon-bg{background:linear-gradient(135deg,#1a56db,#4f83f0);}
+.role-card.rc-super_admin::before{background:linear-gradient(90deg,#1a56db,#4f83f0);}
+.role-card.rc-admin .role-icon-bg{background:linear-gradient(135deg,#0d9488,#2dd4bf);}
+.role-card.rc-admin::before{background:linear-gradient(90deg,#0d9488,#2dd4bf);}
+.role-card.rc-akademik .role-icon-bg{background:linear-gradient(135deg,#7c3aed,#a78bfa);}
+.role-card.rc-akademik::before{background:linear-gradient(90deg,#7c3aed,#a78bfa);}
+.role-card.rc-dosen .role-icon-bg{background:linear-gradient(135deg,#f59e0b,#fbbf24);}
+.role-card.rc-dosen::before{background:linear-gradient(90deg,#f59e0b,#fbbf24);}
+.role-card.rc-mahasiswa .role-icon-bg{background:linear-gradient(135deg,#e11d48,#fb7185);}
+.role-card.rc-mahasiswa::before{background:linear-gradient(90deg,#e11d48,#fb7185);}
+.role-card.rc-keuangan .role-icon-bg{background:linear-gradient(135deg,#16a34a,#4ade80);}
+.role-card.rc-keuangan::before{background:linear-gradient(90deg,#16a34a,#4ade80);}
+
+.role-icon-bg{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;margin-bottom:14px;box-shadow:0 4px 12px rgba(0,0,0,.15);}
+.role-card-name{font-size:.92rem;font-weight:800;color:var(--text-dark);margin-bottom:3px;}
+.role-card-slug{font-size:.68rem;color:var(--text-muted);font-weight:600;font-family:monospace;background:rgba(26,86,219,.07);padding:2px 8px;border-radius:100px;display:inline-block;margin-bottom:10px;}
+.role-card-desc{font-size:.75rem;color:var(--text-muted);line-height:1.5;margin-bottom:12px;}
+.role-card-footer{display:flex;align-items:center;justify-content:space-between;}
+.role-user-count{font-size:.75rem;font-weight:700;color:var(--text-dark);}
+.role-user-count span{color:var(--text-muted);font-weight:500;}
+.role-actions{display:flex;gap:6px;}
+.btn-icon-sm{width:28px;height:28px;border-radius:7px;border:none;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;transition:var(--transition);}
+.btn-icon-sm.edit{background:var(--primary-light);color:var(--primary);}
+.btn-icon-sm.edit:hover{background:var(--primary);color:#fff;}
+.btn-icon-sm.del{background:#ffe4e6;color:#e11d48;}
+.btn-icon-sm.del:hover{background:#e11d48;color:#fff;}
+.btn-icon-sm.view{background:#dcfce7;color:#16a34a;}
+.btn-icon-sm.view:hover{background:#16a34a;color:#fff;}
+
+/* ===== PERMISSION MATRIX TABLE ===== */
+.perm-table-wrap{overflow-x:auto;border-radius:var(--radius-md);}
+.perm-table{width:100%;border-collapse:separate;border-spacing:0;font-size:.82rem;}
+.perm-table th{background:var(--soft-bg);font-weight:700;color:var(--text-dark);padding:12px 14px;white-space:nowrap;border-bottom:2px solid var(--border);position:sticky;top:0;}
+.perm-table th:first-child{border-radius:var(--radius-md) 0 0 0;min-width:200px;}
+.perm-table th.role-header{text-align:center;min-width:88px;}
+.perm-table td{padding:10px 14px;border-bottom:1px solid rgba(26,86,219,.05);vertical-align:middle;transition:background .15s;}
+.perm-table tbody tr:hover td{background:rgba(26,86,219,.03);}
+.perm-table tbody tr:last-child td{border-bottom:none;}
+.perm-table .section-row td{background:rgba(26,86,219,.04);font-weight:700;color:var(--primary);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;padding:8px 14px;}
+.perm-label{display:flex;align-items:center;gap:8px;}
+.perm-label .perm-icon{color:var(--text-muted);font-size:14px;}
+.perm-label .perm-name{color:var(--text-dark);font-weight:500;}
+.perm-label .perm-key{font-family:monospace;font-size:.68rem;color:var(--text-muted);background:rgba(0,0,0,.05);padding:1px 6px;border-radius:4px;}
+.perm-check{text-align:center;}
+.chk{width:22px;height:22px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;transition:var(--transition);cursor:pointer;}
+.chk.yes{background:var(--green-light);color:var(--green);}
+.chk.no{background:#f1f5f9;color:#cbd5e1;}
+.chk.partial{background:var(--accent-light);color:#b45309;}
+.chk.yes:hover{background:var(--green);color:#fff;}
+.chk.no:hover{background:#e2e8f0;color:#94a3b8;}
+
+/* ===== USER TABLE ===== */
+.user-table{width:100%;border-collapse:separate;border-spacing:0;font-size:.83rem;}
+.user-table th{background:var(--soft-bg);font-weight:700;color:var(--text-dark);padding:11px 14px;white-space:nowrap;border-bottom:2px solid var(--border);}
+.user-table td{padding:11px 14px;border-bottom:1px solid rgba(26,86,219,.05);vertical-align:middle;}
+.user-table tbody tr:hover td{background:rgba(26,86,219,.025);}
+.user-table tbody tr:last-child td{border-bottom:none;}
+.user-avatar{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:#fff;flex-shrink:0;}
+.role-pill{display:inline-flex;align-items:center;gap:4px;font-size:.68rem;font-weight:700;padding:3px 10px;border-radius:100px;}
+.status-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:5px;}
+
+/* ===== TABS ===== */
+.custom-tabs{display:flex;gap:4px;background:rgba(255,255,255,.7);padding:5px;border-radius:12px;border:1px solid var(--border);margin-bottom:20px;flex-wrap:wrap;}
+.custom-tab{padding:8px 18px;border-radius:8px;border:none;background:none;font-size:.82rem;font-weight:600;color:var(--text-muted);cursor:pointer;transition:var(--transition);font-family:'Plus Jakarta Sans',sans-serif;display:flex;align-items:center;gap:6px;}
+.custom-tab.active{background:var(--primary);color:#fff;box-shadow:0 2px 8px rgba(26,86,219,.3);}
+.custom-tab:hover:not(.active){background:var(--primary-light);color:var(--primary);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* ===== MODAL ===== */
+.modal-custom .modal-content{border-radius:var(--radius-lg);border:none;box-shadow:0 20px 60px rgba(26,86,219,.15);}
+.modal-custom .modal-header{border-bottom:1px solid var(--border);padding:20px 24px 16px;}
+.modal-custom .modal-title{font-weight:800;font-size:1rem;color:var(--text-dark);}
+.modal-custom .modal-body{padding:20px 24px;}
+.modal-custom .modal-footer{border-top:1px solid var(--border);padding:14px 24px;}
+.form-label-custom{font-size:.8rem;font-weight:700;color:var(--text-dark);margin-bottom:5px;display:block;}
+.form-ctrl{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:.85rem;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text-dark);background:rgba(255,255,255,.8);outline:none;transition:var(--transition);}
+.form-ctrl:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(26,86,219,.08);}
+
+/* ===== PERM TOGGLE GRID ===== */
+.perm-toggle-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.perm-toggle{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;background:rgba(255,255,255,.7);cursor:pointer;transition:var(--transition);}
+.perm-toggle.on{border-color:var(--primary);background:var(--primary-light);}
+.perm-toggle .pt-label{font-size:.75rem;font-weight:600;color:var(--text-dark);}
+.perm-toggle .pt-key{font-size:.62rem;color:var(--text-muted);font-family:monospace;}
+.toggle-switch{width:34px;height:18px;background:#e2e8f0;border-radius:100px;position:relative;transition:background .2s;flex-shrink:0;}
+.toggle-switch::after{content:'';position:absolute;width:14px;height:14px;background:#fff;border-radius:50%;top:2px;left:2px;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.2);}
+.perm-toggle.on .toggle-switch{background:var(--primary);}
+.perm-toggle.on .toggle-switch::after{left:18px;}
+
+/* ===== SEARCH + FILTER BAR ===== */
+.filter-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:18px;}
+.filter-input{flex:1;min-width:180px;padding:9px 14px 9px 36px;border:1.5px solid var(--border);border-radius:10px;font-size:.83rem;font-family:'Plus Jakarta Sans',sans-serif;background:rgba(255,255,255,.8);color:var(--text-dark);outline:none;transition:var(--transition);}
+.filter-input:focus{border-color:var(--primary);background:#fff;box-shadow:0 0 0 3px rgba(26,86,219,.07);}
+.filter-select{padding:9px 30px 9px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:.83rem;font-family:'Plus Jakarta Sans',sans-serif;background:rgba(255,255,255,.8);color:var(--text-dark);outline:none;appearance:none;cursor:pointer;transition:var(--transition);}
+.filter-select:focus{border-color:var(--primary);}
+.btn-primary-sm{padding:9px 16px;background:var(--primary);color:#fff;border:none;border-radius:10px;font-size:.82rem;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;display:flex;align-items:center;gap:6px;transition:var(--transition);}
+.btn-primary-sm:hover{background:var(--primary-dark);box-shadow:0 4px 14px rgba(26,86,219,.3);}
+.btn-outline-sm{padding:9px 16px;background:transparent;color:var(--text-muted);border:1.5px solid var(--border);border-radius:10px;font-size:.82rem;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;display:flex;align-items:center;gap:6px;transition:var(--transition);}
+.btn-outline-sm:hover{background:var(--primary-light);color:var(--primary);border-color:var(--primary);}
+
+/* ===== STAT MINI ===== */
+.stat-mini{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 12px;background:rgba(255,255,255,.85);border:1px solid rgba(255,255,255,.9);border-radius:var(--radius-md);box-shadow:var(--shadow-card);text-align:center;transition:var(--transition);}
+.stat-mini:hover{box-shadow:var(--shadow-hover);transform:translateY(-2px);}
+.stat-mini-num{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:800;line-height:1;margin-bottom:3px;}
+.stat-mini-lbl{font-size:.7rem;color:var(--text-muted);font-weight:500;}
+.stat-mini-sub{font-size:.65rem;margin-top:4px;font-weight:600;padding:2px 8px;border-radius:100px;}
+
+/* ===== MOBILE ===== */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(15,30,69,.5);z-index:1039;backdrop-filter:blur(2px);}
+@media(max-width:991.98px){
+  .sidebar{transform:translateX(-100%);width:var(--sidebar-w) !important;}
+  .sidebar-open .sidebar{transform:translateX(0);box-shadow:8px 0 40px rgba(0,0,0,.2);}
+  .sidebar-open .sidebar-overlay{display:block;}
+  .main-wrapper{margin-left:0 !important;}
+  .topbar{left:0 !important;}
+  .sidebar-collapsed .sidebar{width:var(--sidebar-w) !important;}
+  .ph-actions{display:none;}
+  .topbar-search{display:none;}
+}
+@media(max-width:575.98px){
+  .main-content{padding:16px 14px 32px;}
+  .perm-toggle-grid{grid-template-columns:1fr;}
+}
+
+.scroll-top{position:fixed;bottom:28px;right:28px;width:40px;height:40px;background:var(--primary);color:white;border:none;border-radius:12px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(26,86,219,.3);transition:var(--transition);z-index:999;opacity:0;transform:translateY(10px);}
+.scroll-top.visible{opacity:1;transform:translateY(0);}
+.scroll-top:hover{background:var(--primary-dark);transform:translateY(-2px);}
+</style>
+</head>
+<body>
+
+<!-- BG -->
+<div class="bg-anim">
+  <div class="dot-grid"></div>
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+  <div class="bg-orb bg-orb-3"></div>
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- ===== SIDEBAR ===== -->
+<aside class="sidebar" id="mainSidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon"><i class="bi bi-mortarboard-fill"></i></div>
+    <div class="brand-text"><h6>SIAKAD</h6><small>Universitas Nusantara</small></div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-title">MENU UTAMA</div>
+    <a class="nav-item-link" href="siakad-dashboard.html">
+      <span class="nav-icon"><i class="bi bi-grid-1x2-fill"></i></span><span class="nav-label">Dashboard</span>
+    </a>
+    <button class="nav-item-link" onclick="toggleMenu('menuAkademik',this)">
+      <span class="nav-icon"><i class="bi bi-book-fill"></i></span><span class="nav-label">Akademik</span>
+      <i class="bi bi-chevron-down ms-auto" style="font-size:11px;color:rgba(255,255,255,.35);transition:transform .25s;" id="chevAkademik"></i>
+    </button>
+    <div class="nav-submenu" id="menuAkademik">
+      <a href="#" class="nav-subitem">Kurikulum</a>
+      <a href="#" class="nav-subitem">Mata Kuliah</a>
+      <a href="#" class="nav-subitem">Jadwal Kuliah</a>
+    </div>
+    <a class="nav-item-link" href="#"><span class="nav-icon"><i class="bi bi-people-fill"></i></span><span class="nav-label">Mahasiswa</span></a>
+    <a class="nav-item-link" href="#"><span class="nav-icon"><i class="bi bi-person-badge-fill"></i></span><span class="nav-label">Dosen & Staf</span></a>
+    <button class="nav-item-link" onclick="toggleMenu('menuKRS',this)">
+      <span class="nav-icon"><i class="bi bi-journal-check"></i></span><span class="nav-label">KRS & Nilai</span>
+      <i class="bi bi-chevron-down ms-auto" style="font-size:11px;color:rgba(255,255,255,.35);transition:transform .25s;" id="chevKRS"></i>
+    </button>
+    <div class="nav-submenu" id="menuKRS">
+      <a href="#" class="nav-subitem">Pengajuan KRS</a>
+      <a href="#" class="nav-subitem">Input Nilai</a>
+      <a href="#" class="nav-subitem">Transkrip</a>
+    </div>
+    <a class="nav-item-link" href="#"><span class="nav-icon"><i class="bi bi-calendar3-week"></i></span><span class="nav-label">Absensi</span><span class="nav-badge">3</span></a>
+    <div class="nav-section-title">KEUANGAN</div>
+    <a class="nav-item-link" href="#"><span class="nav-icon"><i class="bi bi-wallet2"></i></span><span class="nav-label">Tagihan & SPP</span></a>
+    <a class="nav-item-link" href="#"><span class="nav-icon"><i class="bi bi-receipt"></i></span><span class="nav-label">Riwayat Bayar</span></a>
+    <div class="nav-section-title">SISTEM</div>
+    <a class="nav-item-link active" href="#"><span class="nav-icon"><i class="bi bi-shield-lock-fill"></i></span><span class="nav-label">Roles & Akses</span></a>
+    <a class="nav-item-link" href="#"><span class="nav-icon"><i class="bi bi-activity"></i></span><span class="nav-label">Activity Log</span></a>
+    <a class="nav-item-link" href="#"><span class="nav-icon"><i class="bi bi-gear-fill"></i></span><span class="nav-label">Pengaturan</span></a>
+  </nav>
+  <div class="sidebar-user">
+    <div class="user-avatar-sm">AR</div>
+    <div class="sidebar-user-info"><div class="name">Admin Registrar</div><div class="role">Super Admin</div></div>
+    <button style="background:none;border:none;color:rgba(255,255,255,.3);font-size:14px;cursor:pointer;flex-shrink:0;"><i class="bi bi-box-arrow-right"></i></button>
+  </div>
+</aside>
+
+<!-- ===== TOPBAR ===== -->
+<header class="topbar" id="mainTopbar">
+  <button class="topbar-toggle" onclick="toggleSidebar()"><i class="bi bi-list"></i></button>
+  <div class="topbar-breadcrumb">
+    <p class="page-title">Roles & Akses</p>
+    <p class="breadcrumb-trail">SIAKAD / Sistem / Roles & Akses</p>
+  </div>
+  <div class="topbar-search">
+    <i class="bi bi-search search-icon"></i>
+    <input type="text" placeholder="Cari pengguna, role...">
+  </div>
+  <div class="topbar-actions">
+    <button class="topbar-btn"><i class="bi bi-bell"></i><span class="topbar-badge"></span></button>
+    <button class="topbar-btn"><i class="bi bi-chat-dots"></i></button>
+  </div>
+  <div class="topbar-user">
+    <div class="topbar-avatar">AR</div>
+    <div class="topbar-user-text d-none d-md-block">
+      <span class="name">Admin Registrar</span><span class="role">Super Admin</span>
+    </div>
+  </div>
+</header>
+
+<!-- ===== MAIN ===== -->
+<div class="main-wrapper" id="mainWrapper">
+<div class="main-content">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header" data-aos="fade-down" data-aos-duration="550">
+    <div style="position:relative;z-index:1;">
+      <h4><i class="bi bi-shield-lock-fill me-2"></i>Manajemen Roles & Akses</h4>
+      <p>Kelola hak akses pengguna berdasarkan role menggunakan Spatie Laravel Permission</p>
+    </div>
+    <div class="ph-actions">
+      <button class="btn-ph btn-ph-white" onclick="openModal('modalRole')">
+        <i class="bi bi-plus-lg"></i> Tambah Role
+      </button>
+      <button class="btn-ph btn-ph-solid" onclick="openModal('modalUser')">
+        <i class="bi bi-person-plus"></i> Assign User
+      </button>
+    </div>
+  </div>
+
+  <!-- STAT MINI ROW -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3 col-lg-2" data-aos="fade-up" data-aos-delay="0" data-aos-duration="480">
+      <div class="stat-mini">
+        <div class="stat-mini-num" style="color:var(--primary);">6</div>
+        <div class="stat-mini-lbl">Total Role</div>
+        <div class="stat-mini-sub" style="background:var(--primary-light);color:var(--primary);">Aktif semua</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3 col-lg-2" data-aos="fade-up" data-aos-delay="60" data-aos-duration="480">
+      <div class="stat-mini">
+        <div class="stat-mini-num" style="color:var(--teal);">48</div>
+        <div class="stat-mini-lbl">Permission</div>
+        <div class="stat-mini-sub" style="background:var(--teal-light);color:var(--teal);">Terdaftar</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3 col-lg-2" data-aos="fade-up" data-aos-delay="120" data-aos-duration="480">
+      <div class="stat-mini">
+        <div class="stat-mini-num" style="color:var(--purple);">12.980</div>
+        <div class="stat-mini-lbl">Total User</div>
+        <div class="stat-mini-sub" style="background:var(--purple-light);color:var(--purple);">Ter-assign</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3 col-lg-2" data-aos="fade-up" data-aos-delay="180" data-aos-duration="480">
+      <div class="stat-mini">
+        <div class="stat-mini-num" style="color:var(--green);">12.961</div>
+        <div class="stat-mini-lbl">Akun Aktif</div>
+        <div class="stat-mini-sub" style="background:var(--green-light);color:var(--green);">99.8%</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3 col-lg-2" data-aos="fade-up" data-aos-delay="240" data-aos-duration="480">
+      <div class="stat-mini">
+        <div class="stat-mini-num" style="color:var(--rose);">19</div>
+        <div class="stat-mini-lbl">Akun Nonaktif</div>
+        <div class="stat-mini-sub" style="background:var(--rose-light);color:var(--rose);">Diblokir</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3 col-lg-2" data-aos="fade-up" data-aos-delay="300" data-aos-duration="480">
+      <div class="stat-mini">
+        <div class="stat-mini-num" style="color:var(--accent);">7</div>
+        <div class="stat-mini-lbl">Login Hari Ini</div>
+        <div class="stat-mini-sub" style="background:var(--accent-light);color:#b45309;">Sesi aktif</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="custom-tabs" data-aos="fade-up" data-aos-duration="400">
+    <button class="custom-tab active" onclick="switchTab('tabRoles', this)">
+      <i class="bi bi-shield-fill"></i> Daftar Role
+    </button>
+    <button class="custom-tab" onclick="switchTab('tabMatrix', this)">
+      <i class="bi bi-grid-3x3-gap-fill"></i> Matriks Permission
+    </button>
+    <button class="custom-tab" onclick="switchTab('tabUsers', this)">
+      <i class="bi bi-people-fill"></i> Pengguna & Role
+    </button>
+  </div>
+
+  <!-- ==============================
+       TAB 1 — ROLE CARDS
+  ============================== -->
+  <div class="tab-panel active" id="tabRoles">
+    <div class="row g-3">
+
+      <div class="col-12 col-sm-6 col-lg-4" data-aos="fade-up" data-aos-delay="0" data-aos-duration="500">
+        <div class="role-card rc-super_admin">
+          <div class="role-icon-bg"><i class="bi bi-shield-fill-exclamation"></i></div>
+          <div class="role-card-name">Super Admin</div>
+          <div class="role-card-slug">super_admin</div>
+          <div class="role-card-desc">Akses penuh ke seluruh sistem. Dapat mengelola semua modul, user, role, dan konfigurasi sistem.</div>
+          <div class="role-card-footer">
+            <div class="role-user-count">3 <span>pengguna</span></div>
+            <div class="role-actions">
+              <button class="btn-icon-sm view" title="Lihat pengguna" onclick="filterUserByRole('super_admin')"><i class="bi bi-eye"></i></button>
+              <button class="btn-icon-sm edit" title="Edit role" onclick="openEditRole('Super Admin','super_admin','Akses penuh ke seluruh sistem.')"><i class="bi bi-pencil"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-4" data-aos="fade-up" data-aos-delay="80" data-aos-duration="500">
+        <div class="role-card rc-admin">
+          <div class="role-icon-bg"><i class="bi bi-person-gear"></i></div>
+          <div class="role-card-name">Admin</div>
+          <div class="role-card-slug">admin</div>
+          <div class="role-card-desc">Mengelola data akademik, mahasiswa, dosen, dan laporan. Tidak dapat mengubah konfigurasi sistem.</div>
+          <div class="role-card-footer">
+            <div class="role-user-count">12 <span>pengguna</span></div>
+            <div class="role-actions">
+              <button class="btn-icon-sm view" title="Lihat pengguna" onclick="filterUserByRole('admin')"><i class="bi bi-eye"></i></button>
+              <button class="btn-icon-sm edit" title="Edit role" onclick="openEditRole('Admin','admin','Mengelola data akademik, mahasiswa, dosen.')"><i class="bi bi-pencil"></i></button>
+              <button class="btn-icon-sm del" title="Hapus role" onclick="confirmDelete('Admin')"><i class="bi bi-trash"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-4" data-aos="fade-up" data-aos-delay="160" data-aos-duration="500">
+        <div class="role-card rc-akademik">
+          <div class="role-icon-bg"><i class="bi bi-journal-text"></i></div>
+          <div class="role-card-name">Staf Akademik</div>
+          <div class="role-card-slug">akademik</div>
+          <div class="role-card-desc">Mengelola kurikulum, jadwal kuliah, kalender akademik, dan proses KRS mahasiswa.</div>
+          <div class="role-card-footer">
+            <div class="role-user-count">24 <span>pengguna</span></div>
+            <div class="role-actions">
+              <button class="btn-icon-sm view" title="Lihat pengguna"><i class="bi bi-eye"></i></button>
+              <button class="btn-icon-sm edit" title="Edit role" onclick="openEditRole('Staf Akademik','akademik','Mengelola kurikulum dan jadwal.')"><i class="bi bi-pencil"></i></button>
+              <button class="btn-icon-sm del" title="Hapus role" onclick="confirmDelete('Staf Akademik')"><i class="bi bi-trash"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-4" data-aos="fade-up" data-aos-delay="240" data-aos-duration="500">
+        <div class="role-card rc-dosen">
+          <div class="role-icon-bg"><i class="bi bi-person-badge-fill"></i></div>
+          <div class="role-card-name">Dosen</div>
+          <div class="role-card-slug">dosen</div>
+          <div class="role-card-desc">Input dan kelola nilai mahasiswa, absensi perkuliahan, persetujuan KRS, dan jadwal mengajar.</div>
+          <div class="role-card-footer">
+            <div class="role-user-count">482 <span>pengguna</span></div>
+            <div class="role-actions">
+              <button class="btn-icon-sm view" title="Lihat pengguna"><i class="bi bi-eye"></i></button>
+              <button class="btn-icon-sm edit" title="Edit role" onclick="openEditRole('Dosen','dosen','Input nilai dan absensi.')"><i class="bi bi-pencil"></i></button>
+              <button class="btn-icon-sm del" title="Hapus role" onclick="confirmDelete('Dosen')"><i class="bi bi-trash"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-4" data-aos="fade-up" data-aos-delay="320" data-aos-duration="500">
+        <div class="role-card rc-mahasiswa">
+          <div class="role-icon-bg"><i class="bi bi-mortarboard-fill"></i></div>
+          <div class="role-card-name">Mahasiswa</div>
+          <div class="role-card-slug">mahasiswa</div>
+          <div class="role-card-desc">Akses portal mahasiswa: pengajuan KRS, melihat nilai, jadwal kuliah, dan pembayaran SPP.</div>
+          <div class="role-card-footer">
+            <div class="role-user-count">12.480 <span>pengguna</span></div>
+            <div class="role-actions">
+              <button class="btn-icon-sm view" title="Lihat pengguna"><i class="bi bi-eye"></i></button>
+              <button class="btn-icon-sm edit" title="Edit role" onclick="openEditRole('Mahasiswa','mahasiswa','Akses portal mahasiswa.')"><i class="bi bi-pencil"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-4" data-aos="fade-up" data-aos-delay="400" data-aos-duration="500">
+        <div class="role-card rc-keuangan">
+          <div class="role-icon-bg"><i class="bi bi-cash-coin"></i></div>
+          <div class="role-card-name">Staf Keuangan</div>
+          <div class="role-card-slug">keuangan</div>
+          <div class="role-card-desc">Mengelola tagihan SPP, verifikasi pembayaran, generate laporan keuangan dan kuitansi.</div>
+          <div class="role-card-footer">
+            <div class="role-user-count">8 <span>pengguna</span></div>
+            <div class="role-actions">
+              <button class="btn-icon-sm view" title="Lihat pengguna"><i class="bi bi-eye"></i></button>
+              <button class="btn-icon-sm edit" title="Edit role" onclick="openEditRole('Staf Keuangan','keuangan','Kelola tagihan dan pembayaran.')"><i class="bi bi-pencil"></i></button>
+              <button class="btn-icon-sm del" title="Hapus role" onclick="confirmDelete('Staf Keuangan')"><i class="bi bi-trash"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add role card -->
+      <div class="col-12 col-sm-6 col-lg-4" data-aos="fade-up" data-aos-delay="480" data-aos-duration="500">
+        <div class="role-card" style="border-style:dashed;border-color:rgba(26,86,219,.25);display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:200px;gap:10px;" onclick="openModal('modalRole')">
+          <div style="width:46px;height:46px;border-radius:13px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;color:var(--primary);font-size:22px;">
+            <i class="bi bi-plus-lg"></i>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:.85rem;font-weight:700;color:var(--primary);">Tambah Role Baru</div>
+            <div style="font-size:.72rem;color:var(--text-muted);">Klik untuk membuat role kustom</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==============================
+       TAB 2 — PERMISSION MATRIX
+  ============================== -->
+  <div class="tab-panel" id="tabMatrix">
+    <div class="card-custom" data-aos="fade-up" data-aos-duration="500">
+      <div style="padding:16px 20px 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+        <div>
+          <div style="font-size:.92rem;font-weight:700;color:var(--text-dark);margin-bottom:2px;"><i class="bi bi-grid-3x3-gap-fill text-primary me-2"></i>Matriks Hak Akses</div>
+          <div style="font-size:.72rem;color:var(--text-muted);">Klik checkbox untuk mengubah permission secara langsung</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <span style="display:inline-flex;align-items:center;gap:5px;font-size:.72rem;color:var(--text-muted);"><span class="chk yes" style="width:16px;height:16px;font-size:9px;"><i class="bi bi-check-lg"></i></span> Diizinkan</span>
+          <span style="display:inline-flex;align-items:center;gap:5px;font-size:.72rem;color:var(--text-muted);"><span class="chk partial" style="width:16px;height:16px;font-size:9px;"><i class="bi bi-dash-lg"></i></span> Sebagian</span>
+          <span style="display:inline-flex;align-items:center;gap:5px;font-size:.72rem;color:var(--text-muted);"><span class="chk no" style="width:16px;height:16px;font-size:9px;"><i class="bi bi-x-lg"></i></span> Tidak</span>
+        </div>
+      </div>
+      <div style="padding:16px 20px 20px;">
+        <div class="perm-table-wrap">
+          <table class="perm-table">
+            <thead>
+              <tr>
+                <th>Permission</th>
+                <th class="role-header"><i class="bi bi-shield-fill-exclamation" style="color:#1a56db;"></i><br><span style="font-size:.65rem;">S.Admin</span></th>
+                <th class="role-header"><i class="bi bi-person-gear" style="color:#0d9488;"></i><br><span style="font-size:.65rem;">Admin</span></th>
+                <th class="role-header"><i class="bi bi-journal-text" style="color:#7c3aed;"></i><br><span style="font-size:.65rem;">Akademik</span></th>
+                <th class="role-header"><i class="bi bi-person-badge-fill" style="color:#f59e0b;"></i><br><span style="font-size:.65rem;">Dosen</span></th>
+                <th class="role-header"><i class="bi bi-mortarboard-fill" style="color:#e11d48;"></i><br><span style="font-size:.65rem;">Mahasiswa</span></th>
+                <th class="role-header"><i class="bi bi-cash-coin" style="color:#16a34a;"></i><br><span style="font-size:.65rem;">Keuangan</span></th>
+              </tr>
+            </thead>
+            <tbody id="permMatrix">
+              <!-- Injected by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================
+       TAB 3 — USER TABLE
+  ============================== -->
+  <div class="tab-panel" id="tabUsers">
+    <div class="card-custom" data-aos="fade-up" data-aos-duration="500">
+      <div style="padding:16px 20px 0;">
+        <div style="font-size:.92rem;font-weight:700;color:var(--text-dark);margin-bottom:14px;"><i class="bi bi-people-fill text-primary me-2"></i>Pengguna & Role</div>
+        <div class="filter-bar">
+          <div style="position:relative;flex:1;min-width:180px;">
+            <i class="bi bi-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:14px;"></i>
+            <input type="text" class="filter-input" placeholder="Cari nama, email, NIM..." style="padding-left:36px;" oninput="filterUsers(this.value)">
+          </div>
+          <select class="filter-select" id="roleFilter" onchange="filterUsers()">
+            <option value="">Semua Role</option>
+            <option value="super_admin">Super Admin</option>
+            <option value="admin">Admin</option>
+            <option value="akademik">Staf Akademik</option>
+            <option value="dosen">Dosen</option>
+            <option value="mahasiswa">Mahasiswa</option>
+            <option value="keuangan">Staf Keuangan</option>
+          </select>
+          <select class="filter-select">
+            <option>Semua Status</option>
+            <option>Aktif</option>
+            <option>Nonaktif</option>
+          </select>
+          <button class="btn-primary-sm" onclick="openModal('modalUser')"><i class="bi bi-person-plus"></i> Assign User</button>
+          <button class="btn-outline-sm"><i class="bi bi-download"></i> Export</button>
+        </div>
+      </div>
+      <div style="padding:0 20px 20px;overflow-x:auto;">
+        <table class="user-table" id="userTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Pengguna</th>
+              <th>Identitas</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Login Terakhir</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="userTableBody">
+            <!-- Injected by JS -->
+          </tbody>
+        </table>
+        <!-- Pagination -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px;flex-wrap:wrap;gap:10px;">
+          <div style="font-size:.78rem;color:var(--text-muted);">Menampilkan <strong>1–10</strong> dari <strong>12.980</strong> pengguna</div>
+          <div style="display:flex;gap:4px;">
+            <button style="padding:6px 12px;border:1.5px solid var(--border);border-radius:8px;background:rgba(255,255,255,.8);font-size:.78rem;font-weight:600;cursor:pointer;color:var(--text-muted);">‹ Prev</button>
+            <button style="padding:6px 12px;border:1.5px solid var(--primary);border-radius:8px;background:var(--primary);font-size:.78rem;font-weight:700;cursor:pointer;color:#fff;">1</button>
+            <button style="padding:6px 12px;border:1.5px solid var(--border);border-radius:8px;background:rgba(255,255,255,.8);font-size:.78rem;font-weight:600;cursor:pointer;color:var(--text-muted);">2</button>
+            <button style="padding:6px 12px;border:1.5px solid var(--border);border-radius:8px;background:rgba(255,255,255,.8);font-size:.78rem;font-weight:600;cursor:pointer;color:var(--text-muted);">3</button>
+            <button style="padding:6px 12px;border:1.5px solid var(--border);border-radius:8px;background:rgba(255,255,255,.8);font-size:.78rem;font-weight:600;cursor:pointer;color:var(--text-muted);">Next ›</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main-content -->
+</div><!-- /main-wrapper -->
+
+<!-- ===========================
+     MODAL: TAMBAH / EDIT ROLE
+=========================== -->
+<div class="modal fade modal-custom" id="modalRole" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <h5 class="modal-title" id="modalRoleTitle">Tambah Role Baru</h5>
+          <div style="font-size:.72rem;color:var(--text-muted);">Konfigurasi role dan permission yang diberikan</div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-3 mb-4">
+          <div class="col-md-6">
+            <label class="form-label-custom">Nama Role</label>
+            <input type="text" class="form-ctrl" id="roleNameInput" placeholder="cth: Operator Perpustakaan">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label-custom">Slug (guard_name)</label>
+            <input type="text" class="form-ctrl" id="roleSlugInput" placeholder="operator_perpustakaan" style="font-family:monospace;">
+          </div>
+          <div class="col-12">
+            <label class="form-label-custom">Deskripsi Role</label>
+            <textarea class="form-ctrl" rows="2" placeholder="Jelaskan fungsi dan batasan role ini..."></textarea>
+          </div>
+        </div>
+        <label class="form-label-custom mb-2">Permission yang Diberikan</label>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+
+          <div style="background:rgba(26,86,219,.04);border-radius:10px;padding:12px 14px;">
+            <div style="font-size:.72rem;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Mahasiswa</div>
+            <div class="perm-toggle-grid">
+              <div class="perm-toggle" onclick="togglePerm(this)"><div><div class="pt-label">Lihat Data Mahasiswa</div><div class="pt-key">mahasiswa.view</div></div><div class="toggle-switch"></div></div>
+              <div class="perm-toggle on" onclick="togglePerm(this)"><div><div class="pt-label">Tambah Mahasiswa</div><div class="pt-key">mahasiswa.create</div></div><div class="toggle-switch"></div></div>
+              <div class="perm-toggle" onclick="togglePerm(this)"><div><div class="pt-label">Edit Mahasiswa</div><div class="pt-key">mahasiswa.edit</div></div><div class="toggle-switch"></div></div>
+              <div class="perm-toggle" onclick="togglePerm(this)"><div><div class="pt-label">Hapus Mahasiswa</div><div class="pt-key">mahasiswa.delete</div></div><div class="toggle-switch"></div></div>
+            </div>
+          </div>
+
+          <div style="background:rgba(13,148,136,.04);border-radius:10px;padding:12px 14px;">
+            <div style="font-size:.72rem;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Akademik</div>
+            <div class="perm-toggle-grid">
+              <div class="perm-toggle on" onclick="togglePerm(this)"><div><div class="pt-label">Lihat Jadwal</div><div class="pt-key">jadwal.view</div></div><div class="toggle-switch"></div></div>
+              <div class="perm-toggle" onclick="togglePerm(this)"><div><div class="pt-label">Kelola Jadwal</div><div class="pt-key">jadwal.manage</div></div><div class="toggle-switch"></div></div>
+              <div class="perm-toggle" onclick="togglePerm(this)"><div><div class="pt-label">Approve KRS</div><div class="pt-key">krs.approve</div></div><div class="toggle-switch"></div></div>
+              <div class="perm-toggle on" onclick="togglePerm(this)"><div><div class="pt-label">Input Nilai</div><div class="pt-key">nilai.input</div></div><div class="toggle-switch"></div></div>
+            </div>
+          </div>
+
+          <div style="background:rgba(245,158,11,.04);border-radius:10px;padding:12px 14px;">
+            <div style="font-size:.72rem;font-weight:700;color:#b45309;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Keuangan</div>
+            <div class="perm-toggle-grid">
+              <div class="perm-toggle" onclick="togglePerm(this)"><div><div class="pt-label">Lihat Tagihan</div><div class="pt-key">tagihan.view</div></div><div class="toggle-switch"></div></div>
+              <div class="perm-toggle" onclick="togglePerm(this)"><div><div class="pt-label">Kelola Tagihan</div><div class="pt-key">tagihan.manage</div></div><div class="toggle-switch"></div></div>
+              <div class="perm-toggle" onclick="togglePerm(this)"><div><div class="pt-label">Verifikasi Bayar</div><div class="pt-key">pembayaran.verify</div></div><div class="toggle-switch"></div></div>
+              <div class="perm-toggle" onclick="togglePerm(this)"><div><div class="pt-label">Laporan Keuangan</div><div class="pt-key">laporan.keuangan</div></div><div class="toggle-switch"></div></div>
+            </div>
+          </div>
+
+          <div style="background:rgba(124,58,237,.04);border-radius:10px;padding:12px 14px;">
+            <div style="font-size:.72rem;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Sistem</div>
+            <div class="perm-toggle-grid">
+              <div class="perm-toggle" onclick="togglePerm(this)"><div><div class="pt-label">Kelola Role</div><div class="pt-key">roles.manage</div></div><div class="toggle-switch"></div></div>
+              <div class="perm-toggle" onclick="togglePerm(this)"><div><div class="pt-label">Activity Log</div><div class="pt-key">log.view</div></div><div class="toggle-switch"></div></div>
+              <div class="perm-toggle" onclick="togglePerm(this)"><div><div class="pt-label">Pengaturan Sistem</div><div class="pt-key">settings.manage</div></div><div class="toggle-switch"></div></div>
+              <div class="perm-toggle" onclick="togglePerm(this)"><div><div class="pt-label">Backup Data</div><div class="pt-key">data.backup</div></div><div class="toggle-switch"></div></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div class="modal-footer" style="justify-content:space-between;">
+        <button type="button" class="btn-outline-sm" data-bs-dismiss="modal"><i class="bi bi-x-lg"></i> Batal</button>
+        <button type="button" class="btn-primary-sm" onclick="saveRole()"><i class="bi bi-check-lg"></i> Simpan Role</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===========================
+     MODAL: ASSIGN USER
+=========================== -->
+<div class="modal fade modal-custom" id="modalUser" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <h5 class="modal-title">Assign Role ke User</h5>
+          <div style="font-size:.72rem;color:var(--text-muted);">Cari pengguna dan tentukan role-nya</div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label-custom">Cari Pengguna</label>
+          <input type="text" class="form-ctrl" placeholder="Nama, NIM, NIDN, atau email...">
+        </div>
+        <div class="mb-3">
+          <label class="form-label-custom">Assign Role</label>
+          <select class="form-ctrl">
+            <option value="">-- Pilih Role --</option>
+            <option>Super Admin</option>
+            <option>Admin</option>
+            <option>Staf Akademik</option>
+            <option>Dosen</option>
+            <option>Mahasiswa</option>
+            <option>Staf Keuangan</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label-custom">Keterangan (opsional)</label>
+          <textarea class="form-ctrl" rows="2" placeholder="Alasan penugasan role ini..."></textarea>
+        </div>
+        <div style="background:var(--accent-light);border-radius:10px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start;">
+          <i class="bi bi-exclamation-triangle-fill" style="color:#b45309;flex-shrink:0;margin-top:1px;"></i>
+          <div style="font-size:.75rem;color:#92400e;line-height:1.5;">Perubahan role akan langsung berlaku. Pastikan pengguna yang dipilih memiliki hak akses yang sesuai.</div>
+        </div>
+      </div>
+      <div class="modal-footer" style="justify-content:space-between;">
+        <button type="button" class="btn-outline-sm" data-bs-dismiss="modal"><i class="bi bi-x-lg"></i> Batal</button>
+        <button type="button" class="btn-primary-sm" onclick="saveAssign()"><i class="bi bi-person-check"></i> Assign Role</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===========================
+     MODAL: CONFIRM DELETE
+=========================== -->
+<div class="modal fade modal-custom" id="modalDelete" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content">
+      <div class="modal-body" style="text-align:center;padding:28px 24px;">
+        <div style="width:56px;height:56px;background:var(--rose-light);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--rose);margin:0 auto 14px;">
+          <i class="bi bi-trash-fill"></i>
+        </div>
+        <h6 style="font-weight:800;color:var(--text-dark);margin-bottom:6px;">Hapus Role?</h6>
+        <p style="font-size:.8rem;color:var(--text-muted);">Role <strong id="deleteRoleName"></strong> akan dihapus secara permanen. Pengguna yang memiliki role ini akan kehilangan aksesnya.</p>
+      </div>
+      <div class="modal-footer" style="justify-content:center;gap:10px;border:none;padding-top:0;">
+        <button class="btn-outline-sm" data-bs-dismiss="modal">Batal</button>
+        <button class="btn-primary-sm" style="background:var(--rose);" onclick="doDelete()"><i class="bi bi-trash"></i> Ya, Hapus</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+  <i class="bi bi-chevron-up"></i>
+</button>
+
+<!-- ===== SCRIPTS ===== -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script>
+AOS.init({once:true,offset:40,easing:'ease-out-cubic'});
+
+/* SIDEBAR */
+let isCollapsed = false;
+function toggleSidebar(){
+  if(window.innerWidth<992) document.body.classList.toggle('sidebar-open');
+  else{ isCollapsed=!isCollapsed; document.body.classList.toggle('sidebar-collapsed',isCollapsed); }
+}
+function closeSidebar(){ document.body.classList.remove('sidebar-open'); }
+window.addEventListener('resize',()=>{ if(window.innerWidth>=992) document.body.classList.remove('sidebar-open'); });
+
+/* SUB MENU */
+function toggleMenu(id,btn){
+  const m=document.getElementById(id);
+  const chev=document.getElementById(id.replace('menu','chev'));
+  m.classList.toggle('open');
+  if(chev) chev.style.transform=m.classList.contains('open')?'rotate(180deg)':'';
+}
+
+/* TABS */
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.custom-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  AOS.refresh();
+}
+
+/* MODAL */
+function openModal(id){ new bootstrap.Modal(document.getElementById(id)).show(); }
+
+function openEditRole(name,slug,desc){
+  document.getElementById('modalRoleTitle').textContent = 'Edit Role: '+name;
+  document.getElementById('roleNameInput').value = name;
+  document.getElementById('roleSlugInput').value = slug;
+  openModal('modalRole');
+}
+
+function confirmDelete(name){
+  document.getElementById('deleteRoleName').textContent = name;
+  openModal('modalDelete');
+}
+
+function doDelete(){
+  bootstrap.Modal.getInstance(document.getElementById('modalDelete')).hide();
+  showToast('Role berhasil dihapus','success');
+}
+
+function saveRole(){
+  bootstrap.Modal.getInstance(document.getElementById('modalRole')).hide();
+  showToast('Role berhasil disimpan','success');
+}
+
+function saveAssign(){
+  bootstrap.Modal.getInstance(document.getElementById('modalUser')).hide();
+  showToast('Role berhasil di-assign ke pengguna','success');
+}
+
+/* TOGGLE PERM */
+function togglePerm(el){ el.classList.toggle('on'); }
+
+/* TOAST */
+function showToast(msg, type='success'){
+  const existing = document.getElementById('siakadToast');
+  if(existing) existing.remove();
+  const t = document.createElement('div');
+  t.id='siakadToast';
+  const bg = type==='success'?'var(--green)':'var(--rose)';
+  const icon = type==='success'?'bi-check-circle-fill':'bi-x-circle-fill';
+  t.style.cssText=`position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:${bg};color:#fff;padding:12px 22px;border-radius:12px;font-size:.84rem;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;box-shadow:0 4px 20px rgba(0,0,0,.15);z-index:9999;display:flex;align-items:center;gap:8px;animation:toastIn .3s ease;`;
+  t.innerHTML=`<i class="bi ${icon}"></i>${msg}`;
+  document.body.appendChild(t);
+  setTimeout(()=>{ t.style.animation='toastOut .3s ease forwards'; setTimeout(()=>t.remove(),300); },2800);
+}
+const sty=document.createElement('style');
+sty.textContent=`@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(12px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}@keyframes toastOut{to{opacity:0;transform:translateX(-50%) translateY(12px);}}`;
+document.head.appendChild(sty);
+
+/* PERMISSION MATRIX DATA */
+const sections = [
+  { section:'Mahasiswa', perms:[
+    {name:'Lihat Data',key:'mahasiswa.view',  sa:1,ad:1,ak:1,ds:1,mh:0,ke:0},
+    {name:'Tambah',    key:'mahasiswa.create',sa:1,ad:1,ak:1,ds:0,mh:0,ke:0},
+    {name:'Edit',      key:'mahasiswa.edit',  sa:1,ad:1,ak:1,ds:0,mh:0,ke:0},
+    {name:'Hapus',     key:'mahasiswa.delete',sa:1,ad:1,ak:0,ds:0,mh:0,ke:0},
+  ]},
+  { section:'KRS', perms:[
+    {name:'Ajukan KRS', key:'krs.submit', sa:1,ad:1,ak:1,ds:0,mh:1,ke:0},
+    {name:'Approve KRS',key:'krs.approve',sa:1,ad:1,ak:1,ds:1,mh:0,ke:0},
+    {name:'Lihat KRS',  key:'krs.view',  sa:1,ad:1,ak:1,ds:1,mh:1,ke:0},
+  ]},
+  { section:'Nilai', perms:[
+    {name:'Input Nilai',key:'nilai.input',  sa:1,ad:1,ak:0,ds:1,mh:0,ke:0},
+    {name:'Lihat Nilai',key:'nilai.view',   sa:1,ad:1,ak:1,ds:1,mh:1,ke:0},
+    {name:'Export Nilai',key:'nilai.export',sa:1,ad:1,ak:1,ds:0,mh:0,ke:0},
+  ]},
+  { section:'Jadwal', perms:[
+    {name:'Lihat Jadwal', key:'jadwal.view',  sa:1,ad:1,ak:1,ds:1,mh:1,ke:0},
+    {name:'Kelola Jadwal',key:'jadwal.manage',sa:1,ad:1,ak:1,ds:0,mh:0,ke:0},
+  ]},
+  { section:'Keuangan', perms:[
+    {name:'Lihat Tagihan',    key:'tagihan.view',     sa:1,ad:1,ak:0,ds:0,mh:1,ke:1},
+    {name:'Kelola Tagihan',   key:'tagihan.manage',   sa:1,ad:0,ak:0,ds:0,mh:0,ke:1},
+    {name:'Verifikasi Bayar', key:'pembayaran.verify',sa:1,ad:0,ak:0,ds:0,mh:0,ke:1},
+    {name:'Laporan Keuangan', key:'laporan.keuangan', sa:1,ad:2,ak:0,ds:0,mh:0,ke:1},
+  ]},
+  { section:'Absensi', perms:[
+    {name:'Input Absensi',key:'absensi.input',sa:1,ad:1,ak:0,ds:1,mh:0,ke:0},
+    {name:'Lihat Absensi',key:'absensi.view', sa:1,ad:1,ak:1,ds:1,mh:1,ke:0},
+  ]},
+  { section:'Sistem', perms:[
+    {name:'Kelola Role',  key:'roles.manage',   sa:1,ad:0,ak:0,ds:0,mh:0,ke:0},
+    {name:'Activity Log', key:'log.view',        sa:1,ad:1,ak:0,ds:0,mh:0,ke:0},
+    {name:'Backup Data',  key:'data.backup',     sa:1,ad:0,ak:0,ds:0,mh:0,ke:0},
+    {name:'Pengaturan',   key:'settings.manage', sa:1,ad:0,ak:0,ds:0,mh:0,ke:0},
+  ]},
+];
+
+function buildChk(val){
+  if(val===1) return `<span class="chk yes" onclick="toggleChk(this)"><i class="bi bi-check-lg"></i></span>`;
+  if(val===2) return `<span class="chk partial" onclick="toggleChk(this)"><i class="bi bi-dash-lg"></i></span>`;
+  return `<span class="chk no" onclick="toggleChk(this)"><i class="bi bi-x-lg"></i></span>`;
+}
+
+function toggleChk(el){
+  if(el.classList.contains('yes')){ el.className='chk no'; el.innerHTML='<i class="bi bi-x-lg"></i>'; }
+  else if(el.classList.contains('no')){ el.className='chk yes'; el.innerHTML='<i class="bi bi-check-lg"></i>'; }
+  else { el.className='chk yes'; el.innerHTML='<i class="bi bi-check-lg"></i>'; }
+}
+
+const tbody = document.getElementById('permMatrix');
+sections.forEach(sec=>{
+  const srow = document.createElement('tr');
+  srow.className='section-row';
+  srow.innerHTML=`<td colspan="7"><i class="bi bi-folder-fill me-2"></i>${sec.section}</td>`;
+  tbody.appendChild(srow);
+  sec.perms.forEach(p=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td><div class="perm-label"><span class="perm-icon"><i class="bi bi-key"></i></span>
+      <div><div class="perm-name">${p.name}</div><div class="perm-key">${p.key}</div></div></div></td>
+      <td class="perm-check">${buildChk(p.sa)}</td>
+      <td class="perm-check">${buildChk(p.ad)}</td>
+      <td class="perm-check">${buildChk(p.ak)}</td>
+      <td class="perm-check">${buildChk(p.ds)}</td>
+      <td class="perm-check">${buildChk(p.mh)}</td>
+      <td class="perm-check">${buildChk(p.ke)}</td>`;
+    tbody.appendChild(tr);
+  });
+});
+
+/* USER TABLE DATA */
+const roleStyles = {
+  super_admin:{bg:'#e8f0fe',color:'#1a56db',label:'Super Admin',icon:'bi-shield-fill-exclamation'},
+  admin:{bg:'#ccfbf1',color:'#0d9488',label:'Admin',icon:'bi-person-gear'},
+  akademik:{bg:'#ede9fe',color:'#7c3aed',label:'Akademik',icon:'bi-journal-text'},
+  dosen:{bg:'#fef3c7',color:'#b45309',label:'Dosen',icon:'bi-person-badge-fill'},
+  mahasiswa:{bg:'#ffe4e6',color:'#e11d48',label:'Mahasiswa',icon:'bi-mortarboard-fill'},
+  keuangan:{bg:'#dcfce7',color:'#16a34a',label:'Keuangan',icon:'bi-cash-coin'},
+};
+const avatarColors=['linear-gradient(135deg,#1a56db,#4f83f0)','linear-gradient(135deg,#0d9488,#2dd4bf)','linear-gradient(135deg,#7c3aed,#a78bfa)','linear-gradient(135deg,#f59e0b,#fbbf24)','linear-gradient(135deg,#e11d48,#fb7185)','linear-gradient(135deg,#16a34a,#4ade80)'];
+
+const usersData = [
+  {id:'SA001',name:'Ahmad Rifai, S.Kom',email:'ahmad.rifai@univ.ac.id',identity:'NIP 198501012010011001',role:'super_admin',status:true,last:'05 Jun 2026, 08:14'},
+  {id:'AD001',name:'Dr. Sari Dewi, M.Si',email:'sari.dewi@univ.ac.id',identity:'NIP 198705152015042001',role:'admin',status:true,last:'05 Jun 2026, 07:52'},
+  {id:'AK001',name:'Hendra Gunawan, M.Pd',email:'hendra.g@univ.ac.id',identity:'NIP 198909122018031002',role:'akademik',status:true,last:'04 Jun 2026, 14:20'},
+  {id:'DS001',name:'Prof. Dr. Agus M., Ph.D',email:'agus.m@univ.ac.id',identity:'NIDN 0123456789',role:'dosen',status:true,last:'05 Jun 2026, 06:45'},
+  {id:'DS002',name:'Dr. Rina Wulandari, M.T',email:'rina.w@univ.ac.id',identity:'NIDN 0987654321',role:'dosen',status:true,last:'05 Jun 2026, 08:01'},
+  {id:'MH001',name:'Budi Santoso',email:'budi.s@mhs.univ.ac.id',identity:'NIM 22101001',role:'mahasiswa',status:true,last:'05 Jun 2026, 07:30'},
+  {id:'MH002',name:'Siti Rahayu',email:'siti.r@mhs.univ.ac.id',identity:'NIM 22101002',role:'mahasiswa',status:true,last:'04 Jun 2026, 20:10'},
+  {id:'MH003',name:'Rizki Pratama',email:'rizki.p@mhs.univ.ac.id',identity:'NIM 22101003',role:'mahasiswa',status:false,last:'02 Jun 2026, 11:22'},
+  {id:'KU001',name:'Dewi Kartika, S.E',email:'dewi.k@univ.ac.id',identity:'NIP 199001202019022001',role:'keuangan',status:true,last:'05 Jun 2026, 08:00'},
+  {id:'AK002',name:'Baskoro Aji, M.M',email:'baskoro.a@univ.ac.id',identity:'NIP 198612102018031003',role:'akademik',status:false,last:'28 Mei 2026, 09:15'},
+];
+
+let filteredUsers = [...usersData];
+
+function renderUsers(list){
+  const tbody = document.getElementById('userTableBody');
+  tbody.innerHTML='';
+  list.forEach((u,i)=>{
+    const rs = roleStyles[u.role];
+    const initials = u.name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+    const av = avatarColors[i%avatarColors.length];
+    const tr=document.createElement('tr');
+    tr.setAttribute('data-role',u.role);
+    tr.innerHTML=`
+      <td style="font-size:.75rem;color:var(--text-muted);font-weight:600;">${i+1}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="user-avatar" style="background:${av};">${initials}</div>
+          <div>
+            <div style="font-weight:700;font-size:.83rem;color:var(--text-dark);">${u.name}</div>
+            <div style="font-size:.7rem;color:var(--text-muted);">${u.email}</div>
+          </div>
+        </div>
+      </td>
+      <td style="font-size:.75rem;color:var(--text-muted);font-family:monospace;">${u.identity}</td>
+      <td>
+        <span class="role-pill" style="background:${rs.bg};color:${rs.color};">
+          <i class="bi ${rs.icon}"></i> ${rs.label}
+        </span>
+      </td>
+      <td>
+        <span style="display:inline-flex;align-items:center;font-size:.75rem;font-weight:600;color:${u.status?'var(--green)':'var(--rose)'};">
+          <span class="status-dot" style="background:${u.status?'var(--green)':'var(--rose)'}"></span>
+          ${u.status?'Aktif':'Nonaktif'}
+        </span>
+      </td>
+      <td style="font-size:.75rem;color:var(--text-muted);">${u.last}</td>
+      <td>
+        <div style="display:flex;gap:5px;">
+          <button class="btn-icon-sm edit" title="Edit role"><i class="bi bi-pencil"></i></button>
+          <button class="btn-icon-sm view" title="Lihat profil"><i class="bi bi-eye"></i></button>
+          <button class="btn-icon-sm" style="background:${u.status?'#ffe4e6':'#dcfce7'};color:${u.status?'#e11d48':'#16a34a'};" title="${u.status?'Nonaktifkan':'Aktifkan'}">
+            <i class="bi ${u.status?'bi-lock-fill':'bi-unlock-fill'}"></i>
+          </button>
+        </div>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function filterUsers(search){
+  const q = (search||document.querySelector('.filter-input')?.[0]?.value||'').toLowerCase();
+  const role = document.getElementById('roleFilter').value;
+  filteredUsers = usersData.filter(u=>{
+    const matchQ = !q || u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q) || u.identity.toLowerCase().includes(q);
+    const matchR = !role || u.role===role;
+    return matchQ && matchR;
+  });
+  renderUsers(filteredUsers);
+}
+
+function filterUserByRole(role){
+  switchTab('tabUsers', document.querySelectorAll('.custom-tab')[2]);
+  document.getElementById('roleFilter').value = role;
+  filterUsers('');
+}
+
+renderUsers(usersData);
+
+/* SEARCH INPUT */
+document.querySelector('.filter-input')?.addEventListener('input', function(){ filterUsers(this.value); });
+
+/* SCROLL TOP */
+window.addEventListener('scroll',()=>{ document.getElementById('scrollTop').classList.toggle('visible',window.scrollY>200); });
+</script>
+</body>
+</html>
