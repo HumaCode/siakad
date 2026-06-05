@@ -28,3 +28,34 @@ test('authenticated user can access roles page', function () {
             ->has('stats')
         );
 });
+
+test('authenticated user can create a new role', function () {
+    $this->withoutMiddleware();
+    
+    $user = User::factory()->create();
+    $adminRole = Role::firstOrCreate(['name' => 'super_admin', 'guard_name' => 'web']);
+    $user->assignRole($adminRole);
+
+    $this->actingAs($user)
+        ->post('/sistem/roles', [
+            'name' => 'akademik_staff',
+            'slug' => 'akademik_staff',
+            'type_role' => 'akademik',
+            'color' => 'blue',
+            'priority' => 2,
+            'is_active' => true,
+            'description' => 'Staff akademik description',
+            'guard_name' => 'web',
+            'permissions' => [],
+        ])
+        ->assertRedirect('/sistem/roles');
+
+    $this->assertDatabaseHas('roles', [
+        'name' => 'akademik_staff',
+        'slug' => 'akademik_staff',
+        'type_role' => 'akademik',
+        'color' => 'blue',
+        'priority' => 2,
+        'is_active' => true,
+    ]);
+});

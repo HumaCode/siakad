@@ -26,6 +26,7 @@ Route::middleware('auth')->group(function () {
 
     // Sistem Roles & Permissions
     Route::get('/sistem/roles', [RoleController::class, 'index'])->name('sistem.roles.index');
+    Route::post('/sistem/roles', [RoleController::class, 'store'])->name('sistem.roles.store');
 });
 
 require __DIR__.'/auth.php';

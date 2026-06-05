@@ -51,4 +51,12 @@ class RoleService
             ],
         ];
     }
+
+    /**
+     * Store a new role.
+     */
+    public function storeRole(array $data): \App\Models\Role
+    {
+        return $this->roleRepository->createRole($data);
+    }
 }

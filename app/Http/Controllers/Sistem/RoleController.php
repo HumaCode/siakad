@@ -4,12 +4,14 @@ namespace App\Http\Controllers\Sistem;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Sistem\RoleIndexRequest;
+use App\Http\Requests\Sistem\RoleStoreRequest;
 use App\Http\Resources\Sistem\RoleResource;
 use App\Http\Resources\Sistem\PermissionResource;
 use App\Http\Resources\Sistem\UserResource;
 use App\Services\RoleService;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Http\RedirectResponse;
 
 class RoleController extends Controller
 {
@@ -52,5 +54,16 @@ class RoleController extends Controller
             ],
             'stats' => $data['stats'],
         ]);
+    }
+
+    /**
+     * Store a newly created role.
+     */
+    public function store(RoleStoreRequest $request): RedirectResponse
+    {
+        $this->roleService->storeRole($request->validated());
+
+        return redirect()->route('sistem.roles.index')
+            ->with('success', 'Role baru berhasil disimpan');
     }
 }

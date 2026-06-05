@@ -220,12 +220,37 @@ export default function RolesIndex({ roles, permissions, users, filters, stats }
     };
 
     const saveRole = () => {
-        setProcessing(true);
-        setTimeout(() => {
-            setProcessing(false);
-            setRoleModalOpen(false);
-            triggerToast(roleModalMode === 'add' ? 'Role baru berhasil disimpan' : 'Perubahan role berhasil disimpan');
-        }, 1500);
+        if (roleModalMode === 'add') {
+            router.post('/sistem/roles', {
+                name: roleFormName,
+                slug: roleFormSlug,
+                description: roleFormDesc,
+                type_role: roleFormType,
+                color: roleFormColor,
+                priority: roleFormPriority,
+                is_active: roleFormActive,
+                guard_name: roleFormGuard,
+                permissions: selectedPermissionIds
+            }, {
+                onStart: () => setProcessing(true),
+                onFinish: () => setProcessing(false),
+                onSuccess: () => {
+                    setRoleModalOpen(false);
+                    triggerToast('Role baru berhasil disimpan');
+                },
+                onError: (errors) => {
+                    const firstError = Object.values(errors)[0] as string;
+                    triggerToast(firstError || 'Gagal menyimpan role', 'danger');
+                }
+            });
+        } else {
+            setProcessing(true);
+            setTimeout(() => {
+                setProcessing(false);
+                setRoleModalOpen(false);
+                triggerToast('Perubahan role berhasil disimpan');
+            }, 1000);
+        }
     };
 
     const openDeleteRole = (role: Role) => {

@@ -83,4 +83,27 @@ class RoleRepository implements RoleRepositoryInterface
             ->whereDoesntHave('dosen');
         })->count();
     }
+
+    /**
+     * Create a new role with given attributes and sync permissions.
+     */
+    public function createRole(array $data): Role
+    {
+        $role = Role::create([
+            'name' => $data['name'],
+            'slug' => $data['slug'],
+            'type_role' => $data['type_role'] ?? null,
+            'color' => $data['color'] ?? null,
+            'priority' => $data['priority'] ?? 0,
+            'is_active' => (bool) ($data['is_active'] ?? true),
+            'description' => $data['description'] ?? null,
+            'guard_name' => $data['guard_name'] ?? 'web',
+        ]);
+
+        if (isset($data['permissions'])) {
+            $role->syncPermissions($data['permissions']);
+        }
+
+        return $role;
+    }
 }

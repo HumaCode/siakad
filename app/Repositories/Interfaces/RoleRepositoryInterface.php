@@ -31,4 +31,9 @@ interface RoleRepositoryInterface
      * Get the count of active users in the system.
      */
     public function getActiveUsersCount(): int;
+
+    /**
+     * Create a new role with given attributes and sync permissions.
+     */
+    public function createRole(array $data): \App\Models\Role;
 }
