@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import FormModal from '@/Components/FormModal';
 import FormInput from '@/Components/FormInput';
 import FormSelect from '@/Components/FormSelect';
@@ -82,6 +82,8 @@ export default function RoleFormModal({
     onSave,
 }: RoleFormModalProps) {
     
+    const [searchQuery, setSearchQuery] = useState('');
+    
     // Automatically generate slug from name
     useEffect(() => {
         const generatedSlug = name
@@ -98,6 +100,17 @@ export default function RoleFormModal({
             setSelectedPermissionIds([...selectedPermissionIds, id]);
         }
     };
+
+    // Filter grouped permissions based on search query
+    const filteredGroupedPermissions = Object.entries(groupedPermissions).reduce((acc, [sectionName, perms]) => {
+        const filteredPerms = perms.filter(perm => 
+            perm.name.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+        if (filteredPerms.length > 0) {
+            acc[sectionName] = filteredPerms;
+        }
+        return acc;
+    }, {} as { [key: string]: Permission[] });
 
     return (
         <FormModal
@@ -206,36 +219,94 @@ export default function RoleFormModal({
                     />
 
                     {/* Fifth Row: Permissions Grouped */}
-                    <label className="form-label-custom mb-2 font-bold text-xs">Permission yang Diberikan</label>
-                    <div className="space-y-3">
-                        {Object.entries(groupedPermissions).map(([sectionName, perms]) => {
-                            if (perms.length === 0) return null;
-                            return (
-                                <div key={sectionName} className="bg-slate-50 dark:bg-slate-800/40 p-4 rounded-xl border border-slate-100/50 dark:border-slate-800">
-                                    <div className="text-[10px] font-extrabold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-2">
-                                        {sectionName}
-                                    </div>
-                                    <div className="perm-toggle-grid">
-                                        {perms.map(perm => {
-                                            const isSelected = selectedPermissionIds.includes(perm.id);
-                                            return (
-                                                <div 
-                                                    key={perm.id} 
-                                                    className={`perm-toggle cursor-pointer select-none ${isSelected ? 'on' : ''}`}
-                                                    onClick={() => togglePermission(perm.id)}
-                                                >
-                                                    <div>
-                                                        <div className="pt-label font-bold">{perm.name}</div>
-                                                        <div className="pt-key">{perm.guard_name}</div>
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+                        <label className="form-label-custom font-extrabold text-slate-800 dark:text-slate-100 text-xs tracking-wide">
+                            Permission yang Diberikan
+                        </label>
+                        <div className="relative w-full md:w-72">
+                            <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+                                <i className="bi bi-search text-xs" />
+                            </span>
+                            <input
+                                type="text"
+                                className="form-ctrl pl-8 py-1.5 text-xs rounded-xl"
+                                placeholder="Cari permission spesifik..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                            {searchQuery && (
+                                <button
+                                    type="button"
+                                    onClick={() => setSearchQuery('')}
+                                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                                >
+                                    <i className="bi bi-x-circle-fill text-xs" />
+                                </button>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="space-y-3 mt-2">
+                        {Object.keys(filteredGroupedPermissions).length === 0 ? (
+                            <div className="flex flex-col items-center justify-center p-8 text-center bg-slate-50 dark:bg-slate-800/10 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800">
+                                <i className="bi bi-shield-slash text-2xl text-slate-400 mb-2" />
+                                <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                                    Tidak ada permission yang cocok dengan pencarian "{searchQuery}"
+                                </p>
+                            </div>
+                        ) : (
+                            Object.entries(filteredGroupedPermissions).map(([sectionName, perms]) => {
+                                const sectionPermIds = perms.map(p => p.id);
+                                const isAllSelected = sectionPermIds.every(id => selectedPermissionIds.includes(id));
+
+                                const toggleSectionAll = () => {
+                                    if (isAllSelected) {
+                                        // Deselect only the currently visible/filtered perms in this section
+                                        setSelectedPermissionIds(selectedPermissionIds.filter(id => !sectionPermIds.includes(id)));
+                                    } else {
+                                        // Select all currently visible/filtered perms in this section
+                                        const newIds = [...selectedPermissionIds, ...sectionPermIds.filter(id => !selectedPermissionIds.includes(id))];
+                                        setSelectedPermissionIds(newIds);
+                                    }
+                                };
+
+                                return (
+                                    <div key={sectionName} className="bg-slate-50 dark:bg-slate-800/40 p-4 rounded-xl border border-slate-100/50 dark:border-slate-800">
+                                        <div className="flex justify-between items-center mb-3">
+                                            <div className="text-[10px] font-extrabold text-blue-600 dark:text-blue-400 uppercase tracking-wider">
+                                                {sectionName}
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={toggleSectionAll}
+                                                className="inline-flex items-center gap-1.5 text-[10px] font-bold text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition-colors bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2 py-1 rounded-lg shadow-sm cursor-pointer"
+                                            >
+                                                <i className={`bi ${isAllSelected ? 'bi-check2-all text-blue-500' : 'bi-square'}`} />
+                                                {isAllSelected ? 'Batalkan Semua' : 'Pilih Semua'}
+                                            </button>
+                                        </div>
+                                        <div className="perm-toggle-grid">
+                                            {perms.map(perm => {
+                                                const isSelected = selectedPermissionIds.includes(perm.id);
+                                                return (
+                                                    <div 
+                                                        key={perm.id} 
+                                                        className={`perm-toggle cursor-pointer select-none ${isSelected ? 'on' : ''}`}
+                                                        onClick={() => togglePermission(perm.id)}
+                                                    >
+                                                        <div>
+                                                            <div className="pt-label font-bold">{perm.name}</div>
+                                                            <div className="pt-key">{perm.guard_name}</div>
+                                                        </div>
+                                                        <div className="toggle-switch" />
                                                     </div>
-                                                    <div className="toggle-switch" />
-                                                </div>
-                                            );
-                                        })}
+                                                );
+                                            })}
+                                        </div>
                                     </div>
-                                </div>
-                            );
-                        })}
+                                );
+                            })
+                        )}
                     </div>
         </FormModal>
     );
