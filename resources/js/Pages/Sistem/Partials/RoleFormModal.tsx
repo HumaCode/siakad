@@ -78,16 +78,14 @@ export default function RoleFormModal({
     onSave,
 }: RoleFormModalProps) {
     
-    // Automatically generate slug from name when adding a new role
+    // Automatically generate slug from name
     useEffect(() => {
-        if (mode === 'add') {
-            const generatedSlug = name
-                .toLowerCase()
-                .replace(/[^a-z0-9_]+/g, '_')
-                .replace(/^_+|_+$/g, '');
-            setSlug(generatedSlug);
-        }
-    }, [name, mode, setSlug]);
+        const generatedSlug = name
+            .toLowerCase()
+            .replace(/[^a-z0-9_]+/g, '_')
+            .replace(/^_+|_+$/g, '');
+        setSlug(generatedSlug);
+    }, [name, setSlug]);
 
     const togglePermission = (id: number) => {
         if (selectedPermissionIds.includes(id)) {
