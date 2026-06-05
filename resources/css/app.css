@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: "Poppins", sans-serif;
+}
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ============================================================
@@ -13,11 +17,11 @@
 }
 
 .font-playfair {
-    font-family: 'Playfair Display', serif !important;
+    font-family: 'Poppins', sans-serif !important;
 }
 
-.font-jakarta {
-    font-family: 'Plus Jakarta Sans', sans-serif !important;
+.font-poppins {
+    font-family: 'Poppins', sans-serif !important;
 }
 
 .sidebar {
@@ -111,7 +115,7 @@
 }
 
 .brand-text h6 {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 0.95rem; font-weight: 800; color: #fff;
     margin: 0; line-height: 1.2; white-space: nowrap;
 }

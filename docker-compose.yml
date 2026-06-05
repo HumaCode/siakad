@@ -1,0 +1,40 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: siakad_app
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - APP_URL=http://localhost:8000
+      - DB_CONNECTION=mysql
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=siakad
+      - DB_USERNAME=siakad
+      - DB_PASSWORD=secret
+    depends_on:
+      - db
+    command: php artisan octane:start --server=frankenphp --host=0.0.0.0 --port=8000 --watch
+
+  db:
+    image: mariadb:10.11
+    container_name: siakad_db
+    ports:
+      - "3308:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_secret
+      - MYSQL_DATABASE=siakad
+      - MYSQL_USER=siakad
+      - MYSQL_PASSWORD=secret
+    volumes:
+      - siakad_mysql_data:/var/lib/mysql
+
+volumes:
+  siakad_mysql_data:
+    driver: local

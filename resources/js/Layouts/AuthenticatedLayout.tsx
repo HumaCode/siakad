@@ -210,10 +210,10 @@ export default function Authenticated({
 
                 {/* Breadcrumbs / Page Title */}
                 <div className="topbar-breadcrumb">
-                    <div className="page-title text-slate-800 dark:text-slate-100 font-extrabold flex items-center gap-2 font-jakarta">
+                    <div className="page-title text-slate-800 dark:text-slate-100 font-extrabold flex items-center gap-2 font-poppins">
                         {header ? header : "Dashboard"}
                     </div>
-                    <p className="breadcrumb-trail text-xs text-slate-400 dark:text-slate-500 font-medium mt-0.5 font-jakarta">
+                    <p className="breadcrumb-trail text-xs text-slate-400 dark:text-slate-500 font-medium mt-0.5 font-poppins">
                         SIAKAD / {header ? header : 'Dashboard'}
                     </p>
                 </div>

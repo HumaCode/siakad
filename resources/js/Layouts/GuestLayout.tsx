@@ -269,7 +269,7 @@ export default function GuestLayout({ children }: PropsWithChildren) {
                 }
 
                 .logo-text h1 {
-                    font-family: 'Playfair Display', serif;
+                    font-family: 'Poppins', sans-serif;
                     font-size: 1.3rem;
                     font-weight: 800;
                     color: #fff;
@@ -463,7 +463,7 @@ export default function GuestLayout({ children }: PropsWithChildren) {
                 }
 
                 .form-header h2 {
-                    font-family: 'Playfair Display', serif;
+                    font-family: 'Poppins', sans-serif;
                     font-size: 1.85rem;
                     font-weight: 800;
                     color: var(--text-dark);

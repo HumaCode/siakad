@@ -71,7 +71,7 @@ export default function Dashboard() {
                     <div className="absolute bottom-20 -left-20 w-[450px] h-[450px] bg-emerald-300/10 dark:bg-emerald-500/5 rounded-full blur-[80px]" />
                 </div>
 
-                <div className="relative z-10 space-y-6 max-w-7xl mx-auto">
+                <div className="relative z-10 space-y-6 w-full">
                     {/* Welcome Banner */}
                     <div className="welcome-banner relative overflow-hidden text-white rounded-2xl p-6 sm:p-8 shadow-xl dark:shadow-none">
                         <div className="absolute top-0 right-0 w-80 h-80 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/3 blur-3xl pointer-events-none" />
@@ -563,22 +563,22 @@ export default function Dashboard() {
                                     />
                                 </svg>
                                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                                    <span className="font-['Playfair_Display'] text-xl font-extrabold text-gray-900 dark:text-gray-100 leading-none">78.7%</span>
+                                    <span className="font-poppins text-xl font-extrabold text-gray-900 dark:text-gray-100 leading-none">78.7%</span>
                                     <span className="text-[9px] text-gray-400 font-bold uppercase tracking-wider mt-0.5">Lunas</span>
                                 </div>
                             </div>
                             
                             <div className="grid grid-cols-3 gap-2 text-center mt-3">
                                 <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-100/30 p-2.5 rounded-xl">
-                                    <div className="font-['Playfair_Display'] text-sm font-extrabold text-blue-600 dark:text-blue-400">9.821</div>
+                                    <div className="font-poppins text-sm font-extrabold text-blue-600 dark:text-blue-400">9.821</div>
                                     <div className="text-[9px] text-blue-500 font-bold uppercase mt-0.5">Lunas</div>
                                 </div>
                                 <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-100/30 p-2.5 rounded-xl">
-                                    <div className="font-['Playfair_Display'] text-sm font-extrabold text-amber-600 dark:text-amber-400">1.512</div>
+                                    <div className="font-poppins text-sm font-extrabold text-amber-600 dark:text-amber-400">1.512</div>
                                     <div className="text-[9px] text-amber-500 font-bold uppercase mt-0.5">Cicilan</div>
                                 </div>
                                 <div className="bg-rose-50 dark:bg-rose-900/20 border border-rose-100/30 p-2.5 rounded-xl">
-                                    <div className="font-['Playfair_Display'] text-sm font-extrabold text-rose-600 dark:text-rose-400">1.147</div>
+                                    <div className="font-poppins text-sm font-extrabold text-rose-600 dark:text-rose-400">1.147</div>
                                     <div className="text-[9px] text-rose-500 font-bold uppercase mt-0.5">Belum</div>
                                 </div>
                             </div>
@@ -597,12 +597,12 @@ export default function Dashboard() {
                             <div className="grid grid-cols-2 gap-2">
                                 <div className="bg-gradient-to-br from-blue-600 to-indigo-700 p-3 rounded-xl text-white shadow-sm shadow-blue-500/10">
                                     <span className="text-[9px] opacity-75 font-bold uppercase tracking-wider block mb-1">Total Pendaftar</span>
-                                    <span className="font-['Playfair_Display'] text-xl font-extrabold block">3.241</span>
+                                    <span className="font-poppins text-xl font-extrabold block">3.241</span>
                                     <span className="text-[9px] opacity-70 font-semibold block mt-1">Semester ini</span>
                                 </div>
                                 <div className="bg-gradient-to-br from-teal-600 to-emerald-700 p-3 rounded-xl text-white shadow-sm shadow-teal-500/10">
                                     <span className="text-[9px] opacity-75 font-bold uppercase tracking-wider block mb-1">Diterima</span>
-                                    <span className="font-['Playfair_Display'] text-xl font-extrabold block">2.891</span>
+                                    <span className="font-poppins text-xl font-extrabold block">2.891</span>
                                     <span className="text-[9px] opacity-70 font-semibold block mt-1">89.2% Accepted</span>
                                 </div>
                             </div>
