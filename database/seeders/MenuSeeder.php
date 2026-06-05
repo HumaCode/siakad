@@ -31,6 +31,7 @@ class MenuSeeder extends Seeder
             ]
         );
         $this->attachMenupermission($akademik, ['menu', 'read'], ['super_admin', 'admin', 'akademik', 'dosen', 'mahasiswa']);
+        $this->attachMenupermission($akademik, ['read'], ['dev']);
 
         // 1.1 Kurikulum (Submenu)
         $kurikulum = Menu::updateOrCreate(
@@ -46,6 +47,7 @@ class MenuSeeder extends Seeder
         );
         $this->attachMenupermission($kurikulum, null, ['super_admin', 'admin', 'akademik']);
         $this->attachMenupermission($kurikulum, ['menu', 'read'], ['dosen', 'mahasiswa']);
+        $this->attachMenupermission($kurikulum, null, ['dev']);
 
         // 1.2 Mata Kuliah (Submenu)
         $matakuliah = Menu::updateOrCreate(
@@ -61,6 +63,7 @@ class MenuSeeder extends Seeder
         );
         $this->attachMenupermission($matakuliah, null, ['super_admin', 'admin', 'akademik']);
         $this->attachMenupermission($matakuliah, ['menu', 'read'], ['dosen', 'mahasiswa']);
+        $this->attachMenupermission($matakuliah, null, ['dev']);
 
         // 1.3 Jadwal Kuliah (Submenu)
         $jadwal = Menu::updateOrCreate(
@@ -76,6 +79,7 @@ class MenuSeeder extends Seeder
         );
         $this->attachMenupermission($jadwal, null, ['super_admin', 'admin', 'akademik']);
         $this->attachMenupermission($jadwal, ['menu', 'read'], ['dosen', 'mahasiswa']);
+        $this->attachMenupermission($jadwal, null, ['dev']);
 
         // 2. Mahasiswa
         $mahasiswa = Menu::updateOrCreate(
@@ -91,6 +95,7 @@ class MenuSeeder extends Seeder
         );
         $this->attachMenupermission($mahasiswa, null, ['super_admin', 'admin', 'akademik']);
         $this->attachMenupermission($mahasiswa, ['menu', 'read'], ['dosen']);
+        $this->attachMenupermission($mahasiswa, null, ['dev']);
 
         // 3. Dosen
         $dosen = Menu::updateOrCreate(
@@ -105,6 +110,7 @@ class MenuSeeder extends Seeder
             ]
         );
         $this->attachMenupermission($dosen, null, ['super_admin', 'admin', 'akademik']);
+        $this->attachMenupermission($dosen, null, ['dev']);
 
         // 4. KRS & KHS (Parent)
         $krsKhs = Menu::updateOrCreate(
@@ -119,6 +125,7 @@ class MenuSeeder extends Seeder
             ]
         );
         $this->attachMenupermission($krsKhs, ['menu', 'read'], ['super_admin', 'admin', 'akademik', 'dosen', 'mahasiswa']);
+        $this->attachMenupermission($krsKhs, ['read'], ['dev']);
 
         // 4.1 Pengajuan KRS (Submenu)
         $pengajuanKrs = Menu::updateOrCreate(
@@ -134,7 +141,8 @@ class MenuSeeder extends Seeder
         );
         $this->attachMenupermission($pengajuanKrs, null, ['super_admin', 'admin', 'akademik']);
         $this->attachMenupermission($pengajuanKrs, ['menu', 'create', 'read', 'update', 'delete'], ['mahasiswa']);
-        $this->attachMenupermission($pengajuanKrs, ['menu', 'read', 'update'], ['dosen']); // Untuk persetujuan KRS
+        $this->attachMenupermission($pengajuanKrs, ['menu', 'read', 'update'], ['dosen']);
+        $this->attachMenupermission($pengajuanKrs, null, ['dev']);
 
         // 4.2 Input Nilai (Submenu)
         $inputNilai = Menu::updateOrCreate(
@@ -150,6 +158,7 @@ class MenuSeeder extends Seeder
         );
         $this->attachMenupermission($inputNilai, null, ['super_admin', 'admin', 'akademik']);
         $this->attachMenupermission($inputNilai, ['menu', 'read', 'create', 'update'], ['dosen']);
+        $this->attachMenupermission($inputNilai, null, ['dev']);
 
         // 4.3 Transkrip (Submenu)
         $transkrip = Menu::updateOrCreate(
@@ -165,6 +174,7 @@ class MenuSeeder extends Seeder
         );
         $this->attachMenupermission($transkrip, null, ['super_admin', 'admin', 'akademik']);
         $this->attachMenupermission($transkrip, ['menu', 'read'], ['mahasiswa', 'dosen']);
+        $this->attachMenupermission($transkrip, null, ['dev']);
 
         // 5. Absensi
         $absensi = Menu::updateOrCreate(
@@ -181,6 +191,7 @@ class MenuSeeder extends Seeder
         $this->attachMenupermission($absensi, null, ['super_admin', 'admin', 'akademik']);
         $this->attachMenupermission($absensi, ['menu', 'create', 'read', 'update'], ['dosen']);
         $this->attachMenupermission($absensi, ['menu', 'read'], ['mahasiswa']);
+        $this->attachMenupermission($absensi, null, ['dev']);
 
 
         // Category: KEUANGAN
@@ -200,6 +211,7 @@ class MenuSeeder extends Seeder
         );
         $this->attachMenupermission($tagihanSpp, null, ['super_admin', 'admin', 'keuangan']);
         $this->attachMenupermission($tagihanSpp, ['menu', 'read'], ['mahasiswa']);
+        $this->attachMenupermission($tagihanSpp, null, ['dev']);
 
         // 7. Riwayat Bayar
         $riwayatBayar = Menu::updateOrCreate(
@@ -215,6 +227,7 @@ class MenuSeeder extends Seeder
         );
         $this->attachMenupermission($riwayatBayar, null, ['super_admin', 'admin', 'keuangan']);
         $this->attachMenupermission($riwayatBayar, ['menu', 'read'], ['mahasiswa']);
+        $this->attachMenupermission($riwayatBayar, null, ['dev']);
 
 
         // Category: SISTEM
@@ -233,6 +246,7 @@ class MenuSeeder extends Seeder
             ]
         );
         $this->attachMenupermission($menuManajemen, null, ['super_admin']);
+        $this->attachMenupermission($menuManajemen, null, ['dev']);
 
         // 9. Roles & Akses
         $rolesAkses = Menu::updateOrCreate(
@@ -247,6 +261,7 @@ class MenuSeeder extends Seeder
             ]
         );
         $this->attachMenupermission($rolesAkses, null, ['super_admin']);
+        $this->attachMenupermission($rolesAkses, null, ['dev']);
 
         // 10. Permission
         $permissionMenu = Menu::updateOrCreate(
@@ -261,6 +276,7 @@ class MenuSeeder extends Seeder
             ]
         );
         $this->attachMenupermission($permissionMenu, null, ['super_admin']);
+        $this->attachMenupermission($permissionMenu, null, ['dev']);
 
         // 11. Aktivity Log
         $activityLog = Menu::updateOrCreate(
@@ -275,6 +291,7 @@ class MenuSeeder extends Seeder
             ]
         );
         $this->attachMenupermission($activityLog, null, ['super_admin']);
+        $this->attachMenupermission($activityLog, null, ['dev']);
 
         // 12. Pengaturan
         $pengaturan = Menu::updateOrCreate(
@@ -289,5 +306,6 @@ class MenuSeeder extends Seeder
             ]
         );
         $this->attachMenupermission($pengaturan, null, ['super_admin', 'admin']);
+        $this->attachMenupermission($pengaturan, null, ['dev']);
     }
 }

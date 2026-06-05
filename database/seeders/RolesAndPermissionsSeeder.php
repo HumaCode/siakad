@@ -179,5 +179,18 @@ class RolesAndPermissionsSeeder extends Seeder
             'manage-billing',
             'verify-payments',
         ]);
+
+        // 7. Dev
+        Role::updateOrCreate(
+            ['name' => 'dev', 'guard_name' => 'web'],
+            [
+                'slug' => 'dev',
+                'type_role' => 'internal',
+                'color' => '#64748b',
+                'priority' => 0,
+                'is_active' => true,
+                'description' => 'Developer role dengan akses penuh.'
+            ]
+        );
     }
 }
