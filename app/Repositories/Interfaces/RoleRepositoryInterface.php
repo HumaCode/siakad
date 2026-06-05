@@ -36,4 +36,9 @@ interface RoleRepositoryInterface
      * Create a new role with given attributes and sync permissions.
      */
     public function createRole(array $data): \App\Models\Role;
+
+    /**
+     * Update an existing role.
+     */
+    public function updateRole($role, array $data): \App\Models\Role;
 }

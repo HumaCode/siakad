@@ -244,12 +244,29 @@ export default function RolesIndex({ roles, permissions, users, filters, stats }
                 }
             });
         } else {
-            setProcessing(true);
-            setTimeout(() => {
-                setProcessing(false);
-                setRoleModalOpen(false);
-                triggerToast('Perubahan role berhasil disimpan');
-            }, 1000);
+            if (!selectedRole) return;
+            router.put(`/sistem/roles/${selectedRole.id}`, {
+                name: roleFormName,
+                slug: roleFormSlug,
+                description: roleFormDesc,
+                type_role: roleFormType,
+                color: roleFormColor,
+                priority: roleFormPriority,
+                is_active: roleFormActive,
+                guard_name: roleFormGuard,
+                permissions: selectedPermissionIds
+            }, {
+                onStart: () => setProcessing(true),
+                onFinish: () => setProcessing(false),
+                onSuccess: () => {
+                    setRoleModalOpen(false);
+                    triggerToast('Perubahan role berhasil disimpan');
+                },
+                onError: (errors) => {
+                    const firstError = Object.values(errors)[0] as string;
+                    triggerToast(firstError || 'Gagal menyimpan perubahan role', 'danger');
+                }
+            });
         }
     };
 

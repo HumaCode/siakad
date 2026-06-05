@@ -59,3 +59,46 @@ test('authenticated user can create a new role', function () {
         'is_active' => true,
     ]);
 });
+
+test('authenticated user can update an existing role', function () {
+    $this->withoutMiddleware();
+
+    $user = User::factory()->create();
+    $adminRole = Role::firstOrCreate(['name' => 'super_admin', 'guard_name' => 'web']);
+    $user->assignRole($adminRole);
+
+    $targetRole = Role::create([
+        'name' => 'editor',
+        'slug' => 'editor',
+        'type_role' => 'lainnya',
+        'color' => 'slate',
+        'priority' => 10,
+        'is_active' => true,
+        'guard_name' => 'web'
+    ]);
+
+    $this->actingAs($user)
+        ->put("/sistem/roles/{$targetRole->id}", [
+            'name' => 'editor_update',
+            'slug' => 'editor_update',
+            'type_role' => 'akademik',
+            'color' => 'rose',
+            'priority' => 5,
+            'is_active' => false,
+            'description' => 'Updated editor description',
+            'guard_name' => 'web',
+            'permissions' => [],
+        ])
+        ->assertSessionHasNoErrors()
+        ->assertRedirect('/sistem/roles');
+
+    $this->assertDatabaseHas('roles', [
+        'id' => $targetRole->id,
+        'name' => 'editor_update',
+        'slug' => 'editor_update',
+        'type_role' => 'akademik',
+        'color' => 'rose',
+        'priority' => 5,
+        'is_active' => false,
+    ]);
+});

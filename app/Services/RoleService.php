@@ -59,4 +59,12 @@ class RoleService
     {
         return $this->roleRepository->createRole($data);
     }
+
+    /**
+     * Update an existing role.
+     */
+    public function updateRole($role, array $data): \App\Models\Role
+    {
+        return $this->roleRepository->updateRole($role, $data);
+    }
 }

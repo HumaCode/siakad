@@ -106,4 +106,31 @@ class RoleRepository implements RoleRepositoryInterface
 
         return $role;
     }
+
+    /**
+     * Update an existing role.
+     */
+    public function updateRole($role, array $data): Role
+    {
+        if (!$role instanceof Role) {
+            $role = Role::findOrFail($role);
+        }
+
+        $role->update([
+            'name' => $data['name'],
+            'slug' => $data['slug'],
+            'type_role' => $data['type_role'] ?? null,
+            'color' => $data['color'] ?? null,
+            'priority' => $data['priority'] ?? 0,
+            'is_active' => (bool) ($data['is_active'] ?? true),
+            'description' => $data['description'] ?? null,
+            'guard_name' => $data['guard_name'] ?? 'web',
+        ]);
+
+        if (isset($data['permissions'])) {
+            $role->syncPermissions($data['permissions']);
+        }
+
+        return $role;
+    }
 }

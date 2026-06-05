@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Sistem;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Sistem\RoleIndexRequest;
 use App\Http\Requests\Sistem\RoleStoreRequest;
+use App\Http\Requests\Sistem\RoleUpdateRequest;
 use App\Http\Resources\Sistem\RoleResource;
 use App\Http\Resources\Sistem\PermissionResource;
 use App\Http\Resources\Sistem\UserResource;
 use App\Services\RoleService;
+use App\Models\Role;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Http\RedirectResponse;
@@ -65,5 +67,21 @@ class RoleController extends Controller
 
         return redirect()->route('sistem.roles.index')
             ->with('success', 'Role baru berhasil disimpan');
+    }
+
+    /**
+     * Update the specified role in storage.
+     */
+    public function update(RoleUpdateRequest $request, Role $role): RedirectResponse
+    {
+        if (!$role->exists) {
+            $roleId = $request->route('role');
+            $role = is_object($roleId) ? $roleId : Role::findOrFail($roleId);
+        }
+
+        $this->roleService->updateRole($role, $request->validated());
+
+        return redirect()->route('sistem.roles.index')
+            ->with('success', 'Perubahan role berhasil disimpan');
     }
 }
