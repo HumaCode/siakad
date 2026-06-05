@@ -19,10 +19,10 @@ export default function FormSwitch({
             </div>
             <button
                 type="button"
-                className={`form-switch-custom ${checked ? 'active' : ''} border-none cursor-pointer focus:outline-none`}
+                className={`w-10 h-6 rounded-full transition-colors flex items-center p-1 cursor-pointer border-none focus:outline-none ${checked ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-700'}`}
                 onClick={() => onChange(!checked)}
             >
-                <div className="toggle-switch" />
+                <div className={`w-4 h-4 rounded-full bg-white transition-transform shadow-sm ${checked ? 'translate-x-4' : 'translate-x-0'}`} />
             </button>
         </div>
     );
