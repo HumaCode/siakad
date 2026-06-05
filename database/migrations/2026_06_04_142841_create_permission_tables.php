@@ -27,6 +27,7 @@ return new class extends Migration
             $table->id(); // permission id
             $table->string('name');
             $table->string('guard_name');
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
 
             $table->unique(['name', 'guard_name']);
@@ -42,6 +43,12 @@ return new class extends Migration
                 $table->index($columnNames['team_foreign_key'], 'roles_team_foreign_key_index');
             }
             $table->string('name');
+            $table->string('slug')->nullable();
+            $table->string('type_role')->nullable();
+            $table->string('color')->nullable();
+            $table->integer('priority')->default(0);
+            $table->boolean('is_active')->default(true);
+            $table->text('description')->nullable();
             $table->string('guard_name');
             $table->timestamps();
             if ($teams || config('permission.testing')) {
