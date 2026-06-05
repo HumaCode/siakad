@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,21 +13,20 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\LogOptions;
 
+#[Fillable([
+    'user_id',
+    'nim',
+    'nama',
+    'prodi_id',
+    'angkatan',
+    'status_akademik',
+    'dosen_wali_id',
+])]
 class Mahasiswa extends Model implements HasMedia
 {
     use HasFactory, HasUlids, SoftDeletes, InteractsWithMedia, LogsActivity;
 
     protected $table = 'mahasiswas';
-
-    protected $fillable = [
-        'user_id',
-        'nim',
-        'nama',
-        'prodi_id',
-        'angkatan',
-        'status_akademik',
-        'dosen_wali_id',
-    ];
 
     /**
      * Configure activity logging.

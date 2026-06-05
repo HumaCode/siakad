@@ -2,19 +2,18 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Spatie\Permission\Models\Permission as SpatiePermission;
 
+#[Fillable(['name', 'guard_name', 'is_active'])]
 class Permission extends SpatiePermission
 {
-    protected $fillable = [
-        'name',
-        'guard_name',
-        'is_active',
-    ];
-
-    protected $casts = [
-        'is_active' => 'boolean',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'is_active' => 'boolean',
+        ];
+    }
 
     public function menus(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {

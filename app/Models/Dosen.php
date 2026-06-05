@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,21 +14,20 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\LogOptions;
 
+#[Fillable([
+    'user_id',
+    'nidn',
+    'nama',
+    'gelar_depan',
+    'gelar_belakang',
+    'prodi_id',
+    'status_dosen',
+])]
 class Dosen extends Model implements HasMedia
 {
     use HasFactory, HasUlids, SoftDeletes, InteractsWithMedia, LogsActivity;
 
     protected $table = 'dosens';
-
-    protected $fillable = [
-        'user_id',
-        'nidn',
-        'nama',
-        'gelar_depan',
-        'gelar_belakang',
-        'prodi_id',
-        'status_dosen',
-    ];
 
     /**
      * Configure activity logging.

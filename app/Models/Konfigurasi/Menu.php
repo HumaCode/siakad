@@ -3,29 +3,32 @@
 namespace App\Models\Konfigurasi;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Models\Permission;
 
+#[Fillable([
+    'name',
+    'url',
+    'category',
+    'icon',
+    'active',
+    'orders',
+    'main_menu_id',
+])]
 class Menu extends Model
 {
     protected $table = 'menus';
 
-    protected $fillable = [
-        'name',
-        'url',
-        'category',
-        'icon',
-        'active',
-        'orders',
-        'main_menu_id',
-    ];
-
-    protected $casts = [
-        'active' => 'boolean',
-        'orders' => 'integer',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'active' => 'boolean',
+            'orders' => 'integer',
+        ];
+    }
 
     public function mainMenu(): BelongsTo
     {
