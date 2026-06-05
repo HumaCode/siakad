@@ -3,7 +3,7 @@
 namespace App\Traits;
 
 use Illuminate\Support\Arr;
-
+use Illuminate\Support\Facades\Gate;
 
 trait HasPermission
 {
@@ -39,7 +39,7 @@ trait HasPermission
 
         // Pencarian instan (Hash Lookup)
         if (isset($allowedUrls[$staticPath])) {
-            $this->authorize("$action $staticPath");
+            Gate::authorize("$action $staticPath");
         }
 
         return $this->{$method}(...array_values($parameters));
