@@ -215,7 +215,7 @@ export default function RolesIndex({ roles, permissions, users, filters, stats }
         setRoleFormPriority(role.priority || 0);
         setRoleFormActive(role.is_active !== false);
         setRoleFormGuard(role.guard_name || 'web');
-        setSelectedPermissionIds(role.permissions.map(p => p.id));
+        setSelectedPermissionIds(Array.isArray(role.permissions) ? role.permissions.map(p => p.id) : []);
         setRoleModalOpen(true);
     };
 
@@ -583,7 +583,7 @@ export default function RolesIndex({ roles, permissions, users, filters, stats }
                                                                         </div>
                                                                     </td>
                                                                     {roles.map(role => {
-                                                                        const hasPerm = role.permissions.some(rp => rp.id === perm.id);
+                                                                        const hasPerm = Array.isArray(role.permissions) && role.permissions.some(rp => rp.id === perm.id);
                                                                         return (
                                                                             <td key={role.id} className="perm-check text-center">
                                                                                 <span className={`chk ${hasPerm ? 'yes' : 'no'}`}>
