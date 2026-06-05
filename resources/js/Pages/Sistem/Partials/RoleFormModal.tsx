@@ -1,5 +1,9 @@
 import { useEffect } from 'react';
 import FormModal from '@/Components/FormModal';
+import FormInput from '@/Components/FormInput';
+import FormSelect from '@/Components/FormSelect';
+import FormSwitch from '@/Components/FormSwitch';
+import FormTextarea from '@/Components/FormTextarea';
 
 interface Permission {
     id: number;
@@ -108,117 +112,98 @@ export default function RoleFormModal({
         >
                     {/* First Row: Name & Slug */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label className="form-label-custom mb-1 font-bold text-xs">Nama Role</label>
-                            <input 
-                                type="text" 
-                                className="form-ctrl" 
-                                placeholder="cth: Operator Perpustakaan" 
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                            />
-                        </div>
-                        <div>
-                            <label className="form-label-custom mb-1 font-bold text-xs">Slug (key_name)</label>
-                            <input 
-                                type="text" 
-                                className="form-ctrl font-mono bg-slate-50 dark:bg-slate-800/60 cursor-not-allowed opacity-80" 
-                                placeholder="operator_perpustakaan" 
-                                value={slug}
-                                onChange={(e) => setSlug(e.target.value)}
-                                readOnly
-                            />
-                        </div>
+                        <FormInput 
+                            label="Nama Role" 
+                            placeholder="cth: Operator Perpustakaan" 
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                        />
+                        <FormInput 
+                            label="Slug (key_name)" 
+                            className="font-mono bg-slate-50 dark:bg-slate-800/60 cursor-not-allowed opacity-80" 
+                            placeholder="operator-perpustakaan" 
+                            value={slug}
+                            onChange={(e) => setSlug(e.target.value)}
+                            readOnly
+                        />
                     </div>
 
                     {/* Second Row: Type, Guard & Priority */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                            <label className="form-label-custom mb-1 font-bold text-xs">Tipe Role</label>
-                            <select 
-                                className="form-ctrl" 
-                                value={typeRole}
-                                onChange={(e) => setTypeRole(e.target.value)}
-                            >
-                                <option value="sistem">Sistem</option>
-                                <option value="akademik">Akademik</option>
-                                <option value="keuangan">Keuangan</option>
-                                <option value="kemahasiswaan">Kemahasiswaan</option>
-                                <option value="lainnya">Lainnya</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label className="form-label-custom mb-1 font-bold text-xs">Guard Name</label>
-                            <select 
-                                className="form-ctrl font-mono" 
-                                value={guardName}
-                                onChange={(e) => setGuardName(e.target.value)}
-                            >
-                                <option value="web">web</option>
-                                <option value="api">api</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label className="form-label-custom mb-1 font-bold text-xs">Prioritas (Urutan)</label>
-                            <input 
-                                type="number" 
-                                className="form-ctrl" 
-                                min={0}
-                                value={priority}
-                                onChange={(e) => setPriority(parseInt(e.target.value) || 0)}
-                            />
-                        </div>
+                        <FormSelect 
+                            label="Tipe Role"
+                            value={typeRole}
+                            onChange={(e) => setTypeRole(e.target.value)}
+                            options={[
+                                { value: 'sistem', label: 'Sistem' },
+                                { value: 'akademik', label: 'Akademik' },
+                                { value: 'keuangan', label: 'Keuangan' },
+                                { value: 'kemahasiswaan', label: 'Kemahasiswaan' },
+                                { value: 'lainnya', label: 'Lainnya' },
+                            ]}
+                        />
+                        <FormSelect 
+                            label="Guard Name"
+                            className="font-mono"
+                            value={guardName}
+                            onChange={(e) => setGuardName(e.target.value)}
+                            options={[
+                                { value: 'web', label: 'web' },
+                                { value: 'api', label: 'api' },
+                            ]}
+                        />
+                        <FormInput 
+                            type="number" 
+                            label="Prioritas (Urutan)" 
+                            min={0}
+                            value={priority}
+                            onChange={(e) => setPriority(parseInt(e.target.value) || 0)}
+                        />
                     </div>
 
                     {/* Third Row: Badge Color & Status Toggle */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center bg-slate-50 dark:bg-slate-800/20 p-4 rounded-xl border border-slate-100/50 dark:border-slate-800">
-                        <div>
-                            <label className="form-label-custom mb-2 font-bold text-xs">Warna Badge</label>
-                            <div className="flex gap-2 flex-wrap">
-                                {['blue', 'emerald', 'amber', 'rose', 'indigo', 'violet', 'slate'].map((c) => (
-                                    <button
-                                        key={c}
-                                        type="button"
-                                        className={`w-7 h-7 rounded-full border-2 cursor-pointer transition-all ${
-                                            color === c 
-                                                ? 'border-slate-800 dark:border-slate-100 scale-110 shadow-md' 
-                                                : 'border-transparent hover:scale-105'
-                                        }`}
-                                        style={{ 
-                                            backgroundColor: c === 'blue' ? '#3b82f6' : 
-                                                             c === 'emerald' ? '#10b981' : 
-                                                             c === 'amber' ? '#f59e0b' : 
-                                                             c === 'rose' ? '#f43f5e' : 
-                                                             c === 'indigo' ? '#6366f1' : 
-                                                             c === 'violet' ? '#8b5cf6' : '#64748b'
-                                        }}
-                                        onClick={() => setColor(c)}
-                                        title={c.toUpperCase()}
-                                    />
-                                ))}
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                            <label className="form-label-custom font-bold text-xs mb-0 cursor-pointer select-none flex items-center gap-2" onClick={() => setIsActive(!isActive)}>
-                                <div className={`w-10 h-6 rounded-full transition-colors flex items-center p-1 cursor-pointer ${isActive ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-700'}`}>
-                                    <div className={`w-4 h-4 rounded-full bg-white transition-transform shadow-sm ${isActive ? 'translate-x-4' : 'translate-x-0'}`} />
-                                </div>
-                                <span className="text-slate-700 dark:text-slate-200">Role Aktif</span>
-                            </label>
+                    <div className="bg-slate-50 dark:bg-slate-800/20 p-4 rounded-xl border border-slate-100/50 dark:border-slate-800">
+                        <label className="form-label-custom mb-2 font-bold text-xs block">Warna Badge</label>
+                        <div className="flex gap-2 flex-wrap">
+                            {['blue', 'emerald', 'amber', 'rose', 'indigo', 'violet', 'slate'].map((c) => (
+                                <button
+                                    key={c}
+                                    type="button"
+                                    className={`w-7 h-7 rounded-full border-2 cursor-pointer transition-all ${
+                                        color === c 
+                                            ? 'border-slate-800 dark:border-slate-100 scale-110 shadow-md' 
+                                            : 'border-transparent hover:scale-105'
+                                    }`}
+                                    style={{ 
+                                        backgroundColor: c === 'blue' ? '#3b82f6' : 
+                                                         c === 'emerald' ? '#10b981' : 
+                                                         c === 'amber' ? '#f59e0b' : 
+                                                         c === 'rose' ? '#f43f5e' : 
+                                                         c === 'indigo' ? '#6366f1' : 
+                                                         c === 'violet' ? '#8b5cf6' : '#64748b'
+                                    }}
+                                    onClick={() => setColor(c)}
+                                    title={c.toUpperCase()}
+                                />
+                            ))}
                         </div>
                     </div>
 
+                    <FormSwitch 
+                        label="Status Aktif"
+                        description="Aktifkan untuk mengizinkan penggunaan role ini"
+                        checked={isActive}
+                        onChange={setIsActive}
+                    />
+
                     {/* Fourth Row: Description */}
-                    <div>
-                        <label className="form-label-custom mb-1 font-bold text-xs">Deskripsi Role</label>
-                        <textarea 
-                            className="form-ctrl" 
-                            rows={2} 
-                            placeholder="Jelaskan fungsi dan batasan role ini..." 
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                        />
-                    </div>
+                    <FormTextarea 
+                        label="Deskripsi Role" 
+                        rows={2} 
+                        placeholder="Jelaskan fungsi dan batasan role ini..." 
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                    />
 
                     {/* Fifth Row: Permissions Grouped */}
                     <label className="form-label-custom mb-2 font-bold text-xs">Permission yang Diberikan</label>
