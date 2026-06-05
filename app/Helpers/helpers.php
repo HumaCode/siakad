@@ -23,7 +23,7 @@ if (!function_exists('menus')) {
     /**
      * Get active menus grouped by category, filtered by gate permissions.
      *
-     * @return Collection
+     * @return array
      */
     function menus()
     {
@@ -34,21 +34,42 @@ if (!function_exists('menus')) {
         $key = "menus_raw_{$userId}_{$version}";
 
         if (!Cache::has($key)) {
-            $menus = (new MenuRepository())->getMenus()->groupBy('category');
+            $menus = (new MenuRepository())->getMenus();
 
-            // Filter berdasarkan gate
-            $filtered = $menus->map(function ($menuGroup) {
-                return collect($menuGroup)->filter(function ($item) {
-                    return Gate::allows('read ' . filterKata($item->url));
-                });
-            })->filter(function ($menuGroup) {
-                return $menuGroup->isNotEmpty();
-            });
+            // Filter berdasarkan gate dan convert ke raw array
+            $filtered = [];
+            foreach ($menus as $menu) {
+                if (Gate::allows('read ' . filterKata($menu->url))) {
+                    $item = [
+                        'id' => $menu->id,
+                        'name' => $menu->name,
+                        'url' => $menu->url,
+                        'category' => $menu->category,
+                        'icon' => $menu->icon,
+                        'sub_menus' => []
+                    ];
 
-            Cache::put($key, $filtered, now()->addHours(1)); // atau Cache::forever
+                    foreach ($menu->subMenus as $subMenu) {
+                        if (Gate::allows('read ' . filterKata($subMenu->url))) {
+                            $item['sub_menus'][] = [
+                                'id' => $subMenu->id,
+                                'name' => $subMenu->name,
+                                'url' => $subMenu->url,
+                                'icon' => $subMenu->icon,
+                            ];
+                        }
+                    }
+
+                    // Group by category manually
+                    $category = $menu->category ?? 'General';
+                    $filtered[$category][] = $item;
+                }
+            }
+
+            Cache::put($key, $filtered, now()->addHours(1));
         }
 
-        return Cache::get($key);
+        return Cache::get($key) ?? [];
     }
 }
 
@@ -60,20 +81,25 @@ if (!function_exists('urlMenu')) {
      */
     function urlMenu()
     {
-        if (!Cache::has('urlMenu')) {
-            $menus = menus()->flatMap(fn($item) => $item);
+        $userId = auth()->id() ?? 'guest';
+        $key = "url_menu_{$userId}";
+
+        if (!Cache::has($key)) {
+            $menus = menus();
 
             $url = [];
-            foreach ($menus as $mm) {
-                $url[] = $mm->url;
-                foreach ($mm->subMenus as $sm) {
-                    $url[] = $sm->url;
+            foreach ($menus as $category => $items) {
+                foreach ($items as $mm) {
+                    $url[] = $mm['url'];
+                    foreach ($mm['sub_menus'] as $sm) {
+                        $url[] = $sm['url'];
+                    }
                 }
             }
 
-            Cache::forever('urlMenu', $url);
+            Cache::put($key, $url, now()->addHours(1));
         } else {
-            $url = Cache::get('urlMenu');
+            $url = Cache::get($key);
         }
 
         return $url;

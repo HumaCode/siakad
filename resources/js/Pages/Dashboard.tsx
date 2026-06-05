@@ -60,13 +60,7 @@ export default function Dashboard() {
     ];
 
     return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-bold leading-tight text-gray-800 dark:text-gray-200 font-['Plus_Jakarta_Sans']">
-                    Dashboard Overview
-                </h2>
-            }
-        >
+        <AuthenticatedLayout header="Dashboard">
             <Head title="Dashboard" />
 
             <div className="py-6 px-4 sm:px-6 lg:px-8 relative min-h-screen bg-gradient-to-br from-slate-50 to-blue-50/30 dark:from-slate-950 dark:to-slate-900 overflow-hidden">
@@ -78,13 +72,13 @@ export default function Dashboard() {
 
                 <div className="relative z-10 space-y-6 max-w-7xl mx-auto">
                     {/* Welcome Banner */}
-                    <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 text-white rounded-2xl p-6 sm:p-8 shadow-xl shadow-blue-500/10 dark:shadow-none">
+                    <div className="welcome-banner relative overflow-hidden text-white rounded-2xl p-6 sm:p-8 shadow-xl dark:shadow-none">
                         <div className="absolute top-0 right-0 w-80 h-80 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/3 blur-3xl pointer-events-none" />
                         <div className="absolute bottom-0 right-1/4 w-48 h-48 bg-white/5 rounded-full translate-y-1/3 blur-2xl pointer-events-none" />
                         
                         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
                             <div>
-                                <h3 className="text-2xl sm:text-3xl font-extrabold font-['Playfair_Display'] tracking-tight mb-2">
+                                <h3 className="text-2xl sm:text-3xl font-extrabold font-playfair tracking-tight mb-2">
                                     Selamat Datang, {user.name}! 👋
                                 </h3>
                                 <p className="text-sm text-blue-100 font-medium">
@@ -102,16 +96,16 @@ export default function Dashboard() {
                             
                             <div className="hidden lg:flex gap-4 shrink-0">
                                 <div className="bg-white/10 border border-white/15 rounded-2xl px-5 py-4 text-center backdrop-blur-md min-w-[90px]">
-                                    <span className="block text-2xl font-extrabold font-['Playfair_Display']">92%</span>
+                                    <span className="block text-2xl font-extrabold font-playfair">92%</span>
                                     <span className="text-[10px] text-blue-200 font-bold uppercase tracking-wider">Kehadiran</span>
                                 </div>
                                 <div className="bg-white/10 border border-white/15 rounded-2xl px-5 py-4 text-center backdrop-blur-md min-w-[90px]">
-                                    <span className="block text-2xl font-extrabold font-['Playfair_Display']">38</span>
+                                    <span className="block text-2xl font-extrabold font-playfair">38</span>
                                     <span className="text-[10px] text-blue-200 font-bold uppercase tracking-wider">Prodi Aktif</span>
                                 </div>
                                 <div className="bg-white/10 border border-white/15 rounded-2xl px-5 py-4 text-center backdrop-blur-md min-w-[90px]">
-                                    <span className="block text-2xl font-extrabold font-['Playfair_Display']">5</span>
-                                    <span className="text-[10px] text-blue-200 font-bold uppercase tracking-wider">Pending</span>
+                                    <span className="block text-2xl font-extrabold font-playfair">5</span>
+                                    <span className="text-[10px] text-blue-200 font-bold uppercase tracking-wider">Tugas Pending</span>
                                 </div>
                             </div>
                         </div>
@@ -125,7 +119,7 @@ export default function Dashboard() {
                             <div className="w-11 h-11 rounded-xl flex items-center justify-center text-lg mb-3.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
                                 <i className="bi bi-mortarboard-fill" />
                             </div>
-                            <div className="text-2xl sm:text-3xl font-extrabold font-['Playfair_Display'] text-gray-900 dark:text-gray-100 mb-1">
+                            <div className="text-2xl sm:text-3xl font-extrabold font-playfair text-gray-900 dark:text-gray-100 mb-1">
                                 <AnimatedCounter value={12480} />
                             </div>
                             <div className="text-xs font-semibold text-gray-500 dark:text-gray-400">Total Mahasiswa</div>
@@ -140,7 +134,7 @@ export default function Dashboard() {
                             <div className="w-11 h-11 rounded-xl flex items-center justify-center text-lg mb-3.5 bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400">
                                 <i className="bi bi-person-badge-fill" />
                             </div>
-                            <div className="text-2xl sm:text-3xl font-extrabold font-['Playfair_Display'] text-gray-900 dark:text-gray-100 mb-1">
+                            <div className="text-2xl sm:text-3xl font-extrabold font-playfair text-gray-900 dark:text-gray-100 mb-1">
                                 <AnimatedCounter value={482} />
                             </div>
                             <div className="text-xs font-semibold text-gray-500 dark:text-gray-400">Total Dosen</div>
@@ -155,12 +149,12 @@ export default function Dashboard() {
                             <div className="w-11 h-11 rounded-xl flex items-center justify-center text-lg mb-3.5 bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400">
                                 <i className="bi bi-journal-check" />
                             </div>
-                            <div className="text-2xl sm:text-3xl font-extrabold font-['Playfair_Display'] text-gray-900 dark:text-gray-100 mb-1">
+                            <div className="text-2xl sm:text-3xl font-extrabold font-playfair text-gray-900 dark:text-gray-100 mb-1">
                                 <AnimatedCounter value={11247} />
                             </div>
                             <div className="text-xs font-semibold text-gray-500 dark:text-gray-400">KRS Disetujui</div>
                             <div className="inline-flex items-center gap-0.5 text-[10px] font-bold px-2 py-0.5 rounded-full mt-2 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400">
-                                <i className="bi bi-arrow-up-short" /> 98.2%
+                                <i className="bi bi-arrow-up-short" /> +98.2%
                             </div>
                         </div>
 
@@ -170,12 +164,12 @@ export default function Dashboard() {
                             <div className="w-11 h-11 rounded-xl flex items-center justify-center text-lg mb-3.5 bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400">
                                 <i className="bi bi-exclamation-circle-fill" />
                             </div>
-                            <div className="text-2xl sm:text-3xl font-extrabold font-['Playfair_Display'] text-gray-900 dark:text-gray-100 mb-1">
+                            <div className="text-2xl sm:text-3xl font-extrabold font-playfair text-gray-900 dark:text-gray-100 mb-1">
                                 <AnimatedCounter value={143} />
                             </div>
                             <div className="text-xs font-semibold text-gray-500 dark:text-gray-400">KRS Pending</div>
                             <div className="inline-flex items-center gap-0.5 text-[10px] font-bold px-2 py-0.5 rounded-full mt-2 bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400">
-                                <i className="bi bi-arrow-down-short" /> perlu review
+                                <i className="bi bi-arrow-down-short" /> +perlu review
                             </div>
                         </div>
 
@@ -185,12 +179,12 @@ export default function Dashboard() {
                             <div className="w-11 h-11 rounded-xl flex items-center justify-center text-lg mb-3.5 bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400">
                                 <i className="bi bi-cash-coin" />
                             </div>
-                            <div className="text-2xl sm:text-3xl font-extrabold font-['Playfair_Display'] text-gray-900 dark:text-gray-100 mb-1">
+                            <div className="text-2xl sm:text-3xl font-extrabold font-playfair text-gray-900 dark:text-gray-100 mb-1">
                                 <AnimatedCounter value={9821} />
                             </div>
                             <div className="text-xs font-semibold text-gray-500 dark:text-gray-400">Lunas SPP</div>
                             <div className="inline-flex items-center gap-0.5 text-[10px] font-bold px-2 py-0.5 rounded-full mt-2 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400">
-                                <i className="bi bi-arrow-up-short" /> 78.7%
+                                <i className="bi bi-arrow-up-short" /> +78.7%
                             </div>
                         </div>
 
@@ -200,12 +194,12 @@ export default function Dashboard() {
                             <div className="w-11 h-11 rounded-xl flex items-center justify-center text-lg mb-3.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400">
                                 <i className="bi bi-building-fill-check" />
                             </div>
-                            <div className="text-2xl sm:text-3xl font-extrabold font-['Playfair_Display'] text-gray-900 dark:text-gray-100 mb-1">
+                            <div className="text-2xl sm:text-3xl font-extrabold font-playfair text-gray-900 dark:text-gray-100 mb-1">
                                 <AnimatedCounter value={38} />
                             </div>
                             <div className="text-xs font-semibold text-gray-500 dark:text-gray-400">Program Studi</div>
                             <div className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full mt-2 bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-400">
-                                <i className="bi bi-check-circle" /> Semua aktif
+                                <i className="bi bi-check-circle-fill" /> Semua aktif
                             </div>
                         </div>
                     </div>
