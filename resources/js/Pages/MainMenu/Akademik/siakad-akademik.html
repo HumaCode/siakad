@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIAKAD — Akademik</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+/* ============================================================ TOKENS */
+:root {
+  --primary:#1a56db; --primary-dark:#1344b8; --primary-light:#e8f0fe; --primary-mid:#4f83f0;
+  --accent:#f59e0b;  --accent-light:#fef3c7;
+  --teal:#0d9488;    --teal-light:#ccfbf1;
+  --rose:#e11d48;    --rose-light:#ffe4e6;
+  --purple:#7c3aed;  --purple-light:#ede9fe;
+  --green:#16a34a;   --green-light:#dcfce7;
+  --indigo:#4338ca;  --indigo-light:#e0e7ff;
+  --soft-bg:#f0f4ff; --sidebar-bg:#0f1e45;
+  --sidebar-w:260px; --sidebar-w-col:72px; --topbar-h:64px;
+  --white:#fff; --text-dark:#1e2a4a; --text-muted:#64748b;
+  --border:rgba(26,86,219,.10);
+  --radius-lg:18px; --radius-md:12px; --radius-sm:8px;
+  --shadow-card:0 2px 20px rgba(26,86,219,.07),0 1px 4px rgba(0,0,0,.04);
+  --shadow-hover:0 8px 32px rgba(26,86,219,.14),0 2px 8px rgba(0,0,0,.06);
+  --transition:all .25s cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--soft-bg);color:var(--text-dark);overflow-x:hidden;}
+
+/* ===== ANIMATED BG ===== */
+.bg-anim{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;
+  background:linear-gradient(135deg,#e8f0fe 0%,#f0f4ff 50%,#e0f2fe 100%);}
+.dot-grid{position:absolute;inset:0;
+  background-image:radial-gradient(circle,rgba(26,86,219,.06) 1.5px,transparent 1.5px);
+  background-size:30px 30px;}
+.bg-orb{position:absolute;border-radius:50%;filter:blur(60px);animation:orbFloat linear infinite;opacity:.3;}
+.bg-orb-1{width:500px;height:500px;background:#bfdbfe;top:-180px;right:-130px;animation-duration:24s;}
+.bg-orb-2{width:320px;height:320px;background:#a7f3d0;bottom:-90px;left:60px;animation-duration:30s;animation-delay:-12s;}
+.bg-orb-3{width:200px;height:200px;background:#fde68a;top:45%;left:48%;animation-duration:20s;animation-delay:-7s;opacity:.18;}
+@keyframes orbFloat{0%{transform:translate(0,0) scale(1);}33%{transform:translate(35px,-28px) scale(1.04);}66%{transform:translate(-25px,20px) scale(.96);}100%{transform:translate(0,0) scale(1);}}
+
+/* ===== SIDEBAR ===== */
+.sidebar{position:fixed;top:0;left:0;bottom:0;width:var(--sidebar-w);background:var(--sidebar-bg);z-index:1040;display:flex;flex-direction:column;transition:width .3s cubic-bezier(.4,0,.2,1),transform .3s cubic-bezier(.4,0,.2,1);overflow:hidden;}
+.sidebar::before{content:'';position:absolute;width:240px;height:240px;border-radius:50%;background:rgba(79,131,240,.1);top:-80px;right:-80px;pointer-events:none;}
+.sidebar::after{content:'';position:absolute;width:160px;height:160px;border-radius:50%;background:rgba(13,148,136,.07);bottom:60px;left:-50px;pointer-events:none;}
+.sidebar-collapsed .sidebar{width:var(--sidebar-w-col);}
+.sidebar-collapsed .sidebar .nav-label,.sidebar-collapsed .sidebar .nav-section-title,
+.sidebar-collapsed .sidebar .sidebar-user-info,.sidebar-collapsed .sidebar .brand-text{opacity:0;pointer-events:none;width:0;overflow:hidden;}
+.sidebar-collapsed .sidebar .nav-item-link{justify-content:center;padding:11px 0;}
+.sidebar-collapsed .sidebar .nav-item-link .nav-icon{margin-right:0;}
+.sidebar-collapsed .sidebar .sidebar-brand{justify-content:center;padding:0 16px;}
+.sidebar-collapsed .main-wrapper{margin-left:var(--sidebar-w-col);}
+.sidebar-collapsed .topbar{left:var(--sidebar-w-col);}
+.sidebar-brand{height:var(--topbar-h);display:flex;align-items:center;gap:11px;padding:0 20px;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0;}
+.brand-icon{width:38px;height:38px;background:linear-gradient(135deg,#1a56db,#4f83f0);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;flex-shrink:0;box-shadow:0 4px 12px rgba(26,86,219,.4);}
+.brand-text h6{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:800;color:#fff;margin:0;line-height:1.2;white-space:nowrap;}
+.brand-text small{font-size:.65rem;color:rgba(255,255,255,.45);font-weight:500;white-space:nowrap;}
+.sidebar-nav{flex:1;overflow-y:auto;overflow-x:hidden;padding:16px 0;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent;}
+.sidebar-nav::-webkit-scrollbar{width:3px;}
+.sidebar-nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px;}
+.nav-section-title{font-size:.6rem;font-weight:700;color:rgba(255,255,255,.3);letter-spacing:.1em;text-transform:uppercase;padding:14px 20px 6px;white-space:nowrap;}
+.nav-item-link{display:flex;align-items:center;padding:10px 20px;color:rgba(255,255,255,.6);text-decoration:none;transition:var(--transition);position:relative;cursor:pointer;border:none;background:none;width:100%;text-align:left;}
+.nav-item-link::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:0;background:var(--primary-mid);border-radius:0 3px 3px 0;transition:height .25s ease;}
+.nav-item-link:hover{color:rgba(255,255,255,.9);background:rgba(255,255,255,.05);}
+.nav-item-link.active{color:#fff;background:rgba(79,131,240,.18);}
+.nav-item-link.active::before{height:28px;}
+.nav-icon{font-size:17px;width:32px;flex-shrink:0;margin-right:8px;display:flex;align-items:center;justify-content:center;}
+.nav-label{font-size:.85rem;font-weight:500;white-space:nowrap;flex:1;}
+.nav-badge{background:var(--primary-mid);color:#fff;font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:100px;flex-shrink:0;}
+.sidebar-user{padding:14px 16px;border-top:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.user-avatar-sm{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#f87171);display:flex;align-items:center;justify-content:center;color:#fff;font-size:.8rem;font-weight:700;flex-shrink:0;}
+.sidebar-user-info .name{font-size:.82rem;font-weight:700;color:#fff;white-space:nowrap;}
+.sidebar-user-info .role{font-size:.68rem;color:rgba(255,255,255,.45);white-space:nowrap;}
+.nav-submenu{background:rgba(0,0,0,.12);overflow:hidden;max-height:0;transition:max-height .3s ease;}
+.nav-submenu.open{max-height:300px;}
+.nav-subitem{display:flex;align-items:center;padding:8px 20px 8px 56px;color:rgba(255,255,255,.45);text-decoration:none;font-size:.8rem;font-weight:500;transition:var(--transition);}
+.nav-subitem::before{content:'·';margin-right:8px;color:rgba(255,255,255,.25);}
+.nav-subitem:hover{color:rgba(255,255,255,.8);}
+.nav-subitem.active{color:#fff;}
+
+/* ===== TOPBAR ===== */
+.topbar{position:fixed;top:0;left:var(--sidebar-w);right:0;height:var(--topbar-h);background:rgba(240,244,255,.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);z-index:1030;display:flex;align-items:center;padding:0 24px;gap:16px;transition:left .3s cubic-bezier(.4,0,.2,1);}
+.topbar-toggle{background:none;border:none;color:var(--text-muted);font-size:20px;padding:6px;border-radius:8px;cursor:pointer;transition:var(--transition);}
+.topbar-toggle:hover{background:var(--primary-light);color:var(--primary);}
+.topbar-breadcrumb{flex:1;}
+.topbar-breadcrumb .page-title{font-size:1rem;font-weight:700;color:var(--text-dark);margin:0;line-height:1.2;}
+.topbar-breadcrumb .breadcrumb-trail{font-size:.72rem;color:var(--text-muted);margin:0;}
+.topbar-search{position:relative;}
+.topbar-search input{width:200px;padding:8px 14px 8px 36px;border:1.5px solid var(--border);border-radius:100px;font-size:.82rem;font-family:'Plus Jakarta Sans',sans-serif;background:rgba(255,255,255,.8);color:var(--text-dark);outline:none;transition:var(--transition);}
+.topbar-search input:focus{width:260px;border-color:var(--primary);background:#fff;box-shadow:0 0 0 3px rgba(26,86,219,.08);}
+.topbar-search .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:14px;pointer-events:none;}
+.topbar-actions{display:flex;align-items:center;gap:6px;}
+.topbar-btn{position:relative;width:38px;height:38px;border:1.5px solid var(--border);background:rgba(255,255,255,.8);border-radius:10px;color:var(--text-muted);font-size:17px;cursor:pointer;transition:var(--transition);display:flex;align-items:center;justify-content:center;}
+.topbar-btn:hover{background:var(--primary-light);color:var(--primary);border-color:var(--primary-mid);}
+.topbar-badge{position:absolute;top:5px;right:5px;width:8px;height:8px;background:var(--rose);border-radius:50%;border:1.5px solid white;}
+.topbar-user{display:flex;align-items:center;gap:9px;padding:5px 10px;border-radius:12px;cursor:pointer;transition:var(--transition);border:1.5px solid transparent;}
+.topbar-user:hover{background:rgba(255,255,255,.9);border-color:var(--border);}
+.topbar-avatar{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--primary),var(--primary-mid));display:flex;align-items:center;justify-content:center;color:#fff;font-size:.75rem;font-weight:700;}
+.topbar-user-text .name{font-size:.82rem;font-weight:700;color:var(--text-dark);display:block;line-height:1.1;}
+.topbar-user-text .role{font-size:.68rem;color:var(--text-muted);}
+
+/* ===== LAYOUT ===== */
+.main-wrapper{margin-left:var(--sidebar-w);padding-top:var(--topbar-h);min-height:100vh;transition:margin-left .3s cubic-bezier(.4,0,.2,1);}
+.main-content{padding:28px 24px 48px;}
+
+/* ===== CARDS ===== */
+.card-custom{background:rgba(255,255,255,.85);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.9);border-radius:var(--radius-lg);box-shadow:var(--shadow-card);overflow:hidden;transition:var(--transition);}
+.card-custom:hover{box-shadow:var(--shadow-hover);}
+
+/* ===== PAGE HEADER ===== */
+.page-header{background:linear-gradient(135deg,#1a56db 0%,#2563eb 55%,#1d4ed8 100%);border-radius:var(--radius-lg);padding:26px 28px;color:#fff;position:relative;overflow:hidden;margin-bottom:24px;box-shadow:0 8px 32px rgba(26,86,219,.22);}
+.page-header::before{content:'';position:absolute;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,.06);top:-110px;right:-60px;}
+.page-header::after{content:'';position:absolute;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.04);bottom:-60px;right:28%;}
+.page-header-inner{position:relative;z-index:1;}
+.page-header h4{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:800;margin-bottom:4px;}
+.page-header p{font-size:.83rem;color:rgba(255,255,255,.72);margin:0;}
+.ph-right{position:absolute;right:28px;top:50%;transform:translateY(-50%);display:flex;gap:10px;z-index:1;}
+.btn-ph{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:10px;font-size:.82rem;font-weight:700;cursor:pointer;transition:var(--transition);font-family:'Plus Jakarta Sans',sans-serif;border:none;}
+.btn-ph-white{background:rgba(255,255,255,.18);color:#fff;border:1.5px solid rgba(255,255,255,.28);}
+.btn-ph-white:hover{background:rgba(255,255,255,.3);}
+.btn-ph-solid{background:#fff;color:var(--primary);}
+.btn-ph-solid:hover{background:#f0f4ff;}
+
+/* ===== STAT MINI ===== */
+.stat-mini{background:rgba(255,255,255,.88);border:1px solid rgba(255,255,255,.9);border-radius:var(--radius-md);box-shadow:var(--shadow-card);padding:16px 14px;text-align:center;transition:var(--transition);}
+.stat-mini:hover{box-shadow:var(--shadow-hover);transform:translateY(-2px);}
+.stat-mini-num{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:800;line-height:1;margin-bottom:3px;}
+.stat-mini-lbl{font-size:.7rem;color:var(--text-muted);font-weight:500;}
+.stat-mini-badge{display:inline-flex;align-items:center;gap:3px;font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:100px;margin-top:5px;}
+
+/* ===== CUSTOM TABS ===== */
+.main-tabs{display:flex;gap:3px;background:rgba(255,255,255,.7);border:1px solid var(--border);border-radius:14px;padding:5px;flex-wrap:wrap;margin-bottom:22px;}
+.main-tab{padding:9px 20px;border-radius:9px;border:none;background:none;font-size:.83rem;font-weight:600;color:var(--text-muted);cursor:pointer;transition:var(--transition);font-family:'Plus Jakarta Sans',sans-serif;display:flex;align-items:center;gap:7px;white-space:nowrap;}
+.main-tab.active{background:var(--primary);color:#fff;box-shadow:0 3px 10px rgba(26,86,219,.28);}
+.main-tab:hover:not(.active){background:var(--primary-light);color:var(--primary);}
+.main-tab .tab-count{background:rgba(255,255,255,.25);font-size:.65rem;padding:1px 7px;border-radius:100px;}
+.main-tab.active .tab-count{background:rgba(255,255,255,.25);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* ===== FILTER BAR ===== */
+.filter-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:16px 20px 0;}
+.fi{padding:9px 14px 9px 36px;border:1.5px solid var(--border);border-radius:10px;font-size:.82rem;font-family:'Plus Jakarta Sans',sans-serif;background:rgba(255,255,255,.8);color:var(--text-dark);outline:none;transition:var(--transition);}
+.fi:focus{border-color:var(--primary);background:#fff;box-shadow:0 0 0 3px rgba(26,86,219,.07);}
+.fi-wrap{position:relative;flex:1;min-width:180px;}
+.fi-wrap .fi-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:13px;pointer-events:none;}
+.fsel{padding:9px 30px 9px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:.82rem;font-family:'Plus Jakarta Sans',sans-serif;background:rgba(255,255,255,.8);color:var(--text-dark);outline:none;appearance:none;cursor:pointer;transition:var(--transition);}
+.fsel:focus{border-color:var(--primary);}
+.btn-add{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:var(--primary);color:#fff;border:none;border-radius:10px;font-size:.82rem;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:var(--transition);}
+.btn-add:hover{background:var(--primary-dark);box-shadow:0 4px 14px rgba(26,86,219,.3);}
+.btn-outline{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:transparent;color:var(--text-muted);border:1.5px solid var(--border);border-radius:10px;font-size:.82rem;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:var(--transition);}
+.btn-outline:hover{background:var(--primary-light);color:var(--primary);border-color:var(--primary);}
+
+/* ===== DATA TABLE ===== */
+.data-table{width:100%;border-collapse:separate;border-spacing:0;font-size:.82rem;}
+.data-table th{background:var(--soft-bg);font-weight:700;color:var(--text-dark);padding:11px 14px;white-space:nowrap;border-bottom:2px solid var(--border);}
+.data-table td{padding:11px 14px;border-bottom:1px solid rgba(26,86,219,.05);vertical-align:middle;}
+.data-table tbody tr{transition:background .15s;}
+.data-table tbody tr:hover td{background:rgba(26,86,219,.025);}
+.data-table tbody tr:last-child td{border-bottom:none;}
+.tbl-wrap{overflow-x:auto;padding:0 0 16px;}
+
+/* ===== BADGES ===== */
+.badge-pill{display:inline-flex;align-items:center;gap:4px;font-size:.68rem;font-weight:700;padding:3px 10px;border-radius:100px;}
+.bp-blue{background:var(--primary-light);color:var(--primary);}
+.bp-teal{background:var(--teal-light);color:var(--teal);}
+.bp-amber{background:var(--accent-light);color:#b45309;}
+.bp-rose{background:var(--rose-light);color:var(--rose);}
+.bp-purple{background:var(--purple-light);color:var(--purple);}
+.bp-green{background:var(--green-light);color:var(--green);}
+.bp-indigo{background:var(--indigo-light);color:var(--indigo);}
+.bp-gray{background:#f1f5f9;color:#475569;}
+
+/* ===== ACTION BUTTONS ===== */
+.btn-icon{width:30px;height:30px;border-radius:8px;border:none;display:inline-flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;transition:var(--transition);}
+.bi-edit{background:var(--primary-light);color:var(--primary);}
+.bi-edit:hover{background:var(--primary);color:#fff;}
+.bi-del{background:var(--rose-light);color:var(--rose);}
+.bi-del:hover{background:var(--rose);color:#fff;}
+.bi-view{background:var(--green-light);color:var(--green);}
+.bi-view:hover{background:var(--green);color:#fff;}
+.bi-detail{background:var(--indigo-light);color:var(--indigo);}
+.bi-detail:hover{background:var(--indigo);color:#fff;}
+
+/* ===== PAGINATION ===== */
+.pagi{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;flex-wrap:wrap;gap:10px;}
+.pagi-info{font-size:.75rem;color:var(--text-muted);}
+.pagi-btns{display:flex;gap:4px;}
+.pagi-btn{padding:6px 12px;border:1.5px solid var(--border);border-radius:8px;background:rgba(255,255,255,.8);font-size:.75rem;font-weight:600;cursor:pointer;color:var(--text-muted);transition:var(--transition);}
+.pagi-btn:hover{background:var(--primary-light);color:var(--primary);border-color:var(--primary);}
+.pagi-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+
+/* ===== KURIKULUM CARD ===== */
+.kurikulum-card{background:rgba(255,255,255,.88);border:1.5px solid var(--border);border-radius:var(--radius-lg);padding:18px;box-shadow:var(--shadow-card);transition:var(--transition);position:relative;overflow:hidden;cursor:pointer;}
+.kurikulum-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:4px 0 0 4px;}
+.kurikulum-card:hover{box-shadow:var(--shadow-hover);transform:translateY(-2px);}
+.kc-ti::before{background:linear-gradient(180deg,#1a56db,#4f83f0);}
+.kc-si::before{background:linear-gradient(180deg,#0d9488,#2dd4bf);}
+.kc-mb::before{background:linear-gradient(180deg,#f59e0b,#fbbf24);}
+.kc-hk::before{background:linear-gradient(180deg,#7c3aed,#a78bfa);}
+.kc-kd::before{background:linear-gradient(180deg,#e11d48,#fb7185);}
+.kc-te::before{background:linear-gradient(180deg,#16a34a,#4ade80);}
+.kc-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;}
+.kc-icon{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;}
+.kc-title{font-size:.9rem;font-weight:800;color:var(--text-dark);margin-bottom:2px;}
+.kc-sub{font-size:.7rem;color:var(--text-muted);font-weight:500;}
+.kc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:12px;}
+.kcs-item{background:var(--soft-bg);border-radius:8px;padding:7px 8px;text-align:center;}
+.kcs-num{font-size:.9rem;font-weight:800;color:var(--text-dark);display:block;line-height:1;}
+.kcs-lbl{font-size:.62rem;color:var(--text-muted);font-weight:500;}
+.kc-footer{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid rgba(26,86,219,.07);}
+
+/* ===== SCHEDULE / JADWAL ===== */
+.jadwal-grid{display:grid;grid-template-columns:80px repeat(5,1fr);gap:1px;background:var(--border);border-radius:var(--radius-md);overflow:hidden;font-size:.76rem;}
+.jg-header{background:var(--sidebar-bg);color:#fff;font-weight:700;text-align:center;padding:10px 6px;font-size:.72rem;}
+.jg-time{background:rgba(26,86,219,.05);color:var(--text-muted);font-weight:700;text-align:center;padding:10px 4px;font-size:.68rem;display:flex;align-items:center;justify-content:center;}
+.jg-cell{background:rgba(255,255,255,.9);padding:4px;min-height:56px;display:flex;align-items:stretch;}
+.jg-cell.empty{background:rgba(240,244,255,.5);}
+.jg-subject{border-radius:8px;padding:6px 8px;width:100%;display:flex;flex-direction:column;justify-content:center;cursor:pointer;transition:var(--transition);}
+.jg-subject:hover{filter:brightness(0.93);}
+.jg-subject .jg-name{font-weight:700;color:#fff;font-size:.7rem;line-height:1.3;margin-bottom:2px;}
+.jg-subject .jg-meta{font-size:.6rem;color:rgba(255,255,255,.78);}
+.jg-sks{display:inline-block;background:rgba(255,255,255,.25);font-size:.58rem;padding:1px 5px;border-radius:4px;margin-top:3px;font-weight:700;color:#fff;}
+
+/* ===== CALENDAR ===== */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.cal-day-header{text-align:center;font-size:.7rem;font-weight:700;color:var(--text-muted);padding:6px 0;text-transform:uppercase;}
+.cal-day{min-height:72px;border-radius:10px;background:rgba(255,255,255,.7);border:1px solid var(--border);padding:6px;cursor:pointer;transition:var(--transition);position:relative;}
+.cal-day:hover{background:rgba(255,255,255,.95);box-shadow:0 2px 12px rgba(26,86,219,.1);}
+.cal-day.today{background:var(--primary-light);border-color:var(--primary);}
+.cal-day.other-month{opacity:.45;}
+.cal-day.has-event::after{content:'';position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:20px;height:3px;border-radius:3px;background:var(--primary);}
+.cal-num{font-size:.8rem;font-weight:700;color:var(--text-dark);margin-bottom:4px;}
+.cal-day.today .cal-num{background:var(--primary);color:#fff;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:.72rem;}
+.cal-event{font-size:.58rem;font-weight:600;padding:1px 5px;border-radius:4px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* ===== TIMELINE KALENDER ===== */
+.timeline-item{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid rgba(26,86,219,.06);}
+.timeline-item:last-child{border-bottom:none;}
+.tl-dot-wrap{display:flex;flex-direction:column;align-items:center;gap:0;}
+.tl-dot{width:12px;height:12px;border-radius:50%;border:2px solid #fff;flex-shrink:0;box-shadow:0 0 0 2px currentColor;margin-top:3px;}
+.tl-line{flex:1;width:2px;background:rgba(26,86,219,.1);margin-top:4px;}
+.tl-content{flex:1;}
+.tl-title{font-size:.84rem;font-weight:700;color:var(--text-dark);margin-bottom:2px;}
+.tl-date{font-size:.72rem;color:var(--text-muted);font-weight:500;margin-bottom:4px;}
+.tl-desc{font-size:.75rem;color:var(--text-muted);line-height:1.5;}
+
+/* ===== PROGRESS ===== */
+.prog-bar-bg{height:6px;background:rgba(26,86,219,.08);border-radius:100px;overflow:hidden;margin-top:4px;}
+.prog-bar-fill{height:100%;border-radius:100px;}
+
+/* ===== MODAL ===== */
+.modal-custom .modal-content{border-radius:var(--radius-lg);border:none;box-shadow:0 20px 60px rgba(26,86,219,.15);}
+.modal-custom .modal-header{border-bottom:1px solid var(--border);padding:20px 24px 16px;}
+.modal-custom .modal-title{font-weight:800;font-size:1rem;color:var(--text-dark);}
+.modal-custom .modal-body{padding:20px 24px;}
+.modal-custom .modal-footer{border-top:1px solid var(--border);padding:14px 24px;}
+.form-label-c{font-size:.79rem;font-weight:700;color:var(--text-dark);margin-bottom:5px;display:block;}
+.form-ctrl{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:.85rem;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text-dark);background:rgba(255,255,255,.8);outline:none;transition:var(--transition);}
+.form-ctrl:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(26,86,219,.08);}
+
+/* ===== MOBILE / OVERLAY ===== */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(15,30,69,.5);z-index:1039;backdrop-filter:blur(2px);}
+@media(max-width:991.98px){
+  .sidebar{transform:translateX(-100%);width:var(--sidebar-w) !important;}
+  .sidebar-open .sidebar{transform:translateX(0);box-shadow:8px 0 40px rgba(0,0,0,.2);}
+  .sidebar-open .sidebar-overlay{display:block;}
+  .main-wrapper{margin-left:0 !important;}
+  .topbar{left:0 !important;}
+  .ph-right{display:none;}
+  .topbar-search{display:none;}
+  .jadwal-grid{grid-template-columns:60px repeat(5,1fr);font-size:.65rem;}
+}
+@media(max-width:575.98px){
+  .main-content{padding:16px 14px 36px;}
+  .jadwal-grid{display:none;}
+  .jadwal-mobile-note{display:block;}
+}
+
+.scroll-top{position:fixed;bottom:28px;right:28px;width:40px;height:40px;background:var(--primary);color:white;border:none;border-radius:12px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(26,86,219,.3);transition:var(--transition);z-index:999;opacity:0;transform:translateY(10px);}
+.scroll-top.visible{opacity:1;transform:translateY(0);}
+.scroll-top:hover{background:var(--primary-dark);}
+.jadwal-mobile-note{display:none;font-size:.8rem;color:var(--text-muted);background:var(--accent-light);padding:10px 14px;border-radius:10px;margin-bottom:14px;}
+</style>
+</head>
+<body>
+<div class="bg-anim"><div class="dot-grid"></div><div class="bg-orb bg-orb-1"></div><div class="bg-orb bg-orb-2"></div><div class="bg-orb bg-orb-3"></div></div>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- ===== SIDEBAR ===== -->
+<aside class="sidebar" id="mainSidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon"><i class="bi bi-mortarboard-fill"></i></div>
+    <div class="brand-text"><h6>SIAKAD</h6><small>Universitas Nusantara</small></div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-title">MENU UTAMA</div>
+    <a class="nav-item-link" href="#"><span class="nav-icon"><i class="bi bi-grid-1x2-fill"></i></span><span class="nav-label">Dashboard</span></a>
+    <button class="nav-item-link active" onclick="toggleMenu('menuAkademik',this)">
+      <span class="nav-icon"><i class="bi bi-book-fill"></i></span><span class="nav-label">Akademik</span>
+      <i class="bi bi-chevron-down ms-auto" style="font-size:11px;color:rgba(255,255,255,.55);transition:transform .25s;" id="chevAkademik"></i>
+    </button>
+    <div class="nav-submenu open" id="menuAkademik">
+      <a href="#" class="nav-subitem active" onclick="switchTabFromNav('tabKurikulum',this)">Kurikulum</a>
+      <a href="#" class="nav-subitem" onclick="switchTabFromNav('tabMataKuliah',this)">Mata Kuliah</a>
+      <a href="#" class="nav-subitem" onclick="switchTabFromNav('tabJadwal',this)">Jadwal Kuliah</a>
+      <a href="#" class="nav-subitem" onclick="switchTabFromNav('tabKalender',this)">Kalender Akademik</a>
+    </div>
+    <a class="nav-item-link" href="#"><span class="nav-icon"><i class="bi bi-people-fill"></i></span><span class="nav-label">Mahasiswa</span></a>
+    <a class="nav-item-link" href="#"><span class="nav-icon"><i class="bi bi-person-badge-fill"></i></span><span class="nav-label">Dosen & Staf</span></a>
+    <button class="nav-item-link" onclick="toggleMenu('menuKRS',this)">
+      <span class="nav-icon"><i class="bi bi-journal-check"></i></span><span class="nav-label">KRS & Nilai</span>
+      <i class="bi bi-chevron-down ms-auto" style="font-size:11px;color:rgba(255,255,255,.35);transition:transform .25s;" id="chevKRS"></i>
+    </button>
+    <div class="nav-submenu" id="menuKRS">
+      <a href="#" class="nav-subitem">Pengajuan KRS</a>
+      <a href="#" class="nav-subitem">Input Nilai</a>
+      <a href="#" class="nav-subitem">Transkrip</a>
+    </div>
+    <a class="nav-item-link" href="#"><span class="nav-icon"><i class="bi bi-calendar3-week"></i></span><span class="nav-label">Absensi</span><span class="nav-badge">3</span></a>
+    <div class="nav-section-title">KEUANGAN</div>
+    <a class="nav-item-link" href="#"><span class="nav-icon"><i class="bi bi-wallet2"></i></span><span class="nav-label">Tagihan & SPP</span></a>
+    <a class="nav-item-link" href="#"><span class="nav-icon"><i class="bi bi-receipt"></i></span><span class="nav-label">Riwayat Bayar</span></a>
+    <div class="nav-section-title">SISTEM</div>
+    <a class="nav-item-link" href="#"><span class="nav-icon"><i class="bi bi-shield-lock-fill"></i></span><span class="nav-label">Roles & Akses</span></a>
+    <a class="nav-item-link" href="#"><span class="nav-icon"><i class="bi bi-activity"></i></span><span class="nav-label">Activity Log</span></a>
+    <a class="nav-item-link" href="#"><span class="nav-icon"><i class="bi bi-gear-fill"></i></span><span class="nav-label">Pengaturan</span></a>
+  </nav>
+  <div class="sidebar-user">
+    <div class="user-avatar-sm">AR</div>
+    <div class="sidebar-user-info"><div class="name">Admin Registrar</div><div class="role">Super Admin</div></div>
+    <button style="background:none;border:none;color:rgba(255,255,255,.3);font-size:14px;cursor:pointer;flex-shrink:0;"><i class="bi bi-box-arrow-right"></i></button>
+  </div>
+</aside>
+
+<!-- ===== TOPBAR ===== -->
+<header class="topbar">
+  <button class="topbar-toggle" onclick="toggleSidebar()"><i class="bi bi-list"></i></button>
+  <div class="topbar-breadcrumb">
+    <p class="page-title">Akademik</p>
+    <p class="breadcrumb-trail" id="breadcrumbTrail">SIAKAD / Akademik / Kurikulum</p>
+  </div>
+  <div class="topbar-search"><i class="bi bi-search search-icon"></i><input type="text" placeholder="Cari mata kuliah, jadwal..."></div>
+  <div class="topbar-actions">
+    <button class="topbar-btn"><i class="bi bi-bell"></i><span class="topbar-badge"></span></button>
+    <button class="topbar-btn"><i class="bi bi-chat-dots"></i></button>
+  </div>
+  <div class="topbar-user">
+    <div class="topbar-avatar">AR</div>
+    <div class="topbar-user-text d-none d-md-block"><span class="name">Admin Registrar</span><span class="role">Super Admin</span></div>
+  </div>
+</header>
+
+<!-- ===== MAIN ===== -->
+<div class="main-wrapper" id="mainWrapper">
+<div class="main-content">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header" data-aos="fade-down" data-aos-duration="550">
+    <div class="page-header-inner">
+      <h4><i class="bi bi-book-fill me-2"></i>Modul Akademik</h4>
+      <p>Kelola kurikulum, mata kuliah, jadwal perkuliahan, dan kalender akademik Semester Gasal 2025/2026</p>
+    </div>
+    <div class="ph-right">
+      <button class="btn-ph btn-ph-white" onclick="openModal('modalKurikulum')"><i class="bi bi-plus-lg"></i> Tambah Kurikulum</button>
+      <button class="btn-ph btn-ph-solid" onclick="openModal('modalMK')"><i class="bi bi-journal-plus"></i> Tambah Mata Kuliah</button>
+    </div>
+  </div>
+
+  <!-- STAT ROW -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="0"><div class="stat-mini"><div class="stat-mini-num" style="color:var(--primary);">38</div><div class="stat-mini-lbl">Program Studi</div><div class="stat-mini-badge" style="background:var(--primary-light);color:var(--primary);"><i class="bi bi-check-circle-fill"></i>Aktif</div></div></div>
+    <div class="col-6 col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="60"><div class="stat-mini"><div class="stat-mini-num" style="color:var(--teal);">246</div><div class="stat-mini-lbl">Mata Kuliah</div><div class="stat-mini-badge" style="background:var(--teal-light);color:var(--teal);">Semester ini</div></div></div>
+    <div class="col-6 col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="120"><div class="stat-mini"><div class="stat-mini-num" style="color:var(--purple);">892</div><div class="stat-mini-lbl">Sesi Jadwal</div><div class="stat-mini-badge" style="background:var(--purple-light);color:var(--purple);">Mingguan</div></div></div>
+    <div class="col-6 col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="180"><div class="stat-mini"><div class="stat-mini-num" style="color:var(--accent)">482</div><div class="stat-mini-lbl">Dosen Mengajar</div><div class="stat-mini-badge" style="background:var(--accent-light);color:#b45309;">Aktif</div></div></div>
+    <div class="col-6 col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="240"><div class="stat-mini"><div class="stat-mini-num" style="color:var(--green);">128</div><div class="stat-mini-lbl">Ruangan</div><div class="stat-mini-badge" style="background:var(--green-light);color:var(--green);">Tersedia</div></div></div>
+    <div class="col-6 col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="300"><div class="stat-mini"><div class="stat-mini-num" style="color:var(--rose);">16</div><div class="stat-mini-lbl">Pertemuan/Sem</div><div class="stat-mini-badge" style="background:var(--rose-light);color:var(--rose);">Minggu ke-8</div></div></div>
+  </div>
+
+  <!-- MAIN TABS -->
+  <div class="main-tabs" data-aos="fade-up" data-aos-duration="400">
+    <button class="main-tab active" onclick="switchTab('tabKurikulum',this)"><i class="bi bi-diagram-3-fill"></i> Kurikulum <span class="tab-count">38</span></button>
+    <button class="main-tab" onclick="switchTab('tabMataKuliah',this)"><i class="bi bi-journal-richtext"></i> Mata Kuliah <span class="tab-count">246</span></button>
+    <button class="main-tab" onclick="switchTab('tabJadwal',this)"><i class="bi bi-calendar3-week-fill"></i> Jadwal Kuliah <span class="tab-count">892</span></button>
+    <button class="main-tab" onclick="switchTab('tabKalender',this)"><i class="bi bi-calendar-event-fill"></i> Kalender Akademik</button>
+  </div>
+
+  <!-- =============================================
+       TAB 1 — KURIKULUM
+  ============================================= -->
+  <div class="tab-panel active" id="tabKurikulum">
+
+    <!-- Filter -->
+    <div class="card-custom mb-3" data-aos="fade-up" data-aos-duration="400">
+      <div class="filter-bar">
+        <div class="fi-wrap"><i class="bi bi-search fi-icon"></i><input class="fi" type="text" placeholder="Cari program studi..." style="width:100%;" oninput="filterKurikulum(this.value)"></div>
+        <select class="fsel"><option>Semua Fakultas</option><option>Teknik</option><option>Ekonomi</option><option>Hukum</option><option>Kedokteran</option></select>
+        <select class="fsel"><option>Semua Tahun</option><option>2024</option><option>2023</option><option>2022</option><option>2021</option></select>
+        <button class="btn-add" onclick="openModal('modalKurikulum')"><i class="bi bi-plus-lg"></i> Tambah Prodi</button>
+        <button class="btn-outline"><i class="bi bi-download"></i> Export</button>
+      </div>
+      <div style="padding:4px 20px 16px;"><small style="font-size:.72rem;color:var(--text-muted);">Menampilkan 6 dari 38 program studi</small></div>
+    </div>
+
+    <!-- Kurikulum Cards -->
+    <div class="row g-3" id="kurikulumGrid">
+
+      <div class="col-12 col-sm-6 col-lg-4" data-aos="fade-up" data-aos-delay="0" data-aos-duration="500">
+        <div class="kurikulum-card kc-ti">
+          <div class="kc-header">
+            <div style="display:flex;align-items:center;gap:12px;flex:1;">
+              <div class="kc-icon" style="background:#e8f0fe;color:#1a56db;"><i class="bi bi-cpu-fill"></i></div>
+              <div>
+                <div class="kc-title">Teknik Informatika</div>
+                <div class="kc-sub">S1 · Kurikulum 2023 · Akreditasi <strong style="color:#f59e0b;">Unggul</strong></div>
+              </div>
+            </div>
+            <span class="badge-pill bp-blue">Aktif</span>
+          </div>
+          <div style="font-size:.74rem;color:var(--text-muted);line-height:1.5;margin-bottom:4px;">Kurikulum berbasis KKNI Level 6, menekankan pada rekayasa perangkat lunak, kecerdasan buatan, dan keamanan siber.</div>
+          <div class="kc-stats">
+            <div class="kcs-item"><span class="kcs-num" style="color:var(--primary);">148</span><span class="kcs-lbl">SKS Total</span></div>
+            <div class="kcs-item"><span class="kcs-num" style="color:var(--teal);">62</span><span class="kcs-lbl">Mata Kuliah</span></div>
+            <div class="kcs-item"><span class="kcs-num" style="color:var(--accent);">8</span><span class="kcs-lbl">Semester</span></div>
+          </div>
+          <div class="kc-footer">
+            <div style="font-size:.72rem;color:var(--text-muted);">Kaprodi: <strong>Dr. Budi S., M.Kom</strong></div>
+            <div style="display:flex;gap:6px;">
+              <button class="btn-icon bi-detail" title="Detail kurikulum"><i class="bi bi-eye"></i></button>
+              <button class="btn-icon bi-edit" title="Edit" onclick="openModal('modalKurikulum')"><i class="bi bi-pencil"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-4" data-aos="fade-up" data-aos-delay="80" data-aos-duration="500">
+        <div class="kurikulum-card kc-si">
+          <div class="kc-header">
+            <div style="display:flex;align-items:center;gap:12px;flex:1;">
+              <div class="kc-icon" style="background:var(--teal-light);color:var(--teal);"><i class="bi bi-database-fill"></i></div>
+              <div>
+                <div class="kc-title">Sistem Informasi</div>
+                <div class="kc-sub">S1 · Kurikulum 2022 · Akreditasi <strong style="color:#f59e0b;">Unggul</strong></div>
+              </div>
+            </div>
+            <span class="badge-pill bp-teal">Aktif</span>
+          </div>
+          <div style="font-size:.74rem;color:var(--text-muted);line-height:1.5;margin-bottom:4px;">Fokus pada perancangan dan pengelolaan sistem informasi bisnis, analitik data, dan transformasi digital.</div>
+          <div class="kc-stats">
+            <div class="kcs-item"><span class="kcs-num" style="color:var(--teal);">144</span><span class="kcs-lbl">SKS Total</span></div>
+            <div class="kcs-item"><span class="kcs-num" style="color:var(--teal);">58</span><span class="kcs-lbl">Mata Kuliah</span></div>
+            <div class="kcs-item"><span class="kcs-num" style="color:var(--accent);">8</span><span class="kcs-lbl">Semester</span></div>
+          </div>
+          <div class="kc-footer">
+            <div style="font-size:.72rem;color:var(--text-muted);">Kaprodi: <strong>Dr. Rina W., M.T</strong></div>
+            <div style="display:flex;gap:6px;">
+              <button class="btn-icon bi-detail" title="Detail"><i class="bi bi-eye"></i></button>
+              <button class="btn-icon bi-edit" title="Edit" onclick="openModal('modalKurikulum')"><i class="bi bi-pencil"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-4" data-aos="fade-up" data-aos-delay="160" data-aos-duration="500">
+        <div class="kurikulum-card kc-mb">
+          <div class="kc-header">
+            <div style="display:flex;align-items:center;gap:12px;flex:1;">
+              <div class="kc-icon" style="background:var(--accent-light);color:#b45309;"><i class="bi bi-briefcase-fill"></i></div>
+              <div>
+                <div class="kc-title">Manajemen Bisnis</div>
+                <div class="kc-sub">S1 · Kurikulum 2023 · Akreditasi <strong style="color:#16a34a;">A</strong></div>
+              </div>
+            </div>
+            <span class="badge-pill bp-amber">Aktif</span>
+          </div>
+          <div style="font-size:.74rem;color:var(--text-muted);line-height:1.5;margin-bottom:4px;">Mengembangkan kompetensi manajemen strategis, kewirausahaan, pemasaran, dan keuangan bisnis modern.</div>
+          <div class="kc-stats">
+            <div class="kcs-item"><span class="kcs-num" style="color:#b45309;">144</span><span class="kcs-lbl">SKS Total</span></div>
+            <div class="kcs-item"><span class="kcs-num" style="color:#b45309;">55</span><span class="kcs-lbl">Mata Kuliah</span></div>
+            <div class="kcs-item"><span class="kcs-num" style="color:var(--accent);">8</span><span class="kcs-lbl">Semester</span></div>
+          </div>
+          <div class="kc-footer">
+            <div style="font-size:.72rem;color:var(--text-muted);">Kaprodi: <strong>Prof. Hendra K., Ph.D</strong></div>
+            <div style="display:flex;gap:6px;">
+              <button class="btn-icon bi-detail" title="Detail"><i class="bi bi-eye"></i></button>
+              <button class="btn-icon bi-edit" title="Edit" onclick="openModal('modalKurikulum')"><i class="bi bi-pencil"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-4" data-aos="fade-up" data-aos-delay="240" data-aos-duration="500">
+        <div class="kurikulum-card kc-hk">
+          <div class="kc-header">
+            <div style="display:flex;align-items:center;gap:12px;flex:1;">
+              <div class="kc-icon" style="background:var(--purple-light);color:var(--purple);"><i class="bi bi-bank2"></i></div>
+              <div>
+                <div class="kc-title">Ilmu Hukum</div>
+                <div class="kc-sub">S1 · Kurikulum 2021 · Akreditasi <strong style="color:#16a34a;">A</strong></div>
+              </div>
+            </div>
+            <span class="badge-pill bp-purple">Revisi</span>
+          </div>
+          <div style="font-size:.74rem;color:var(--text-muted);line-height:1.5;margin-bottom:4px;">Pembentukan ahli hukum yang kompeten di bidang hukum perdata, pidana, tata negara, dan hukum internasional.</div>
+          <div class="kc-stats">
+            <div class="kcs-item"><span class="kcs-num" style="color:var(--purple);">152</span><span class="kcs-lbl">SKS Total</span></div>
+            <div class="kcs-item"><span class="kcs-num" style="color:var(--purple);">64</span><span class="kcs-lbl">Mata Kuliah</span></div>
+            <div class="kcs-item"><span class="kcs-num" style="color:var(--accent);">8</span><span class="kcs-lbl">Semester</span></div>
+          </div>
+          <div class="kc-footer">
+            <div style="font-size:.72rem;color:var(--text-muted);">Kaprodi: <strong>Dr. Sari D., S.H., M.H</strong></div>
+            <div style="display:flex;gap:6px;">
+              <button class="btn-icon bi-detail" title="Detail"><i class="bi bi-eye"></i></button>
+              <button class="btn-icon bi-edit" title="Edit" onclick="openModal('modalKurikulum')"><i class="bi bi-pencil"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-4" data-aos="fade-up" data-aos-delay="320" data-aos-duration="500">
+        <div class="kurikulum-card kc-kd">
+          <div class="kc-header">
+            <div style="display:flex;align-items:center;gap:12px;flex:1;">
+              <div class="kc-icon" style="background:var(--rose-light);color:var(--rose);"><i class="bi bi-heart-pulse-fill"></i></div>
+              <div>
+                <div class="kc-title">Kedokteran Gigi</div>
+                <div class="kc-sub">S1 · Kurikulum 2022 · Akreditasi <strong style="color:#f59e0b;">B</strong></div>
+              </div>
+            </div>
+            <span class="badge-pill bp-rose">Aktif</span>
+          </div>
+          <div style="font-size:.74rem;color:var(--text-muted);line-height:1.5;margin-bottom:4px;">Mencetak dokter gigi yang kompeten dan beretika dalam pelayanan kesehatan gigi dan mulut di masyarakat.</div>
+          <div class="kc-stats">
+            <div class="kcs-item"><span class="kcs-num" style="color:var(--rose);">160</span><span class="kcs-lbl">SKS Total</span></div>
+            <div class="kcs-item"><span class="kcs-num" style="color:var(--rose);">72</span><span class="kcs-lbl">Mata Kuliah</span></div>
+            <div class="kcs-item"><span class="kcs-num" style="color:var(--accent);">10</span><span class="kcs-lbl">Semester</span></div>
+          </div>
+          <div class="kc-footer">
+            <div style="font-size:.72rem;color:var(--text-muted);">Kaprodi: <strong>Prof. Agus M., Ph.D</strong></div>
+            <div style="display:flex;gap:6px;">
+              <button class="btn-icon bi-detail" title="Detail"><i class="bi bi-eye"></i></button>
+              <button class="btn-icon bi-edit" title="Edit" onclick="openModal('modalKurikulum')"><i class="bi bi-pencil"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-4" data-aos="fade-up" data-aos-delay="400" data-aos-duration="500">
+        <div class="kurikulum-card kc-te">
+          <div class="kc-header">
+            <div style="display:flex;align-items:center;gap:12px;flex:1;">
+              <div class="kc-icon" style="background:var(--green-light);color:var(--green);"><i class="bi bi-lightning-charge-fill"></i></div>
+              <div>
+                <div class="kc-title">Teknik Elektro</div>
+                <div class="kc-sub">S1 · Kurikulum 2023 · Akreditasi <strong style="color:#16a34a;">A</strong></div>
+              </div>
+            </div>
+            <span class="badge-pill bp-green">Aktif</span>
+          </div>
+          <div style="font-size:.74rem;color:var(--text-muted);line-height:1.5;margin-bottom:4px;">Menghasilkan insinyur elektro yang ahli dalam sistem tenaga, elektronika, telekomunikasi, dan otomasi industri.</div>
+          <div class="kc-stats">
+            <div class="kcs-item"><span class="kcs-num" style="color:var(--green);">144</span><span class="kcs-lbl">SKS Total</span></div>
+            <div class="kcs-item"><span class="kcs-num" style="color:var(--green);">60</span><span class="kcs-lbl">Mata Kuliah</span></div>
+            <div class="kcs-item"><span class="kcs-num" style="color:var(--accent);">8</span><span class="kcs-lbl">Semester</span></div>
+          </div>
+          <div class="kc-footer">
+            <div style="font-size:.72rem;color:var(--text-muted);">Kaprodi: <strong>Ir. Surya P., M.T</strong></div>
+            <div style="display:flex;gap:6px;">
+              <button class="btn-icon bi-detail" title="Detail"><i class="bi bi-eye"></i></button>
+              <button class="btn-icon bi-edit" title="Edit" onclick="openModal('modalKurikulum')"><i class="bi bi-pencil"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /row -->
+  </div>
+
+  <!-- =============================================
+       TAB 2 — MATA KULIAH
+  ============================================= -->
+  <div class="tab-panel" id="tabMataKuliah">
+    <div class="card-custom" data-aos="fade-up" data-aos-duration="500">
+      <div class="filter-bar">
+        <div class="fi-wrap"><i class="bi bi-search fi-icon"></i><input class="fi" type="text" placeholder="Cari kode/nama mata kuliah..." style="width:100%;" oninput="filterMK(this.value)"></div>
+        <select class="fsel" id="filterProdi"><option value="">Semua Prodi</option><option>Teknik Informatika</option><option>Sistem Informasi</option><option>Manajemen Bisnis</option><option>Ilmu Hukum</option></select>
+        <select class="fsel"><option>Semua Semester</option><option>Semester 1</option><option>Semester 2</option><option>Semester 3</option><option>Semester 4</option><option>Semester 5</option><option>Semester 6</option><option>Semester 7</option><option>Semester 8</option></select>
+        <select class="fsel"><option>Semua Jenis</option><option>Wajib</option><option>Pilihan</option><option>Praktikum</option></select>
+        <button class="btn-add" onclick="openModal('modalMK')"><i class="bi bi-journal-plus"></i> Tambah MK</button>
+        <button class="btn-outline"><i class="bi bi-download"></i> Export</button>
+      </div>
+      <div class="tbl-wrap" style="padding:0 20px 0;">
+        <table class="data-table" id="mkTable">
+          <thead>
+            <tr>
+              <th>Kode MK</th>
+              <th>Nama Mata Kuliah</th>
+              <th>Prodi</th>
+              <th>SKS</th>
+              <th>Semester</th>
+              <th>Jenis</th>
+              <th>Prasyarat</th>
+              <th>Dosen</th>
+              <th>Status</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="mkTableBody"></tbody>
+        </table>
+      </div>
+      <div class="pagi">
+        <div class="pagi-info">Menampilkan <strong>1–12</strong> dari <strong>246</strong> mata kuliah</div>
+        <div class="pagi-btns">
+          <button class="pagi-btn">‹</button>
+          <button class="pagi-btn active">1</button>
+          <button class="pagi-btn">2</button>
+          <button class="pagi-btn">3</button>
+          <button class="pagi-btn">›</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =============================================
+       TAB 3 — JADWAL KULIAH
+  ============================================= -->
+  <div class="tab-panel" id="tabJadwal">
+    <div class="row g-3">
+      <!-- Filter + Jadwal grid -->
+      <div class="col-12 col-lg-9">
+        <div class="card-custom" data-aos="fade-right" data-aos-duration="500">
+          <div class="filter-bar" style="padding-bottom:16px;">
+            <select class="fsel"><option>Semua Prodi</option><option selected>Teknik Informatika</option><option>Sistem Informasi</option></select>
+            <select class="fsel"><option>Semester 5</option><option>Semester 3</option><option>Semester 1</option></select>
+            <select class="fsel"><option>Kelas A</option><option>Kelas B</option><option>Kelas C</option></select>
+            <button class="btn-add" onclick="openModal('modalJadwal')"><i class="bi bi-plus-lg"></i> Tambah Jadwal</button>
+            <button class="btn-outline"><i class="bi bi-printer"></i> Cetak</button>
+          </div>
+
+          <!-- Jadwal header info -->
+          <div style="padding:0 20px 14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <div>
+              <div style="font-size:.92rem;font-weight:800;color:var(--text-dark);">Jadwal Kuliah — Teknik Informatika · Kelas A · Semester 5</div>
+              <div style="font-size:.72rem;color:var(--text-muted);">Semester Gasal 2025/2026 · 16 pertemuan per mata kuliah</div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <span style="font-size:.7rem;font-weight:600;display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:3px;background:#1a56db;display:inline-block;"></span> Teori</span>
+              <span style="font-size:.7rem;font-weight:600;display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:3px;background:#0d9488;display:inline-block;"></span> Praktikum</span>
+              <span style="font-size:.7rem;font-weight:600;display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:3px;background:#7c3aed;display:inline-block;"></span> Studio</span>
+            </div>
+          </div>
+
+          <div class="jadwal-mobile-note"><i class="bi bi-info-circle me-1"></i>Jadwal grid tersedia di layar yang lebih besar. Silakan gunakan tablet atau desktop.</div>
+
+          <div style="padding:0 20px 20px;overflow-x:auto;">
+            <div class="jadwal-grid" id="jadwalGrid">
+              <!-- Injected by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Side: Legend & Dosen -->
+      <div class="col-12 col-lg-3" data-aos="fade-left" data-aos-delay="100" data-aos-duration="500">
+
+        <!-- Ringkasan Beban -->
+        <div class="card-custom mb-3">
+          <div style="padding:16px 18px 0;font-size:.88rem;font-weight:800;color:var(--text-dark);margin-bottom:12px;"><i class="bi bi-bar-chart-fill text-primary me-2"></i>Beban SKS Kelas A</div>
+          <div style="padding:0 18px 16px;">
+            <div style="margin-bottom:10px;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:.76rem;font-weight:600;">Algoritma & Pemrograman</span><span style="font-size:.72rem;font-weight:700;color:var(--primary);">3 SKS</span></div>
+              <div class="prog-bar-bg"><div class="prog-bar-fill" style="width:75%;background:linear-gradient(90deg,#1a56db,#4f83f0);"></div></div>
+            </div>
+            <div style="margin-bottom:10px;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:.76rem;font-weight:600;">Basis Data Lanjut</span><span style="font-size:.72rem;font-weight:700;color:var(--teal);">3 SKS</span></div>
+              <div class="prog-bar-bg"><div class="prog-bar-fill" style="width:75%;background:linear-gradient(90deg,#0d9488,#2dd4bf);"></div></div>
+            </div>
+            <div style="margin-bottom:10px;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:.76rem;font-weight:600;">Rekayasa Perangkat Lunak</span><span style="font-size:.72rem;font-weight:700;color:var(--purple);">3 SKS</span></div>
+              <div class="prog-bar-bg"><div class="prog-bar-fill" style="width:75%;background:linear-gradient(90deg,#7c3aed,#a78bfa);"></div></div>
+            </div>
+            <div style="margin-bottom:10px;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:.76rem;font-weight:600;">Jaringan Komputer</span><span style="font-size:.72rem;font-weight:700;color:var(--green);">2 SKS</span></div>
+              <div class="prog-bar-bg"><div class="prog-bar-fill" style="width:50%;background:linear-gradient(90deg,#16a34a,#4ade80);"></div></div>
+            </div>
+            <div style="margin-bottom:10px;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:.76rem;font-weight:600;">Metode Penelitian</span><span style="font-size:.72rem;font-weight:700;color:var(--accent);">2 SKS</span></div>
+              <div class="prog-bar-bg"><div class="prog-bar-fill" style="width:50%;background:linear-gradient(90deg,#f59e0b,#fbbf24);"></div></div>
+            </div>
+            <div style="margin-top:12px;padding:10px 12px;background:var(--primary-light);border-radius:10px;display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:.78rem;font-weight:700;color:var(--primary);">Total SKS Semester</span>
+              <span style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:800;color:var(--primary);">20 SKS</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dosen Mengajar -->
+        <div class="card-custom">
+          <div style="padding:16px 18px 0;font-size:.88rem;font-weight:800;color:var(--text-dark);margin-bottom:12px;"><i class="bi bi-person-badge-fill text-warning me-2"></i>Dosen Pengampu</div>
+          <div style="padding:0 18px 16px;display:flex;flex-direction:column;gap:8px;" id="dosenList"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- =============================================
+       TAB 4 — KALENDER AKADEMIK
+  ============================================= -->
+  <div class="tab-panel" id="tabKalender">
+    <div class="row g-3">
+
+      <!-- Calendar widget -->
+      <div class="col-12 col-lg-8" data-aos="fade-right" data-aos-duration="500">
+        <div class="card-custom">
+          <!-- Month nav -->
+          <div style="padding:18px 20px 14px;display:flex;align-items:center;justify-content:space-between;">
+            <div>
+              <div style="font-size:1rem;font-weight:800;color:var(--text-dark);" id="calMonthLabel">Juni 2026</div>
+              <div style="font-size:.72rem;color:var(--text-muted);">Semester Gasal 2025/2026</div>
+            </div>
+            <div style="display:flex;gap:6px;align-items:center;">
+              <button class="btn-icon bi-view" style="background:var(--primary-light);color:var(--primary);" onclick="changeMonth(-1)"><i class="bi bi-chevron-left"></i></button>
+              <button class="btn-add" style="padding:7px 14px;font-size:.75rem;" onclick="goToday()">Hari Ini</button>
+              <button class="btn-icon bi-view" style="background:var(--primary-light);color:var(--primary);" onclick="changeMonth(1)"><i class="bi bi-chevron-right"></i></button>
+            </div>
+          </div>
+          <!-- Legend -->
+          <div style="padding:0 20px 10px;display:flex;gap:12px;flex-wrap:wrap;">
+            <span style="font-size:.68rem;font-weight:600;display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;border-radius:2px;background:var(--primary);display:inline-block;"></span>Perkuliahan</span>
+            <span style="font-size:.68rem;font-weight:600;display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;border-radius:2px;background:var(--rose);display:inline-block;"></span>Ujian</span>
+            <span style="font-size:.68rem;font-weight:600;display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;border-radius:2px;background:var(--accent);display:inline-block;"></span>Libur</span>
+            <span style="font-size:.68rem;font-weight:600;display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;border-radius:2px;background:var(--green);display:inline-block;"></span>Kegiatan</span>
+          </div>
+          <div style="padding:0 20px 20px;">
+            <!-- Day headers -->
+            <div class="cal-grid mb-1">
+              <div class="cal-day-header">Min</div><div class="cal-day-header">Sen</div><div class="cal-day-header">Sel</div>
+              <div class="cal-day-header">Rab</div><div class="cal-day-header">Kam</div><div class="cal-day-header">Jum</div><div class="cal-day-header">Sab</div>
+            </div>
+            <div class="cal-grid" id="calGrid"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Events timeline -->
+      <div class="col-12 col-lg-4" data-aos="fade-left" data-aos-delay="100" data-aos-duration="500">
+
+        <!-- Upcoming events -->
+        <div class="card-custom mb-3">
+          <div style="padding:16px 18px 0;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <span style="font-size:.88rem;font-weight:800;color:var(--text-dark);"><i class="bi bi-calendar-event-fill text-primary me-2"></i>Agenda Mendatang</span>
+            <button class="btn-add" style="padding:6px 12px;font-size:.72rem;" onclick="openModal('modalEvent')"><i class="bi bi-plus-lg"></i> Tambah</button>
+          </div>
+          <div style="padding:0 18px 16px;" id="eventTimeline"></div>
+        </div>
+
+        <!-- Academic periods -->
+        <div class="card-custom">
+          <div style="padding:16px 18px 0;font-size:.88rem;font-weight:800;color:var(--text-dark);margin-bottom:12px;"><i class="bi bi-clock-history text-success me-2"></i>Periode Akademik</div>
+          <div style="padding:0 18px 16px;">
+            <div id="periodList"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main-content -->
+</div><!-- /main-wrapper -->
+
+<!-- ===== MODAL: KURIKULUM ===== -->
+<div class="modal fade modal-custom" id="modalKurikulum" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div><h5 class="modal-title">Tambah / Edit Kurikulum</h5><div style="font-size:.72rem;color:var(--text-muted);">Data program studi dan kurikulum aktif</div></div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-3">
+          <div class="col-md-6"><label class="form-label-c">Nama Program Studi</label><input class="form-ctrl" type="text" placeholder="cth: Teknik Informatika"></div>
+          <div class="col-md-6"><label class="form-label-c">Jenjang</label><select class="form-ctrl"><option>S1 (Sarjana)</option><option>S2 (Magister)</option><option>S3 (Doktor)</option><option>D3 (Diploma III)</option><option>D4 (Diploma IV)</option></select></div>
+          <div class="col-md-4"><label class="form-label-c">Tahun Kurikulum</label><input class="form-ctrl" type="number" placeholder="2024"></div>
+          <div class="col-md-4"><label class="form-label-c">Total SKS</label><input class="form-ctrl" type="number" placeholder="144"></div>
+          <div class="col-md-4"><label class="form-label-c">Lama Studi (Semester)</label><input class="form-ctrl" type="number" placeholder="8"></div>
+          <div class="col-md-6"><label class="form-label-c">Fakultas</label><select class="form-ctrl"><option>Teknik & Teknologi</option><option>Ekonomi & Bisnis</option><option>Hukum</option><option>Kedokteran</option></select></div>
+          <div class="col-md-6"><label class="form-label-c">Status Akreditasi</label><select class="form-ctrl"><option>Unggul</option><option>A</option><option>B</option><option>C</option><option>Dalam Proses</option></select></div>
+          <div class="col-md-6"><label class="form-label-c">Ketua Program Studi</label><input class="form-ctrl" type="text" placeholder="Nama dosen kaprodi"></div>
+          <div class="col-md-6"><label class="form-label-c">Status Kurikulum</label><select class="form-ctrl"><option>Aktif</option><option>Revisi</option><option>Tidak Aktif</option></select></div>
+          <div class="col-12"><label class="form-label-c">Deskripsi / Profil Lulusan</label><textarea class="form-ctrl" rows="3" placeholder="Deskripsi kurikulum dan profil lulusan..."></textarea></div>
+        </div>
+      </div>
+      <div class="modal-footer" style="justify-content:space-between;">
+        <button class="btn-outline" data-bs-dismiss="modal"><i class="bi bi-x-lg"></i> Batal</button>
+        <button class="btn-add" onclick="saveAndClose('modalKurikulum','Kurikulum berhasil disimpan')"><i class="bi bi-check-lg"></i> Simpan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: MATA KULIAH ===== -->
+<div class="modal fade modal-custom" id="modalMK" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div><h5 class="modal-title">Tambah / Edit Mata Kuliah</h5><div style="font-size:.72rem;color:var(--text-muted);">Data mata kuliah dalam kurikulum</div></div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-3">
+          <div class="col-md-4"><label class="form-label-c">Kode Mata Kuliah</label><input class="form-ctrl" type="text" placeholder="TI501" style="font-family:monospace;"></div>
+          <div class="col-md-8"><label class="form-label-c">Nama Mata Kuliah</label><input class="form-ctrl" type="text" placeholder="Algoritma & Pemrograman"></div>
+          <div class="col-md-4"><label class="form-label-c">Program Studi</label><select class="form-ctrl"><option>Teknik Informatika</option><option>Sistem Informasi</option><option>Manajemen Bisnis</option></select></div>
+          <div class="col-md-4"><label class="form-label-c">SKS Teori</label><input class="form-ctrl" type="number" placeholder="2"></div>
+          <div class="col-md-4"><label class="form-label-c">SKS Praktik</label><input class="form-ctrl" type="number" placeholder="1"></div>
+          <div class="col-md-4"><label class="form-label-c">Semester</label><select class="form-ctrl"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select></div>
+          <div class="col-md-4"><label class="form-label-c">Jenis</label><select class="form-ctrl"><option>Wajib</option><option>Pilihan</option><option>Praktikum</option></select></div>
+          <div class="col-md-4"><label class="form-label-c">Prasyarat</label><input class="form-ctrl" type="text" placeholder="Kode MK prasyarat (opsional)"></div>
+          <div class="col-12"><label class="form-label-c">Dosen Pengampu</label><input class="form-ctrl" type="text" placeholder="Nama dosen / NIDN"></div>
+          <div class="col-12"><label class="form-label-c">Deskripsi Mata Kuliah</label><textarea class="form-ctrl" rows="2" placeholder="Deskripsi singkat capaian pembelajaran mata kuliah..."></textarea></div>
+        </div>
+      </div>
+      <div class="modal-footer" style="justify-content:space-between;">
+        <button class="btn-outline" data-bs-dismiss="modal"><i class="bi bi-x-lg"></i> Batal</button>
+        <button class="btn-add" onclick="saveAndClose('modalMK','Mata kuliah berhasil disimpan')"><i class="bi bi-check-lg"></i> Simpan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: JADWAL ===== -->
+<div class="modal fade modal-custom" id="modalJadwal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div><h5 class="modal-title">Tambah Sesi Jadwal</h5><div style="font-size:.72rem;color:var(--text-muted);">Konfigurasikan jadwal perkuliahan</div></div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-3">
+          <div class="col-12"><label class="form-label-c">Mata Kuliah</label><select class="form-ctrl"><option>Algoritma & Pemrograman (TI501)</option><option>Basis Data Lanjut (TI502)</option><option>Rekayasa Perangkat Lunak (TI503)</option><option>Jaringan Komputer (TI504)</option></select></div>
+          <div class="col-md-6"><label class="form-label-c">Hari</label><select class="form-ctrl"><option>Senin</option><option>Selasa</option><option>Rabu</option><option>Kamis</option><option>Jumat</option></select></div>
+          <div class="col-md-6"><label class="form-label-c">Kelas</label><select class="form-ctrl"><option>A</option><option>B</option><option>C</option></select></div>
+          <div class="col-md-6"><label class="form-label-c">Jam Mulai</label><input class="form-ctrl" type="time" value="07:00"></div>
+          <div class="col-md-6"><label class="form-label-c">Jam Selesai</label><input class="form-ctrl" type="time" value="08:40"></div>
+          <div class="col-md-6"><label class="form-label-c">Ruangan</label><select class="form-ctrl"><option>R.101</option><option>R.204</option><option>R.304</option><option>Lab TI</option><option>Lab Jaringan</option></select></div>
+          <div class="col-md-6"><label class="form-label-c">Tipe</label><select class="form-ctrl"><option>Teori</option><option>Praktikum</option><option>Studio</option></select></div>
+          <div class="col-12"><label class="form-label-c">Dosen</label><input class="form-ctrl" type="text" placeholder="Cari nama dosen..."></div>
+        </div>
+      </div>
+      <div class="modal-footer" style="justify-content:space-between;">
+        <button class="btn-outline" data-bs-dismiss="modal"><i class="bi bi-x-lg"></i> Batal</button>
+        <button class="btn-add" onclick="saveAndClose('modalJadwal','Jadwal berhasil ditambahkan')"><i class="bi bi-check-lg"></i> Simpan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: EVENT KALENDER ===== -->
+<div class="modal fade modal-custom" id="modalEvent" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div><h5 class="modal-title">Tambah Event Kalender</h5><div style="font-size:.72rem;color:var(--text-muted);">Kalender akademik Semester Gasal 2025/2026</div></div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-3">
+          <div class="col-12"><label class="form-label-c">Nama Kegiatan</label><input class="form-ctrl" type="text" placeholder="cth: Ujian Tengah Semester"></div>
+          <div class="col-md-6"><label class="form-label-c">Tanggal Mulai</label><input class="form-ctrl" type="date"></div>
+          <div class="col-md-6"><label class="form-label-c">Tanggal Selesai</label><input class="form-ctrl" type="date"></div>
+          <div class="col-md-6"><label class="form-label-c">Kategori</label><select class="form-ctrl"><option>Perkuliahan</option><option>Ujian</option><option>Libur Nasional</option><option>Libur Kampus</option><option>Kegiatan Mahasiswa</option><option>Wisuda</option></select></div>
+          <div class="col-md-6"><label class="form-label-c">Berlaku Untuk</label><select class="form-ctrl"><option>Semua Prodi</option><option>Teknik Informatika</option><option>Sistem Informasi</option></select></div>
+          <div class="col-12"><label class="form-label-c">Keterangan</label><textarea class="form-ctrl" rows="2" placeholder="Informasi tambahan kegiatan..."></textarea></div>
+        </div>
+      </div>
+      <div class="modal-footer" style="justify-content:space-between;">
+        <button class="btn-outline" data-bs-dismiss="modal"><i class="bi bi-x-lg"></i> Batal</button>
+        <button class="btn-add" onclick="saveAndClose('modalEvent','Event berhasil ditambahkan')"><i class="bi bi-check-lg"></i> Simpan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="bi bi-chevron-up"></i></button>
+
+<!-- ===== SCRIPTS ===== -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script>
+AOS.init({once:true,offset:30,easing:'ease-out-cubic'});
+
+/* ── SIDEBAR ── */
+let isCollapsed=false;
+function toggleSidebar(){if(window.innerWidth<992)document.body.classList.toggle('sidebar-open');else{isCollapsed=!isCollapsed;document.body.classList.toggle('sidebar-collapsed',isCollapsed);}}
+function closeSidebar(){document.body.classList.remove('sidebar-open');}
+window.addEventListener('resize',()=>{if(window.innerWidth>=992)document.body.classList.remove('sidebar-open');});
+
+function toggleMenu(id,btn){const m=document.getElementById(id);m.classList.toggle('open');const chevId=id.replace('menu','chev');const ch=document.getElementById(chevId);if(ch)ch.style.transform=m.classList.contains('open')?'rotate(180deg)':'';}
+
+/* open on load */
+document.getElementById('chevAkademik').style.transform='rotate(180deg)';
+
+/* ── TABS ── */
+const breadcrumbs={'tabKurikulum':'SIAKAD / Akademik / Kurikulum','tabMataKuliah':'SIAKAD / Akademik / Mata Kuliah','tabJadwal':'SIAKAD / Akademik / Jadwal Kuliah','tabKalender':'SIAKAD / Akademik / Kalender Akademik'};
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.main-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  document.getElementById('breadcrumbTrail').textContent=breadcrumbs[id]||'SIAKAD / Akademik';
+  AOS.refresh();
+}
+function switchTabFromNav(id,link){
+  document.querySelectorAll('.nav-subitem').forEach(s=>s.classList.remove('active'));
+  link.classList.add('active');
+  const tabIdx={'tabKurikulum':0,'tabMataKuliah':1,'tabJadwal':2,'tabKalender':3};
+  const tabs=document.querySelectorAll('.main-tab');
+  tabs.forEach(t=>t.classList.remove('active'));
+  if(tabs[tabIdx[id]])tabs[tabIdx[id]].classList.add('active');
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById('breadcrumbTrail').textContent=breadcrumbs[id];
+  if(window.innerWidth<992)closeSidebar();
+}
+
+/* ── MODAL ── */
+function openModal(id){new bootstrap.Modal(document.getElementById(id)).show();}
+function saveAndClose(id,msg){bootstrap.Modal.getInstance(document.getElementById(id)).hide();showToast(msg,'success');}
+
+/* ── TOAST ── */
+function showToast(msg,type='success'){
+  const ex=document.getElementById('sToast');if(ex)ex.remove();
+  const t=document.createElement('div');t.id='sToast';
+  const bg=type==='success'?'var(--green)':'var(--rose)';
+  t.style.cssText=`position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:${bg};color:#fff;padding:11px 22px;border-radius:12px;font-size:.84rem;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;box-shadow:0 4px 20px rgba(0,0,0,.15);z-index:9999;display:flex;align-items:center;gap:8px;animation:tIn .3s ease;`;
+  t.innerHTML=`<i class="bi bi-check-circle-fill"></i>${msg}`;
+  document.body.appendChild(t);
+  const s=document.createElement('style');s.textContent='@keyframes tIn{from{opacity:0;transform:translateX(-50%) translateY(12px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}@keyframes tOut{to{opacity:0;transform:translateX(-50%) translateY(12px);}}';
+  document.head.appendChild(s);
+  setTimeout(()=>{t.style.animation='tOut .3s ease forwards';setTimeout(()=>t.remove(),300);},2800);
+}
+
+/* ── MATA KULIAH DATA ── */
+const mkData=[
+  {kode:'TI501',nama:'Algoritma & Pemrograman',prodi:'Teknik Informatika',sks:3,sem:5,jenis:'Wajib',prasyarat:'TI302',dosen:'Dr. Budi S.',status:'Aktif'},
+  {kode:'TI502',nama:'Basis Data Lanjut',prodi:'Teknik Informatika',sks:3,sem:5,jenis:'Wajib',prasyarat:'TI301',dosen:'Dr. Rina W.',status:'Aktif'},
+  {kode:'TI503',nama:'Rekayasa Perangkat Lunak',prodi:'Teknik Informatika',sks:3,sem:5,jenis:'Wajib',prasyarat:'-',dosen:'Drs. Hendra',status:'Aktif'},
+  {kode:'TI504',nama:'Jaringan Komputer',prodi:'Teknik Informatika',sks:2,sem:5,jenis:'Wajib',prasyarat:'-',dosen:'Ir. Surya P.',status:'Aktif'},
+  {kode:'TI505',nama:'Metode Penelitian',prodi:'Teknik Informatika',sks:2,sem:5,jenis:'Wajib',prasyarat:'-',dosen:'Prof. Agus M.',status:'Aktif'},
+  {kode:'TI506',nama:'Keamanan Siber',prodi:'Teknik Informatika',sks:3,sem:5,jenis:'Pilihan',prasyarat:'TI504',dosen:'Dr. Andi K.',status:'Aktif'},
+  {kode:'SI401',nama:'Analisis & Desain Sistem',prodi:'Sistem Informasi',sks:3,sem:4,jenis:'Wajib',prasyarat:'-',dosen:'Dr. Maya S.',status:'Aktif'},
+  {kode:'SI402',nama:'Manajemen Proyek SI',prodi:'Sistem Informasi',sks:2,sem:4,jenis:'Wajib',prasyarat:'SI301',dosen:'M. Rizal, M.Kom',status:'Aktif'},
+  {kode:'MB301',nama:'Manajemen Strategis',prodi:'Manajemen Bisnis',sks:3,sem:3,jenis:'Wajib',prasyarat:'-',dosen:'Prof. Hendra K.',status:'Aktif'},
+  {kode:'MB302',nama:'Kewirausahaan Digital',prodi:'Manajemen Bisnis',sks:2,sem:3,jenis:'Pilihan',prasyarat:'-',dosen:'Dr. Dewi A.',status:'Aktif'},
+  {kode:'TI507',nama:'Machine Learning',prodi:'Teknik Informatika',sks:3,sem:7,jenis:'Pilihan',prasyarat:'TI601',dosen:'Dr. Fajar N.',status:'Nonaktif'},
+  {kode:'TI508',nama:'Pengembangan Aplikasi Mobile',prodi:'Teknik Informatika',sks:3,sem:6,jenis:'Pilihan',prasyarat:'TI501',dosen:'M. Saleh, M.T',status:'Aktif'},
+];
+
+const jenisStyle={Wajib:'bp-blue',Pilihan:'bp-teal',Praktikum:'bp-purple'};
+const statusStyle={Aktif:'bp-green',Nonaktif:'bp-rose'};
+
+function renderMK(list){
+  const tbody=document.getElementById('mkTableBody');
+  tbody.innerHTML='';
+  list.forEach(m=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td><span style="font-family:monospace;font-size:.8rem;font-weight:700;color:var(--primary);">${m.kode}</span></td>
+      <td><div style="font-weight:700;font-size:.82rem;color:var(--text-dark);">${m.nama}</div></td>
+      <td><span style="font-size:.72rem;color:var(--text-muted);">${m.prodi}</span></td>
+      <td><span style="font-weight:800;color:var(--primary);font-family:'Playfair Display',serif;font-size:.95rem;">${m.sks}</span></td>
+      <td style="text-align:center;"><span class="badge-pill bp-indigo">Sem ${m.sem}</span></td>
+      <td><span class="badge-pill ${jenisStyle[m.jenis]||'bp-gray'}">${m.jenis}</span></td>
+      <td style="font-size:.75rem;font-family:monospace;color:var(--text-muted);">${m.prasyarat}</td>
+      <td style="font-size:.75rem;color:var(--text-dark);">${m.dosen}</td>
+      <td><span class="badge-pill ${statusStyle[m.status]||'bp-gray'}">${m.status}</span></td>
+      <td>
+        <div style="display:flex;gap:4px;">
+          <button class="btn-icon bi-edit" title="Edit" onclick="openModal('modalMK')"><i class="bi bi-pencil"></i></button>
+          <button class="btn-icon bi-detail" title="Detail"><i class="bi bi-eye"></i></button>
+          <button class="btn-icon bi-del" title="Hapus"><i class="bi bi-trash"></i></button>
+        </div>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+}
+renderMK(mkData);
+
+function filterMK(q){
+  const r=mkData.filter(m=>m.nama.toLowerCase().includes(q.toLowerCase())||m.kode.toLowerCase().includes(q.toLowerCase())||m.prodi.toLowerCase().includes(q.toLowerCase()));
+  renderMK(r);
+}
+function filterKurikulum(q){/* filter cards by name - visual only */}
+
+/* ── JADWAL GRID ── */
+const times=['07:00–08:40','08:40–10:20','10:20–12:00','13:00–14:40','14:40–16:20','16:20–18:00'];
+const days=['Senin','Selasa','Rabu','Kamis','Jumat'];
+const jadwalData={
+  '07:00–08:40':{
+    Senin:{name:'Algoritma & Pemrog.',room:'R.304',dosen:'Dr. Budi S.',color:'#1a56db',type:'Teori'},
+    Selasa:{name:'Jaringan Komputer',room:'Lab Jaringan',dosen:'Ir. Surya P.',color:'#16a34a',type:'Praktikum'},
+    Rabu:{name:'Metode Penelitian',room:'R.101',dosen:'Prof. Agus M.',color:'#f59e0b',type:'Teori'},
+  },
+  '08:40–10:20':{
+    Senin:{name:'Basis Data Lanjut',room:'Lab TI',dosen:'Dr. Rina W.',color:'#0d9488',type:'Praktikum'},
+    Kamis:{name:'Rekayasa PL',room:'R.205',dosen:'Drs. Hendra',color:'#7c3aed',type:'Teori'},
+    Jumat:{name:'Algoritma & Pemrog.',room:'R.304',dosen:'Dr. Budi S.',color:'#1a56db',type:'Teori'},
+  },
+  '10:20–12:00':{
+    Selasa:{name:'Rekayasa PL',room:'R.205',dosen:'Drs. Hendra',color:'#7c3aed',type:'Teori'},
+    Rabu:{name:'Basis Data Lanjut',room:'Lab TI',dosen:'Dr. Rina W.',color:'#0d9488',type:'Praktikum'},
+    Kamis:{name:'Keamanan Siber',room:'Lab TI',dosen:'Dr. Andi K.',color:'#e11d48',type:'Praktikum'},
+  },
+  '13:00–14:40':{
+    Senin:{name:'Metode Penelitian',room:'R.101',dosen:'Prof. Agus M.',color:'#f59e0b',type:'Teori'},
+    Rabu:{name:'Keamanan Siber',room:'R.304',dosen:'Dr. Andi K.',color:'#e11d48',type:'Teori'},
+    Jumat:{name:'Jaringan Komputer',room:'R.302',dosen:'Ir. Surya P.',color:'#16a34a',type:'Teori'},
+  },
+  '14:40–16:20':{
+    Selasa:{name:'Machine Learning',room:'Lab AI',dosen:'Dr. Fajar N.',color:'#4338ca',type:'Praktikum'},
+    Kamis:{name:'Algoritma & Pemrog.',room:'Lab TI',dosen:'Dr. Budi S.',color:'#1a56db',type:'Praktikum'},
+  },
+  '16:20–18:00':{
+    Jumat:{name:'Rekayasa PL',room:'R.205',dosen:'Drs. Hendra',color:'#7c3aed',type:'Studio'},
+  }
+};
+
+const grid=document.getElementById('jadwalGrid');
+/* header row */
+const emptyHdr=document.createElement('div');emptyHdr.className='jg-header';emptyHdr.textContent='Waktu';grid.appendChild(emptyHdr);
+days.forEach(d=>{const h=document.createElement('div');h.className='jg-header';h.textContent=d;grid.appendChild(h);});
+/* data rows */
+times.forEach(t=>{
+  const tCell=document.createElement('div');tCell.className='jg-time';tCell.innerHTML=t.replace('–','<br>');grid.appendChild(tCell);
+  days.forEach(d=>{
+    const cell=document.createElement('div');
+    const subj=jadwalData[t]&&jadwalData[t][d];
+    if(subj){
+      cell.className='jg-cell';
+      cell.innerHTML=`<div class="jg-subject" style="background:${subj.color};" title="${subj.name} · ${subj.room} · ${subj.dosen}">
+        <div class="jg-name">${subj.name}</div>
+        <div class="jg-meta"><i class="bi bi-door-open"></i> ${subj.room}</div>
+        <span class="jg-sks">${subj.type}</span>
+      </div>`;
+    } else {
+      cell.className='jg-cell empty';
+    }
+    grid.appendChild(cell);
+  });
+});
+
+/* ── DOSEN LIST ── */
+const dosenData=[
+  {initials:'BS',name:'Dr. Budi S., M.Kom',mk:'Algoritma & Pemrog.',color:'linear-gradient(135deg,#1a56db,#4f83f0)',count:3},
+  {initials:'RW',name:'Dr. Rina W., M.T',mk:'Basis Data Lanjut',color:'linear-gradient(135deg,#0d9488,#2dd4bf)',count:2},
+  {initials:'DH',name:'Drs. Hendra, M.Cs',mk:'Rekayasa PL',color:'linear-gradient(135deg,#7c3aed,#a78bfa)',count:3},
+  {initials:'SP',name:'Ir. Surya P., M.T',mk:'Jaringan Komputer',color:'linear-gradient(135deg,#16a34a,#4ade80)',count:2},
+  {initials:'AM',name:'Prof. Agus M., Ph.D',mk:'Metode Penelitian',color:'linear-gradient(135deg,#f59e0b,#fbbf24)',count:2},
+];
+const dosenList=document.getElementById('dosenList');
+dosenData.forEach(d=>{
+  dosenList.innerHTML+=`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(26,86,219,.05);">
+    <div style="width:32px;height:32px;border-radius:9px;background:${d.color};display:flex;align-items:center;justify-content:center;color:#fff;font-size:.68rem;font-weight:700;flex-shrink:0;">${d.initials}</div>
+    <div style="flex:1;min-width:0;">
+      <div style="font-size:.78rem;font-weight:700;color:var(--text-dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${d.name}</div>
+      <div style="font-size:.67rem;color:var(--text-muted);">${d.mk} · ${d.count} sesi/minggu</div>
+    </div>
+  </div>`;
+});
+
+/* ── KALENDER ── */
+let currentYear=2026,currentMonth=5; /* June = 5 (0-indexed) */
+const calEvents={
+  '2026-06-05':[{title:'KRS Deadline',color:'#e11d48'}],
+  '2026-06-09':[{title:'Batas KRS',color:'#e11d48'}],
+  '2026-06-10':[{title:'Libur Nasional',color:'#f59e0b'}],
+  '2026-06-15':[{title:'Perkuliahan',color:'#1a56db'},{title:'Seminar IT',color:'#16a34a'}],
+  '2026-06-20':[{title:'Kuliah Umum',color:'#7c3aed'}],
+  '2026-06-23':[{title:'UTS Mulai',color:'#e11d48'}],
+  '2026-06-24':[{title:'UTS',color:'#e11d48'}],
+  '2026-06-25':[{title:'UTS',color:'#e11d48'}],
+  '2026-06-26':[{title:'UTS',color:'#e11d48'}],
+  '2026-06-27':[{title:'UTS',color:'#e11d48'}],
+  '2026-06-30':[{title:'UTS Selesai',color:'#e11d48'}],
+};
+
+const monthNames=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+
+function buildCalendar(year,month){
+  const grid=document.getElementById('calGrid');
+  grid.innerHTML='';
+  document.getElementById('calMonthLabel').textContent=`${monthNames[month]} ${year}`;
+  const first=new Date(year,month,1).getDay();
+  const lastDate=new Date(year,month+1,0).getDate();
+  const prevLast=new Date(year,month,0).getDate();
+  const today=new Date();
+  let dayCount=1,nextDay=1;
+  for(let i=0;i<42;i++){
+    const cell=document.createElement('div');
+    cell.className='cal-day';
+    let displayDay,isOther=false,dateKey='';
+    if(i<first){displayDay=prevLast-(first-1-i);isOther=true;dateKey=`${year}-${String(month).padStart(2,'0')}-${String(displayDay).padStart(2,'0')}`;}
+    else if(dayCount>lastDate){displayDay=nextDay++;isOther=true;const m=month+1>11?0:month+1;const y=month+1>11?year+1:year;dateKey=`${y}-${String(m+1).padStart(2,'0')}-${String(displayDay).padStart(2,'0')}`;}
+    else{displayDay=dayCount;dateKey=`${year}-${String(month+1).padStart(2,'0')}-${String(displayDay).padStart(2,'0')}`;dayCount++;}
+    if(isOther)cell.classList.add('other-month');
+    const isToday=!isOther&&displayDay===today.getDate()&&month===today.getMonth()&&year===today.getFullYear();
+    if(isToday)cell.classList.add('today');
+    const numEl=document.createElement('div');numEl.className='cal-num';numEl.textContent=displayDay;cell.appendChild(numEl);
+    const evs=calEvents[dateKey]||[];
+    if(evs.length){cell.classList.add('has-event');evs.slice(0,2).forEach(ev=>{const e=document.createElement('div');e.className='cal-event';e.style.background=ev.color+'22';e.style.color=ev.color;e.textContent=ev.title;cell.appendChild(e);});}
+    cell.style.cursor='pointer';
+    cell.addEventListener('click',()=>showToast(`${displayDay} ${monthNames[month]} ${year}`+( evs.length?`: ${evs[0].title}`:''),'success'));
+    grid.appendChild(cell);
+  }
+}
+
+function changeMonth(dir){
+  currentMonth+=dir;
+  if(currentMonth<0){currentMonth=11;currentYear--;}
+  if(currentMonth>11){currentMonth=0;currentYear++;}
+  buildCalendar(currentYear,currentMonth);
+}
+function goToday(){currentYear=2026;currentMonth=5;buildCalendar(currentYear,currentMonth);}
+buildCalendar(currentYear,currentMonth);
+
+/* ── EVENT TIMELINE ── */
+const events=[
+  {date:'05 Jun 2026',title:'Batas Pengisian KRS',desc:'Perpanjangan batas KRS hingga pukul 23:59',color:'var(--rose)',icon:'bi-journal-check'},
+  {date:'10 Jun 2026',title:'Libur Nasional',desc:'Hari Raya Idul Adha 1447 H',color:'var(--accent)',icon:'bi-star-fill'},
+  {date:'20 Jun 2026',title:'Kuliah Umum Nasional',desc:'Guest lecture bersama praktisi industri tech',color:'var(--teal)',icon:'bi-megaphone-fill'},
+  {date:'23–30 Jun',title:'Ujian Tengah Semester',desc:'UTS Semester Gasal 2025/2026 semua prodi',color:'var(--rose)',icon:'bi-clipboard2-check-fill'},
+  {date:'7 Jul 2026',title:'Input Nilai UTS',desc:'Batas akhir input nilai UTS oleh dosen',color:'var(--purple)',icon:'bi-pencil-fill'},
+];
+const tl=document.getElementById('eventTimeline');
+events.forEach((ev,i)=>{
+  tl.innerHTML+=`<div class="timeline-item">
+    <div class="tl-dot-wrap">
+      <div class="tl-dot" style="color:${ev.color};background:${ev.color};"></div>
+      ${i<events.length-1?'<div class="tl-line"></div>':''}
+    </div>
+    <div class="tl-content">
+      <div class="tl-date"><i class="bi ${ev.icon}" style="color:${ev.color};margin-right:4px;"></i>${ev.date}</div>
+      <div class="tl-title">${ev.title}</div>
+      <div class="tl-desc">${ev.desc}</div>
+    </div>
+  </div>`;
+});
+
+/* ── ACADEMIC PERIODS ── */
+const periods=[
+  {label:'Penerimaan Mahasiswa Baru',start:'1 Agt',end:'31 Agt 2025',pct:100,color:'var(--green)'},
+  {label:'Registrasi & Pengisian KRS',start:'1 Sep',end:'14 Sep 2025',pct:100,color:'var(--primary)'},
+  {label:'Perkuliahan Semester Gasal',start:'15 Sep 2025',end:'15 Jan 2026',pct:52,color:'var(--primary)'},
+  {label:'Ujian Tengah Semester',start:'23 Jun',end:'30 Jun 2026',pct:0,color:'var(--rose)'},
+  {label:'Ujian Akhir Semester',start:'13 Jan',end:'20 Jan 2026',pct:0,color:'var(--rose)'},
+  {label:'Input Nilai & Pengolahan',start:'21 Jan',end:'31 Jan 2026',pct:0,color:'var(--purple)'},
+];
+const pl=document.getElementById('periodList');
+periods.forEach(p=>{
+  pl.innerHTML+=`<div style="margin-bottom:10px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
+      <span style="font-size:.75rem;font-weight:600;color:var(--text-dark);">${p.label}</span>
+      <span style="font-size:.65rem;color:var(--text-muted);">${p.start}–${p.end}</span>
+    </div>
+    <div class="prog-bar-bg"><div class="prog-bar-fill" style="width:${p.pct}%;background:${p.color};"></div></div>
+  </div>`;
+});
+
+/* ── SCROLL TOP ── */
+window.addEventListener('scroll',()=>document.getElementById('scrollTop').classList.toggle('visible',window.scrollY>200));
+</script>
+</body>
+</html>

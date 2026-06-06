@@ -49,6 +49,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/sistem/activity-log/{activity}', [ActivityLogController::class, 'destroy'])->name('sistem.activity-log.destroy');
     Route::post('/sistem/activity-log/clear-all', [ActivityLogController::class, 'clearAll'])->name('sistem.activity-log.clear-all');
     Route::post('/sistem/activity-log/clear-old', [ActivityLogController::class, 'clearOld'])->name('sistem.activity-log.clear-old');
+
+    // Akademik
+    Route::get('/akademik', [\App\Http\Controllers\MainMenu\AkademikController::class, 'index'])->name('akademik.index');
 });
 
 require __DIR__.'/auth.php';

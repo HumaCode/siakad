@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./sistem/akademik.css";
 
 @theme {
   --font-sans: "Poppins", sans-serif;
