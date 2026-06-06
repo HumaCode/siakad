@@ -273,9 +273,42 @@ export default function ActivityLog({ logs, stats, logNames, events, filters }: 
                                 <tbody>
                                     {logs.data.length === 0 && (
                                         <tr>
-                                            <td colSpan={8} className="text-center py-16 text-slate-400">
-                                                <i className="bi bi-journal-x text-4xl block mb-3 opacity-30" />
-                                                <span className="text-sm font-medium">Belum ada aktivitas yang tercatat</span>
+                                            <td colSpan={8} className="text-center py-14">
+                                                <div className="flex flex-col items-center justify-center max-w-sm mx-auto p-6 rounded-2xl bg-slate-50/50 dark:bg-slate-900/30 border border-slate-100/80 dark:border-slate-800/80 backdrop-blur-sm shadow-sm">
+                                                    {/* Animated Floating Icon */}
+                                                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500/10 to-indigo-500/10 dark:from-blue-500/5 dark:to-indigo-500/5 flex items-center justify-center text-blue-500 dark:text-blue-400 mb-4 shadow-sm relative overflow-hidden group">
+                                                        <div className="absolute inset-0 bg-blue-500/5 dark:bg-blue-400/5 animate-ping opacity-75 rounded-2xl" />
+                                                        <i className="bi bi-journal-x text-3xl relative z-10 transition-transform duration-300 group-hover:scale-110" />
+                                                    </div>
+                                                    
+                                                    {/* Title & Subtitle */}
+                                                    <h6 className="text-sm font-bold text-slate-700 dark:text-slate-300 mb-1 font-poppins">
+                                                        Belum Ada Aktivitas Tercatat
+                                                    </h6>
+                                                    <p className="text-[11px] text-slate-400 dark:text-slate-500 text-center leading-relaxed mb-4 font-poppins">
+                                                        {search || logName || event || dateFrom || dateTo
+                                                            ? "Tidak ditemukan log aktivitas yang sesuai dengan filter pencarian Anda saat ini."
+                                                            : "Sistem saat ini belum mencatat adanya aktivitas atau perubahan data."}
+                                                    </p>
+
+                                                    {/* Reset Button */}
+                                                    {(search || logName || event || dateFrom || dateTo) && (
+                                                        <button
+                                                            onClick={() => {
+                                                                setSearch('');
+                                                                setLogName('');
+                                                                setEvent('');
+                                                                setDateFrom('');
+                                                                setDateTo('');
+                                                                router.get('/sistem/activity-log');
+                                                            }}
+                                                            className="px-4 py-2 bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-bold text-blue-600 dark:text-blue-400 shadow-sm transition-all duration-200 flex items-center gap-1.5"
+                                                        >
+                                                            <i className="bi bi-arrow-counterclockwise" />
+                                                            Reset Filter
+                                                        </button>
+                                                    )}
+                                                </div>
                                             </td>
                                         </tr>
                                     )}
