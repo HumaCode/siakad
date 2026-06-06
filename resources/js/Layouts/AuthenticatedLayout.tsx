@@ -51,6 +51,8 @@ export default function Authenticated({
     const [openSubmenus, setOpenSubmenus] = useState<Record<number, boolean>>({});
     const [isDark, setIsDark] = useState(false);
     const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+    const [showLogoutModal, setShowLogoutModal] = useState(false);
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     useEffect(() => {
         setIsDark(document.documentElement.classList.contains('dark'));
@@ -83,9 +85,20 @@ export default function Authenticated({
         }));
     };
 
-    const handleLogout = (e: React.FormEvent) => {
+    const triggerLogoutModal = (e: React.MouseEvent) => {
         e.preventDefault();
-        router.post(route('logout'));
+        setShowProfileDropdown(false);
+        setShowLogoutModal(true);
+    };
+
+    const confirmLogout = () => {
+        setIsLoggingOut(true);
+        router.post(route('logout'), {}, {
+            onFinish: () => {
+                setIsLoggingOut(false);
+                setShowLogoutModal(false);
+            }
+        });
     };
 
     const userRole = user?.roles && user.roles.length > 0
@@ -299,14 +312,13 @@ export default function Authenticated({
                                         <i className="bi bi-person-fill" /> Edit Profil
                                     </Link>
                                     <div className="border-t border-slate-100 dark:border-slate-800/80 my-1" />
-                                    <form onSubmit={handleLogout}>
-                                        <button
-                                            type="submit"
-                                            className="w-full text-left flex items-center gap-2 px-4 py-2.5 text-xs text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-all font-semibold cursor-pointer"
-                                        >
-                                            <i className="bi bi-box-arrow-right" /> Keluar Aplikasi
-                                        </button>
-                                    </form>
+                                    <button
+                                        type="button"
+                                        className="w-full text-left flex items-center gap-2 px-4 py-2.5 text-xs text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-all font-semibold cursor-pointer border-none bg-transparent outline-none"
+                                        onClick={triggerLogoutModal}
+                                    >
+                                        <i className="bi bi-box-arrow-right" /> Keluar Aplikasi
+                                    </button>
                                 </div>
                             )}
                         </div>
@@ -320,6 +332,54 @@ export default function Authenticated({
                     {children}
                 </div>
             </main>
+
+            {/* Modern Interactive Logout Confirmation Modal */}
+            {showLogoutModal && (
+                <div className="logout-modal-backdrop">
+                    <div className="logout-modal-content">
+                        {/* Animated Icon Container */}
+                        <div className="logout-icon-wrapper">
+                            <div className="logout-icon-pulse"></div>
+                            <div className="logout-icon-box">
+                                <i className="bi bi-box-arrow-right text-rose-600 dark:text-rose-400" />
+                            </div>
+                        </div>
+
+                        {/* Modal Header & Text */}
+                        <h4 className="logout-modal-title">Konfirmasi Keluar</h4>
+                        <p className="logout-modal-desc">
+                            Apakah Anda yakin ingin mengakhiri sesi dan keluar dari sistem SIAKAD?
+                        </p>
+
+                        {/* Actions Row */}
+                        <div className="logout-modal-actions">
+                            <button
+                                type="button"
+                                className="btn-logout-cancel"
+                                onClick={() => setShowLogoutModal(false)}
+                                disabled={isLoggingOut}
+                            >
+                                Batal
+                            </button>
+                            <button
+                                type="button"
+                                className="btn-logout-confirm"
+                                onClick={confirmLogout}
+                                disabled={isLoggingOut}
+                            >
+                                {isLoggingOut ? (
+                                    <>
+                                        <span className="spinner-border" />
+                                        Keluar...
+                                    </>
+                                ) : (
+                                    "Ya, Keluar"
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
