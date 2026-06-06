@@ -5,16 +5,19 @@ import '../../../css/sistem/roles.css';
 import RoleFormModal from './Partials/RoleFormModal';
 import AssignUserModal from './Partials/AssignUserModal';
 import DeleteRoleModal from './Partials/DeleteRoleModal';
+import RolesTab from './Partials/RolesTab';
+import MatrixTab from './Partials/MatrixTab';
+import UsersTab from './Partials/UsersTab';
 
 // Types definition
-interface Permission {
+export interface Permission {
     id: number;
     name: string;
     guard_name: string;
     is_active: boolean;
 }
 
-interface Role {
+export interface Role {
     id: number;
     name: string;
     slug: string;
@@ -28,7 +31,7 @@ interface Role {
     guard_name?: string;
 }
 
-interface User {
+export interface User {
     id: string;
     name: string;
     email: string;
@@ -43,7 +46,7 @@ interface User {
     } | null;
 }
 
-interface PaginatedUsers {
+export interface PaginatedUsers {
     data: User[];
     current_page: number;
     last_page: number;
@@ -520,315 +523,39 @@ export default function RolesIndex({ roles, permissions, users, filters, stats }
 
                     {/* TAB 1: ROLES CARDS */}
                     {activeTab === 'roles' && (
-                        <div className="tab-panel active">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {roles.map(role => {
-                                    const config = getRoleConfig(role.name);
-                                    return (
-                                        <div key={role.id} className={`role-card ${role.is_active ? config.class : 'rc-inactive'}`}>
-                                            {/* Status Badge */}
-                                            <div className="absolute top-4 right-4">
-                                                {role.is_active ? (
-                                                    <span className="inline-flex items-center gap-1 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800/50">
-                                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                                        Aktif
-                                                    </span>
-                                                ) : (
-                                                    <span className="inline-flex items-center gap-1 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-slate-200 dark:border-slate-700">
-                                                        <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
-                                                        Tidak Aktif
-                                                    </span>
-                                                )}
-                                            </div>
-
-                                            <div className="role-icon-bg">
-                                                <i className={`bi ${config.icon}`} />
-                                            </div>
-                                            <div className="role-card-name">{role.name.replace('_', ' ').toUpperCase()}</div>
-                                            <div className="role-card-slug">{role.slug || role.name}</div>
-                                            <div className="role-card-desc min-h-[50px]">
-                                                {role.description || 'Tidak ada deskripsi untuk role ini.'}
-                                            </div>
-                                            <div className="role-card-footer border-t border-slate-100 dark:border-slate-800 pt-3 mt-3">
-                                                <div className="role-user-count">
-                                                    {role.users_count} <span>pengguna</span>
-                                                </div>
-                                                <div className="role-actions">
-                                                    <button 
-                                                        className="btn-icon-sm view" 
-                                                        title="Lihat Pengguna"
-                                                        onClick={() => {
-                                                            setRoleVal(role.name);
-                                                            setActiveTab('users');
-                                                            runFilters(searchVal, role.name);
-                                                        }}
-                                                    >
-                                                        <i className="bi bi-eye" />
-                                                    </button>
-                                                    <button 
-                                                        className="btn-icon-sm edit" 
-                                                        title="Edit Role"
-                                                        onClick={() => openEditRole(role)}
-                                                    >
-                                                        <i className="bi bi-pencil" />
-                                                    </button>
-                                                    {role.name !== 'super_admin' && (
-                                                        <button 
-                                                            className="btn-icon-sm del" 
-                                                            title="Hapus Role"
-                                                            onClick={() => openDeleteRole(role)}
-                                                        >
-                                                            <i className="bi bi-trash" />
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-
-                                {/* Add new role card */}
-                                <div className="role-card flex flex-col items-center justify-center min-h-[220px] border-dashed border-2 border-blue-500/20 hover:border-blue-500/40 bg-white/20 dark:bg-slate-900/10 cursor-pointer transition-all duration-300" onClick={openAddRole}>
-                                    <div className="w-11 h-11 rounded-xl bg-blue-50 dark:bg-blue-950/40 flex items-center justify-center text-blue-600 dark:text-blue-400 text-lg mb-3">
-                                        <i className="bi bi-plus-lg" />
-                                    </div>
-                                    <div className="text-center">
-                                        <div className="text-sm font-bold text-blue-600 dark:text-blue-400">Tambah Role Baru</div>
-                                        <div className="text-xs text-slate-400 mt-1">Klik untuk membuat role kustom</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <RolesTab
+                            roles={roles}
+                            getRoleConfig={getRoleConfig}
+                            setRoleVal={setRoleVal}
+                            setActiveTab={setActiveTab}
+                            runFilters={runFilters}
+                            searchVal={searchVal}
+                            openEditRole={openEditRole}
+                            openDeleteRole={openDeleteRole}
+                            openAddRole={openAddRole}
+                        />
                     )}
 
                     {/* TAB 2: PERMISSION MATRIX */}
                     {activeTab === 'matrix' && (
-                        <div className="tab-panel active">
-                            <div className="card-custom">
-                                <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center flex-wrap gap-4">
-                                    <div>
-                                        <h5 className="text-base font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                                            <i className="bi bi-grid-3x3-gap-fill text-blue-600" /> Matriks Hak Akses
-                                        </h5>
-                                        <p className="text-xs text-slate-400 mt-1">Status permission aktual berdasarkan data peran pada database</p>
-                                    </div>
-                                    <div className="flex gap-4">
-                                        <span className="inline-flex items-center gap-1.5 text-xs text-slate-400">
-                                            <span className="chk yes w-4 h-4 text-[9px]"><i className="bi bi-check-lg" /></span> Diizinkan
-                                        </span>
-                                        <span className="inline-flex items-center gap-1.5 text-xs text-slate-400">
-                                            <span className="chk no w-4 h-4 text-[9px]"><i className="bi bi-x-lg" /></span> Tidak
-                                        </span>
-                                    </div>
-                                </div>
-                                <div className="p-5">
-                                    <div className="perm-table-wrap">
-                                        <table className="perm-table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Permission</th>
-                                                    {roles.map(role => (
-                                                        <th key={role.id} className="role-header text-center">
-                                                            <span className="block text-xs font-bold text-slate-700 dark:text-slate-200">
-                                                                {role.name.replace('_', ' ').toUpperCase()}
-                                                            </span>
-                                                        </th>
-                                                    ))}
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {Object.entries(groupedPermissions).map(([sectionName, perms]) => {
-                                                    if (perms.length === 0) return null;
-                                                    return (
-                                                        <>
-                                                            <tr key={sectionName} className="section-row">
-                                                                <td colSpan={roles.length + 1}>
-                                                                    <i className="bi bi-folder-fill me-2" /> {sectionName}
-                                                                </td>
-                                                            </tr>
-                                                            {perms.map(perm => (
-                                                                <tr key={perm.id}>
-                                                                    <td>
-                                                                        <div className="perm-label">
-                                                                            <span className="perm-icon"><i className="bi bi-key" /></span>
-                                                                            <div>
-                                                                                <div className="perm-name font-semibold">{perm.name}</div>
-                                                                                <div className="perm-key">{perm.guard_name}</div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </td>
-                                                                    {roles.map(role => {
-                                                                        const hasPerm = Array.isArray(role.permissions) && role.permissions.some(rp => Number(rp.id) === Number(perm.id));
-                                                                        return (
-                                                                            <td key={role.id} className="perm-check text-center">
-                                                                                <span className={`chk ${hasPerm ? 'yes' : 'no'}`}>
-                                                                                    <i className={`bi ${hasPerm ? 'bi-check-lg' : 'bi-x-lg'}`} />
-                                                                                </span>
-                                                                            </td>
-                                                                        );
-                                                                    })}
-                                                                </tr>
-                                                            ))}
-                                                        </>
-                                                    );
-                                                })}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <MatrixTab
+                            roles={roles}
+                            groupedPermissions={groupedPermissions}
+                        />
                     )}
 
                     {/* TAB 3: USER & ROLES */}
                     {activeTab === 'users' && (
-                        <div className="tab-panel active">
-                            <div className="card-custom">
-                                <div className="p-5 border-b border-slate-100 dark:border-slate-800">
-                                    <h5 className="text-base font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2 mb-4">
-                                        <i className="bi bi-people-fill text-blue-600" /> Pengguna & Role
-                                    </h5>
-                                    
-                                    {/* Filters Bar */}
-                                    <div className="filter-bar">
-                                        <div className="relative flex-1 min-w-[200px]">
-                                            <i className="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm" />
-                                            <input 
-                                                type="text" 
-                                                className="filter-input w-full pl-9" 
-                                                placeholder="Cari nama, email, identitas..." 
-                                                value={searchVal}
-                                                onChange={handleSearchChange}
-                                            />
-                                        </div>
-                                        <select 
-                                            className="filter-select"
-                                            value={roleVal}
-                                            onChange={handleRoleFilterChange}
-                                        >
-                                            <option value="">Semua Role</option>
-                                            {roles.map(role => (
-                                                <option key={role.id} value={role.name}>
-                                                    {role.name.replace('_', ' ').toUpperCase()}
-                                                </option>
-                                            ))}
-                                        </select>
-                                        <button className="btn-primary-sm" onClick={openAssignUser}>
-                                            <i className="bi bi-person-plus" /> Assign User
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div className="p-5 overflow-x-auto">
-                                    <table className="user-table">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Pengguna</th>
-                                                <th>Identitas</th>
-                                                <th>Role</th>
-                                                <th>Status</th>
-                                                <th>Aksi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {users.data.map((u, i) => {
-                                                const initials = (u.name || '').split(' ').slice(0, 2).filter(Boolean).map(w => w[0] || '').join('').toUpperCase() || 'U';
-                                                const academicStatus = u.mahasiswa ? u.mahasiswa.status_akademik : (u.dosen ? 'aktif' : 'aktif');
-                                                
-                                                return (
-                                                    <tr key={u.id}>
-                                                        <td className="text-slate-400 font-semibold text-xs">{(users.current_page - 1) * users.per_page + i + 1}</td>
-                                                        <td>
-                                                            <div className="flex items-center gap-3">
-                                                                <div className="user-avatar bg-gradient-to-br from-blue-600 to-indigo-700">
-                                                                    {initials}
-                                                                </div>
-                                                                <div>
-                                                                    <div className="font-bold text-slate-800 dark:text-slate-100">{u.name || 'User'}</div>
-                                                                    <div className="text-xs text-slate-400">{u.email || ''}</div>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td className="font-mono text-xs text-slate-500">
-                                                            {u.mahasiswa ? `NIM ${u.mahasiswa.nim}` : (u.dosen ? `NIDN ${u.dosen.nidn}` : 'INTERNAL STAFF')}
-                                                        </td>
-                                                        <td>
-                                                            <div className="flex flex-wrap gap-1">
-                                                                {(u.roles || []).map(r => (
-                                                                    <span key={r.id} className="role-pill bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
-                                                                        {r.name ? r.name.replace('_', ' ').toUpperCase() : ''}
-                                                                    </span>
-                                                                ))}
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <span className={`inline-flex items-center text-xs font-semibold ${academicStatus === 'aktif' ? 'text-emerald-600' : 'text-rose-600'}`}>
-                                                                <span className={`status-dot ${academicStatus === 'aktif' ? 'bg-emerald-600' : 'bg-rose-600'}`} />
-                                                                {academicStatus === 'aktif' ? 'Aktif' : 'Nonaktif'}
-                                                            </span>
-                                                        </td>
-                                                        <td>
-                                                            <div className="flex gap-2">
-                                                                <button className="btn-icon-sm edit" title="Edit Role Pengguna" onClick={openAssignUser}>
-                                                                    <i className="bi bi-pencil" />
-                                                                </button>
-                                                                <button className="btn-icon-sm view" title="Lihat Profil">
-                                                                    <i className="bi bi-eye" />
-                                                                </button>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                );
-                                            })}
-                                            {users.data.length === 0 && (
-                                                <tr>
-                                                    <td colSpan={6} className="text-center py-8 text-slate-400">
-                                                        Tidak ada pengguna ditemukan dengan kriteria tersebut.
-                                                    </td>
-                                                </tr>
-                                            )}
-                                        </tbody>
-                                    </table>
-
-                                    {/* Pagination Links */}
-                                    {users.last_page > 1 && (
-                                        <div className="flex items-center justify-between mt-5 flex-wrap gap-4">
-                                            <div className="text-xs text-slate-400">
-                                                Menampilkan <strong>{users.from || 0}–{users.to || 0}</strong> dari <strong>{users.total}</strong> pengguna
-                                            </div>
-                                            <div className="flex gap-1">
-                                                {getFilteredLinks().map((link, idx) => {
-                                                    if (!link.url) {
-                                                        return (
-                                                            <span 
-                                                                key={idx} 
-                                                                className="px-3 py-1.5 border border-slate-100 dark:border-slate-800 rounded-lg text-xs font-semibold text-slate-300 pointer-events-none"
-                                                                dangerouslySetInnerHTML={{ __html: link.label }}
-                                                            />
-                                                        );
-                                                    }
-                                                    return (
-                                                        <Link
-                                                            key={idx}
-                                                            href={link.url}
-                                                            className={`px-3 py-1.5 border rounded-lg text-xs font-semibold transition-all ${
-                                                                link.active 
-                                                                    ? 'bg-blue-600 text-white border-blue-600 shadow-sm' 
-                                                                    : 'bg-white dark:bg-slate-800 text-slate-500 border-slate-100 dark:border-slate-700 hover:bg-slate-50'
-                                                            }`}
-                                                            preserveState
-                                                            preserveScroll
-                                                            dangerouslySetInnerHTML={{ __html: link.label }}
-                                                        />
-                                                    );
-                                                })}
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
+                        <UsersTab
+                            users={users}
+                            roles={roles}
+                            searchVal={searchVal}
+                            handleSearchChange={handleSearchChange}
+                            roleVal={roleVal}
+                            handleRoleFilterChange={handleRoleFilterChange}
+                            openAssignUser={openAssignUser}
+                            getFilteredLinks={getFilteredLinks}
+                        />
                     )}
                 </div>
             </div>
