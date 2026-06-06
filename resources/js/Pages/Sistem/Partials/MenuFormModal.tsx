@@ -4,6 +4,23 @@ import FormInput from '@/Components/FormInput';
 import FormSelect2 from '@/Components/FormSelect2';
 import FormSwitch from '@/Components/FormSwitch';
 
+const COMMON_ICONS = [
+    // Navigation & General Dashboard
+    'bi-speedometer2', 'bi-house', 'bi-menu-button-wide', 'bi-list-ul', 'bi-grid', 'bi-compass', 'bi-sliders',
+    // Academic / Student / Lecturer / Class
+    'bi-mortarboard', 'bi-book', 'bi-journal-text', 'bi-calendar3', 'bi-award', 'bi-check2-square', 'bi-pencil-square', 'bi-chat-dots',
+    // Settings, Security & System Management
+    'bi-gear', 'bi-wrench', 'bi-tools', 'bi-database', 'bi-shield-lock', 'bi-key', 'bi-shield-check', 'bi-lock', 'bi-unlock',
+    // Users & Roles
+    'bi-people', 'bi-person', 'bi-person-badge', 'bi-person-gear', 'bi-person-lock', 'bi-person-check', 'bi-person-x',
+    // Finance, Stats & Bills
+    'bi-cash-coin', 'bi-wallet2', 'bi-credit-card', 'bi-bank', 'bi-bar-chart-line', 'bi-graph-up-arrow', 'bi-activity',
+    // Logs, Message alerts & System Infos
+    'bi-clock-history', 'bi-bell', 'bi-chat-left-text', 'bi-envelope', 'bi-info-circle', 'bi-question-circle',
+    // Files, Documents & Storage
+    'bi-file-earmark-text', 'bi-files', 'bi-folder', 'bi-archive', 'bi-cloud-download', 'bi-printer',
+];
+
 export interface ParentMenu {
     id: number;
     name: string;
@@ -58,6 +75,7 @@ export default function MenuFormModal({
     
     // Permission search filter within modal
     const [permSearch, setPermSearch] = useState('');
+    const [iconSearch, setIconSearch] = useState('');
 
     useEffect(() => {
         if (isOpen) {
@@ -81,8 +99,13 @@ export default function MenuFormModal({
                 setSelectedPermissions([]);
             }
             setPermSearch('');
+            setIconSearch('');
         }
     }, [isOpen, mode, selectedMenu]);
+
+    const filteredIcons = COMMON_ICONS.filter((ic) => 
+        ic.toLowerCase().includes(iconSearch.toLowerCase())
+    );
 
     const handleSubmit = () => {
         onSave({
@@ -171,27 +194,73 @@ export default function MenuFormModal({
                     />
                 </div>
 
-                {/* Icon selection with preview */}
-                <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+                {/* Icon Selection Grid with Preview & Search */}
+                <div className="grid grid-cols-1 gap-4">
                     <div>
-                        <label className="form-label-custom font-bold text-xs mb-2 block">Ikon Menu (Bootstrap Icons)</label>
-                        <div className="flex gap-3 items-center">
-                            <div className="w-11 h-11 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-xl text-slate-500 shrink-0">
+                        <label className="form-label-custom font-bold text-xs mb-2 block">Pilih Ikon Menu</label>
+                        
+                        {/* Search & Preview Row */}
+                        <div className="flex gap-3 items-center mb-3">
+                            <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-500/30 flex flex-col items-center justify-center text-xl text-blue-600 dark:text-blue-400 shrink-0 shadow-sm relative">
                                 {icon ? <i className={`bi ${icon}`} /> : <i className="bi bi-question-circle" />}
+                                <span className="absolute bottom-1 text-[8px] font-bold tracking-tight opacity-75">PREVIEW</span>
                             </div>
                             <div className="flex-1">
-                                <FormInput 
-                                    label=""
-                                    placeholder="cth: bi-shield-check, bi-gear, bi-person-badge" 
-                                    value={icon}
-                                    onChange={(e) => setIcon(e.target.value)}
-                                    className="font-mono text-sm"
-                                />
+                                <div className="relative">
+                                    <i className="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs" />
+                                    <input 
+                                        type="text" 
+                                        placeholder="Cari ikon (cth: gear, student, cash)..." 
+                                        className="form-ctrl w-full pl-9 pr-24 text-xs font-semibold py-2.5" 
+                                        value={iconSearch}
+                                        onChange={(e) => {
+                                            setIconSearch(e.target.value);
+                                            if (e.target.value.startsWith('bi-')) {
+                                                setIcon(e.target.value);
+                                            }
+                                        }}
+                                    />
+                                    {iconSearch && !iconSearch.startsWith('bi-') && (
+                                        <button 
+                                            type="button"
+                                            onClick={() => setIcon(`bi-${iconSearch}`)}
+                                            className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold px-2 py-1 rounded-md transition-colors"
+                                        >
+                                            Kustom: bi-{iconSearch}
+                                        </button>
+                                    )}
+                                </div>
                             </div>
                         </div>
-                        <span className="text-[10px] text-slate-400 mt-1 block">
-                            Tulis nama kelas ikon dari <a href="https://icons.getbootstrap.com/" target="_blank" rel="noreferrer" className="text-blue-500 underline">Bootstrap Icons</a>
-                        </span>
+
+                        {/* Scrollable Icon Grid */}
+                        <div className="border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40 rounded-xl p-3 max-h-48 overflow-y-auto">
+                            <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 gap-2">
+                                {filteredIcons.map((ic) => {
+                                    const isSelected = icon === ic;
+                                    return (
+                                        <button
+                                            key={ic}
+                                            type="button"
+                                            onClick={() => setIcon(ic)}
+                                            title={ic}
+                                            className={`w-10 h-10 rounded-lg flex items-center justify-center text-lg transition-all ${
+                                                isSelected 
+                                                    ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20 scale-105' 
+                                                    : 'bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/10 border border-slate-100 dark:border-slate-800/80'
+                                            }`}
+                                        >
+                                            <i className={`bi ${ic}`} />
+                                        </button>
+                                    );
+                                })}
+                                {filteredIcons.length === 0 && (
+                                    <div className="col-span-full text-center py-6 text-xs text-slate-400">
+                                        Tidak ada ikon yang cocok. Ketik di atas untuk mencari atau klik tombol kustom.
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     </div>
                 </div>
 
