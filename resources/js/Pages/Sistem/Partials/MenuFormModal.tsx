@@ -201,9 +201,9 @@ export default function MenuFormModal({
                         
                         {/* Search & Preview Row */}
                         <div className="flex gap-3 items-center mb-3">
-                            <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-500/30 flex flex-col items-center justify-center text-xl text-blue-600 dark:text-blue-400 shrink-0 shadow-sm relative">
-                                {icon ? <i className={`bi ${icon}`} /> : <i className="bi bi-question-circle" />}
-                                <span className="absolute bottom-1 text-[8px] font-bold tracking-tight opacity-75">PREVIEW</span>
+                            <div className="w-14 h-14 rounded-xl bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-500/30 flex flex-col items-center justify-between py-2 text-xl text-blue-600 dark:text-blue-400 shrink-0 shadow-sm">
+                                {icon ? <i className={`bi ${icon} leading-none`} /> : <i className="bi bi-question-circle leading-none" />}
+                                <span className="text-[8px] font-black tracking-widest opacity-60 uppercase leading-none">PREVIEW</span>
                             </div>
                             <div className="flex-1">
                                 <div className="relative">
