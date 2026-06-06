@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Models\Permission;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 #[Fillable([
     'name',
@@ -20,6 +22,16 @@ use App\Models\Permission;
 ])]
 class Menu extends Model
 {
+    use LogsActivity;
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable()
+            ->useLogName('Menu')
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
     protected $table = 'menus';
 
     protected function casts(): array
