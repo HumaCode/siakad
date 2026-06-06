@@ -12,17 +12,34 @@ export default function FormSwitch({
     onChange,
 }: FormSwitchProps) {
     return (
-        <div className="flex justify-between items-center bg-slate-50 dark:bg-slate-800/20 p-4 rounded-xl border border-slate-100/50 dark:border-slate-800">
-            <div>
+        <div className="flex justify-between items-center bg-slate-50 dark:bg-slate-800/20 p-3.5 rounded-xl border border-slate-100/50 dark:border-slate-800">
+            <div className="pr-4">
                 <label className="form-label-custom font-bold text-xs mb-0.5 block">{label}</label>
-                {description && <p className="text-xxs text-slate-400">{description}</p>}
+                {description && (
+                    <p className="text-slate-400 mt-0.5 leading-tight" style={{ fontSize: '10.5px' }}>
+                        {description}
+                    </p>
+                )}
             </div>
             <button
                 type="button"
-                className={`w-10 h-6 rounded-full transition-colors flex items-center p-1 cursor-pointer border-none focus:outline-none ${checked ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-700'}`}
+                className="transition-all duration-300 flex items-center cursor-pointer border-none focus:outline-none rounded-full shrink-0"
+                style={{
+                    width: '40px',
+                    height: '24px',
+                    padding: '4px',
+                    backgroundColor: checked ? '#10b981' : '#cbd5e1'
+                }}
                 onClick={() => onChange(!checked)}
             >
-                <div className={`w-4 h-4 rounded-full bg-white transition-transform shadow-sm ${checked ? 'translate-x-4' : 'translate-x-0'}`} />
+                <div 
+                    className="rounded-full bg-white transition-all duration-300 shadow-sm"
+                    style={{
+                        width: '16px',
+                        height: '16px',
+                        transform: checked ? 'translateX(16px)' : 'translateX(0px)'
+                    }}
+                />
             </button>
         </div>
     );
