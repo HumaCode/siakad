@@ -54,7 +54,7 @@ class MenuController extends Controller
         });
 
         return Inertia::render('Sistem/Menus', [
-            'menus' => $menus,
+            'menuList' => $menus,
             'filters' => [
                 'search' => $search,
             ],

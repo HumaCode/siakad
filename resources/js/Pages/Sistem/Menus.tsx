@@ -42,7 +42,7 @@ interface Stats {
 }
 
 interface PageProps {
-    menus: PaginatedMenus;
+    menuList: PaginatedMenus;
     filters: {
         search: string;
     };
@@ -89,7 +89,7 @@ function AnimatedCounter({ value }: { value: number }) {
     return <span>{count.toLocaleString('id-ID')}</span>;
 }
 
-export default function MenusIndex({ menus, filters, stats, parentMenus, permissionsList }: PageProps) {
+export default function MenusIndex({ menuList, filters, stats, parentMenus, permissionsList }: PageProps) {
     // Filters State
     const [searchVal, setSearchVal] = useState(filters.search || '');
 
@@ -231,11 +231,11 @@ export default function MenusIndex({ menus, filters, stats, parentMenus, permiss
 
     // Pagination links generator with ellipsis
     const getFilteredLinks = () => {
-        const links = menus.links;
+        const links = menuList.links;
         if (links.length <= 10) return links;
 
-        const current = menus.current_page;
-        const last = menus.last_page;
+        const current = menuList.current_page;
+        const last = menuList.last_page;
         const delta = 2;
 
         const range = [];
@@ -398,11 +398,11 @@ export default function MenusIndex({ menus, filters, stats, parentMenus, permiss
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {menus.data.map((m, i) => {
+                                    {menuList.data.map((m, i) => {
                                         return (
                                             <tr key={m.id}>
                                                 <td className="text-slate-400 font-semibold text-xs text-center">
-                                                    {(menus.current_page - 1) * menus.per_page + i + 1}
+                                                    {(menuList.current_page - 1) * menuList.per_page + i + 1}
                                                 </td>
                                                 <td>
                                                     <div className="flex items-center gap-2">
@@ -489,7 +489,7 @@ export default function MenusIndex({ menus, filters, stats, parentMenus, permiss
                                             </tr>
                                         );
                                     })}
-                                    {menus.data.length === 0 && (
+                                    {menuList.data.length === 0 && (
                                         <tr>
                                             <td colSpan={9} className="text-center py-8 text-slate-400">
                                                 Tidak ada menu ditemukan.
@@ -501,10 +501,10 @@ export default function MenusIndex({ menus, filters, stats, parentMenus, permiss
                         </div>
 
                         {/* Pagination Section */}
-                        {menus.last_page > 1 && (
+                        {menuList.last_page > 1 && (
                             <div className="p-5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between flex-wrap gap-4">
                                 <div className="text-xs text-slate-400">
-                                    Menampilkan <strong>{menus.from || 0}–{menus.to || 0}</strong> dari <strong>{menus.total}</strong> menu
+                                    Menampilkan <strong>{menuList.from || 0}–{menuList.to || 0}</strong> dari <strong>{menuList.total}</strong> menu
                                 </div>
                                 <div className="flex gap-1">
                                     {getFilteredLinks().map((link, idx) => {

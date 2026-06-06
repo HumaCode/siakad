@@ -34,7 +34,7 @@ test('authenticated user can access menus page', function () {
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->component('Sistem/Menus')
-            ->has('menus')
+            ->has('menuList')
             ->has('filters')
             ->has('stats')
             ->has('parentMenus')
