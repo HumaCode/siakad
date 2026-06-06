@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import FormModal from '@/Components/FormModal';
 import FormInput from '@/Components/FormInput';
-import FormSelect from '@/Components/FormSelect';
+import FormSelect2 from '@/Components/FormSelect2';
 import FormSwitch from '@/Components/FormSwitch';
 
 export interface ParentMenu {
@@ -150,11 +150,10 @@ export default function MenuFormModal({
                         onChange={(e) => setCategory(e.target.value)}
                     />
 
-                    <FormSelect 
+                    <FormSelect2 
                         label="Parent Menu (Menu Utama)"
                         value={mainMenuId === null ? '' : mainMenuId.toString()}
-                        onChange={(e) => {
-                            const val = e.target.value;
+                        onChange={(val) => {
                             setMainMenuId(val === '' ? null : parseInt(val));
                         }}
                         options={[
