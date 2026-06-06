@@ -274,7 +274,7 @@ export default function ActivityLog({ logs, stats, logNames, events, filters }: 
                                     {logs.data.length === 0 && (
                                         <tr>
                                             <td colSpan={8} className="text-center py-14">
-                                                <div className="flex flex-col items-center justify-center max-w-sm mx-auto p-6 rounded-2xl bg-slate-50/50 dark:bg-slate-900/30 border border-slate-100/80 dark:border-slate-800/80 backdrop-blur-sm shadow-sm">
+                                                <div className="flex flex-col items-center justify-center max-w-sm mx-auto py-6">
                                                     {/* Animated Floating Icon */}
                                                     <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500/10 to-indigo-500/10 dark:from-blue-500/5 dark:to-indigo-500/5 flex items-center justify-center text-blue-500 dark:text-blue-400 mb-4 shadow-sm relative overflow-hidden group">
                                                         <div className="absolute inset-0 bg-blue-500/5 dark:bg-blue-400/5 animate-ping opacity-75 rounded-2xl" />
