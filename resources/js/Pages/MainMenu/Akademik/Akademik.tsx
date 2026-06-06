@@ -23,9 +23,10 @@ interface Stats {
 interface PageProps {
     stats: Stats;
     fakultas: any[];
+    prodis: any[];
 }
 
-export default function Akademik({ stats, fakultas }: PageProps) {
+export default function Akademik({ stats, fakultas, prodis }: PageProps) {
     const [activeTab, setActiveTab] = useState<'kurikulum' | 'matakuliah' | 'jadwal' | 'kalender'>('kurikulum');
     
     // Modal Open states
@@ -175,6 +176,7 @@ export default function Akademik({ stats, fakultas }: PageProps) {
                 {activeTab === 'kurikulum' && (
                     <KurikulumTab 
                         fakultas={fakultas} 
+                        prodis={prodis}
                         onOpenModal={() => setIsKurikulumModalOpen(true)} 
                     />
                 )}

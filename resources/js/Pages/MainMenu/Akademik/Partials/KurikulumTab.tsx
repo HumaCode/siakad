@@ -20,124 +20,110 @@ interface KurikulumItem {
 
 interface KurikulumTabProps {
     fakultas: any[];
+    prodis: any[];
     onOpenModal: () => void;
 }
 
-const kurikulumData: KurikulumItem[] = [
-    {
-        id: 1,
-        prodi: 'Teknik Informatika',
-        jenjang: 'S1',
-        tahun: 2023,
-        akreditasi: 'Unggul',
-        status: 'Aktif',
-        deskripsi: 'Kurikulum berbasis KKNI Level 6, menekankan pada rekayasa perangkat lunak, kecerdasan buatan, dan keamanan siber.',
-        sks: 148,
-        mkCount: 62,
-        semesters: 8,
-        kaprodi: 'Dr. Budi S., M.Kom',
-        icon: 'bi-cpu-fill',
-        bgIcon: '#e8f0fe',
-        colorIcon: '#1a56db',
-        classPrefix: 'kc-ti'
-    },
-    {
-        id: 2,
-        prodi: 'Sistem Informasi',
-        jenjang: 'S1',
-        tahun: 2022,
-        akreditasi: 'Unggul',
-        status: 'Aktif',
-        deskripsi: 'Fokus pada perancangan dan pengelolaan sistem informasi bisnis, analitik data, dan transformasi digital.',
-        sks: 144,
-        mkCount: 58,
-        semesters: 8,
-        kaprodi: 'Dr. Rina W., M.T',
-        icon: 'bi-database-fill',
-        bgIcon: 'var(--teal-light)',
-        colorIcon: 'var(--teal)',
-        classPrefix: 'kc-si'
-    },
-    {
-        id: 3,
-        prodi: 'Manajemen Bisnis',
-        jenjang: 'S1',
-        tahun: 2023,
-        akreditasi: 'A',
-        status: 'Aktif',
-        deskripsi: 'Mengembangkan kompetensi manajemen strategis, kewirausahaan, pemasaran, dan keuangan bisnis modern.',
-        sks: 144,
-        mkCount: 55,
-        semesters: 8,
-        kaprodi: 'Prof. Hendra K., Ph.D',
-        icon: 'bi-briefcase-fill',
-        bgIcon: 'var(--accent-light)',
-        colorIcon: '#b45309',
-        classPrefix: 'kc-mb'
-    },
-    {
-        id: 4,
-        prodi: 'Ilmu Hukum',
-        jenjang: 'S1',
-        tahun: 2021,
-        akreditasi: 'A',
-        status: 'Revisi',
-        deskripsi: 'Pembentukan ahli hukum yang kompeten di bidang hukum perdata, pidana, tata negara, dan hukum internasional.',
-        sks: 152,
-        mkCount: 64,
-        semesters: 8,
-        kaprodi: 'Dr. Sari D., S.H., M.H',
-        icon: 'bi-bank2',
-        bgIcon: 'var(--purple-light)',
-        colorIcon: 'var(--purple)',
-        classPrefix: 'kc-hk'
-    },
-    {
-        id: 5,
-        prodi: 'Kedokteran Gigi',
-        jenjang: 'S1',
-        tahun: 2022,
-        akreditasi: 'B',
-        status: 'Aktif',
-        deskripsi: 'Mencetak dokter gigi yang kompeten dan beretika dalam pelayanan kesehatan gigi dan mulut di masyarakat.',
-        sks: 160,
-        mkCount: 72,
-        semesters: 10,
-        kaprodi: 'Prof. Agus M., Ph.D',
-        icon: 'bi-heart-pulse-fill',
-        bgIcon: 'var(--rose-light)',
-        colorIcon: 'var(--rose)',
-        classPrefix: 'kc-kd'
-    },
-    {
-        id: 6,
-        prodi: 'Teknik Elektro',
-        jenjang: 'S1',
-        tahun: 2023,
-        akreditasi: 'A',
-        status: 'Aktif',
-        deskripsi: 'Menghasilkan insinyur elektro yang ahli dalam sistem tenaga, elektronika, telekomunikasi, dan otomasi industri.',
-        sks: 144,
-        mkCount: 60,
-        semesters: 8,
-        kaprodi: 'Ir. Surya P., M.T',
-        icon: 'bi-lightning-charge-fill',
-        bgIcon: 'var(--green-light)',
-        colorIcon: 'var(--green)',
-        classPrefix: 'kc-te'
+const getProdiStylePreset = (kode: string) => {
+    switch (kode.toUpperCase()) {
+        case 'IF':
+            return {
+                icon: 'bi-cpu-fill',
+                bgIcon: '#e8f0fe',
+                colorIcon: '#1a56db',
+                classPrefix: 'kc-ti',
+                deskripsi: 'Kurikulum berbasis KKNI Level 6, menekankan pada rekayasa perangkat lunak, kecerdasan buatan, dan keamanan siber.',
+                sks: 148,
+                mkCount: 62,
+                semesters: 8,
+                akreditasi: 'Unggul',
+                tahun: 2023,
+                status: 'Aktif' as const
+            };
+        case 'SI':
+            return {
+                icon: 'bi-database-fill',
+                bgIcon: 'var(--teal-light)',
+                colorIcon: 'var(--teal)',
+                classPrefix: 'kc-si',
+                deskripsi: 'Fokus pada perancangan dan pengelolaan sistem informasi bisnis, analitik data, dan transformasi digital.',
+                sks: 144,
+                mkCount: 58,
+                semesters: 8,
+                akreditasi: 'Unggul',
+                tahun: 2022,
+                status: 'Aktif' as const
+            };
+        case 'MAT':
+            return {
+                icon: 'bi-calculator-fill',
+                bgIcon: 'var(--purple-light)',
+                colorIcon: 'var(--purple)',
+                classPrefix: 'kc-hk',
+                deskripsi: 'Mata kuliah dasar matematika murni dan aplikasi terapan komputer, sains data, serta optimisasi sistem.',
+                sks: 144,
+                mkCount: 52,
+                semesters: 8,
+                akreditasi: 'A',
+                tahun: 2023,
+                status: 'Aktif' as const
+            };
+        case 'MAN':
+            return {
+                icon: 'bi-briefcase-fill',
+                bgIcon: 'var(--accent-light)',
+                colorIcon: '#b45309',
+                classPrefix: 'kc-mb',
+                deskripsi: 'Mengembangkan kompetensi manajemen strategis, kewirausahaan, pemasaran, dan keuangan bisnis modern.',
+                sks: 144,
+                mkCount: 55,
+                semesters: 8,
+                akreditasi: 'A',
+                tahun: 2023,
+                status: 'Aktif' as const
+            };
+        default:
+            return {
+                icon: 'bi-journal-code',
+                bgIcon: '#f1f5f9',
+                colorIcon: '#64748b',
+                classPrefix: 'kc-ti',
+                deskripsi: 'Program studi akademik tingkat tinggi dengan fokus keilmuan mendalam serta kesiapan industri terapan.',
+                sks: 144,
+                mkCount: 50,
+                semesters: 8,
+                akreditasi: 'B',
+                tahun: 2024,
+                status: 'Aktif' as const
+            };
     }
-];
+};
 
-export default function KurikulumTab({ fakultas, onOpenModal }: KurikulumTabProps) {
+export default function KurikulumTab({ fakultas, prodis, onOpenModal }: KurikulumTabProps) {
     const [search, setSearch] = useState('');
     const [selectedFakultas, setSelectedFakultas] = useState('Semua Fakultas');
     const [selectedTahun, setSelectedTahun] = useState('Semua Tahun');
 
-    const filteredKurikulum = kurikulumData.filter(item => {
+    const kurikulumList = (prodis || []).map((p: any) => {
+        const preset = getProdiStylePreset(p.kode);
+        return {
+            id: p.id,
+            prodi: p.nama,
+            jenjang: p.jenjang,
+            kaprodi: p.kaprodi || 'Belum Ditentukan',
+            fakultas_id: p.fakultas_id,
+            fakultas_nama: p.fakultas?.nama || '',
+            ...preset,
+            status: p.status || preset.status || 'Aktif',
+        };
+    });
+
+    const filteredKurikulum = kurikulumList.filter(item => {
         const matchesSearch = item.prodi.toLowerCase().includes(search.toLowerCase()) ||
             item.kaprodi.toLowerCase().includes(search.toLowerCase());
         const matchesTahun = selectedTahun === 'Semua Tahun' || item.tahun.toString() === selectedTahun;
-        return matchesSearch && matchesTahun;
+        const matchesFakultas = selectedFakultas === 'Semua Fakultas' || item.fakultas_nama === selectedFakultas;
+        return matchesSearch && matchesTahun && matchesFakultas;
     });
 
     const getStatusBadgeClass = (status: string) => {
@@ -193,7 +179,7 @@ export default function KurikulumTab({ fakultas, onOpenModal }: KurikulumTabProp
                 </div>
                 <div className="mt-3 px-1">
                     <small className="text-xs text-slate-400">
-                        Menampilkan {filteredKurikulum.length} dari {kurikulumData.length} program studi
+                        Menampilkan {filteredKurikulum.length} dari {kurikulumList.length} program studi
                     </small>
                 </div>
             </div>

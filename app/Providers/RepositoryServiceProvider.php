@@ -9,6 +9,8 @@ use App\Repositories\Interfaces\DosenRepositoryInterface;
 use App\Repositories\DosenRepository;
 use App\Repositories\Interfaces\RoleRepositoryInterface;
 use App\Repositories\RoleRepository;
+use App\Repositories\Interfaces\ProdiRepositoryInterface;
+use App\Repositories\ProdiRepository;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -20,6 +22,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(MahasiswaRepositoryInterface::class, MahasiswaRepository::class);
         $this->app->bind(DosenRepositoryInterface::class, DosenRepository::class);
         $this->app->bind(RoleRepositoryInterface::class, RoleRepository::class);
+        $this->app->bind(ProdiRepositoryInterface::class, ProdiRepository::class);
     }
 
     /**

@@ -18,6 +18,7 @@ use Spatie\Activitylog\LogOptions;
     'nama',
     'jenjang',
     'kaprodi',
+    'status',
 ])]
 class Prodi extends Model
 {
