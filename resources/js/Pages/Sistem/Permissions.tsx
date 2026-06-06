@@ -1,6 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import '../../../css/sistem/roles.css';
 import PermissionFormModal from './Partials/PermissionFormModal';
 import DeletePermissionModal from './Partials/DeletePermissionModal';
@@ -44,27 +44,35 @@ interface PageProps {
 
 // Animated Counter Component
 function AnimatedCounter({ value }: { value: number }) {
-    const [count, setCount] = useState(0);
+    const [count, setCount] = useState(value);
+    const prevValueRef = useRef(value);
 
     useEffect(() => {
-        let start = 0;
+        const start = prevValueRef.current;
         const end = value;
-        if (start === end) return;
+        
+        if (start === end) {
+            setCount(end);
+            return;
+        }
 
-        const duration = 1000; // ms
-        const stepTime = 16;   // ~60fps
+        const duration = 600; // ms
+        const stepTime = 16;  // ~60fps
         const totalSteps = duration / stepTime;
-        const increment = end / totalSteps;
+        const increment = (end - start) / totalSteps;
+        let current = start;
 
         const timer = setInterval(() => {
-            start += increment;
-            if (start >= end) {
+            current += increment;
+            if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
                 setCount(end);
                 clearInterval(timer);
             } else {
-                setCount(Math.floor(start));
+                setCount(Math.round(current));
             }
         }, stepTime);
+
+        prevValueRef.current = value;
 
         return () => clearInterval(timer);
     }, [value]);
