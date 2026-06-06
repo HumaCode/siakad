@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Sistem\RoleController;
 use App\Http\Controllers\Sistem\PermissionController;
+use App\Http\Controllers\Sistem\MenuController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -35,6 +36,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/sistem/permissions', [PermissionController::class, 'store'])->name('sistem.permissions.store');
     Route::put('/sistem/permissions/{permission}', [PermissionController::class, 'update'])->name('sistem.permissions.update');
     Route::delete('/sistem/permissions/{permission}', [PermissionController::class, 'destroy'])->name('sistem.permissions.destroy');
+
+    // Sistem Menu Manajemen
+    Route::get('/sistem/menu', [MenuController::class, 'index'])->name('sistem.menu.index');
+    Route::post('/sistem/menu', [MenuController::class, 'store'])->name('sistem.menu.store');
+    Route::put('/sistem/menu/{menu}', [MenuController::class, 'update'])->name('sistem.menu.update');
+    Route::delete('/sistem/menu/{menu}', [MenuController::class, 'destroy'])->name('sistem.menu.destroy');
 });
 
 require __DIR__.'/auth.php';
