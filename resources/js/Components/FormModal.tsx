@@ -70,7 +70,7 @@ export default function FormModal({
                     >
                         {processing ? (
                             <>
-                                <span className="animate-spin inline-block w-4 h-4 border-2 rounded-full border-t-transparent border-white" role="status" aria-hidden="true" />
+                                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true" />
                                 Sedang proses...
                             </>
                         ) : (

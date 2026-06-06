@@ -97,7 +97,8 @@ export default function MenusIndex({ menuList, filters, stats, parentMenus, perm
     const [menuModalOpen, setMenuModalOpen] = useState(false);
     const [menuModalMode, setMenuModalMode] = useState<'add' | 'edit'>('add');
     const [selectedMenu, setSelectedMenu] = useState<MenuData | null>(null);
-    const [processing, setProcessing] = useState(false);
+    const [formProcessing, setFormProcessing] = useState(false);
+    const [deleteProcessing, setDeleteProcessing] = useState(false);
 
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [deleteMenuName, setDeleteMenuName] = useState('');
@@ -148,12 +149,14 @@ export default function MenusIndex({ menuList, filters, stats, parentMenus, perm
     };
 
     const openAddMenu = () => {
+        setFormProcessing(false);
         setMenuModalMode('add');
         setSelectedMenu(null);
         setMenuModalOpen(true);
     };
 
     const openEditMenu = (menu: Menu) => {
+        setFormProcessing(false);
         setMenuModalMode('edit');
         setSelectedMenu({
             id: menu.id,
@@ -177,7 +180,7 @@ export default function MenusIndex({ menuList, filters, stats, parentMenus, perm
 
     // Save Menu
     const saveMenu = (data: MenuData) => {
-        setProcessing(true);
+        setFormProcessing(true);
         if (menuModalMode === 'add') {
             router.post('/sistem/menu', data as any, {
                 onSuccess: () => {
@@ -188,7 +191,7 @@ export default function MenusIndex({ menuList, filters, stats, parentMenus, perm
                     const errMsg = Object.values(err)[0] || 'Gagal menyimpan menu';
                     triggerToast(errMsg as string, 'danger');
                 },
-                onFinish: () => setProcessing(false)
+                onFinish: () => setFormProcessing(false)
             });
         } else {
             if (!selectedMenu?.id) return;
@@ -201,7 +204,7 @@ export default function MenusIndex({ menuList, filters, stats, parentMenus, perm
                     const errMsg = Object.values(err)[0] || 'Gagal mengubah menu';
                     triggerToast(errMsg as string, 'danger');
                 },
-                onFinish: () => setProcessing(false)
+                onFinish: () => setFormProcessing(false)
             });
         }
     };
@@ -209,7 +212,7 @@ export default function MenusIndex({ menuList, filters, stats, parentMenus, perm
     // Delete Menu
     const confirmDeleteMenu = () => {
         if (!deleteMenuId) return;
-        setProcessing(true);
+        setDeleteProcessing(true);
         router.delete(`/sistem/menu/${deleteMenuId}`, {
             onSuccess: () => {
                 setDeleteModalOpen(false);
@@ -219,7 +222,7 @@ export default function MenusIndex({ menuList, filters, stats, parentMenus, perm
                 const errMsg = Object.values(err)[0] || 'Gagal menghapus menu';
                 triggerToast(errMsg as string, 'danger');
             },
-            onFinish: () => setProcessing(false)
+            onFinish: () => setDeleteProcessing(false)
         });
     };
 
@@ -554,7 +557,7 @@ export default function MenusIndex({ menuList, filters, stats, parentMenus, perm
                 selectedMenu={selectedMenu}
                 parentMenus={parentMenus}
                 permissionsList={permissionsList}
-                processing={processing}
+                processing={formProcessing}
                 onClose={() => setMenuModalOpen(false)}
                 onSave={saveMenu}
             />
@@ -564,7 +567,7 @@ export default function MenusIndex({ menuList, filters, stats, parentMenus, perm
                 menuName={deleteMenuName}
                 onClose={() => setDeleteModalOpen(false)}
                 onConfirm={confirmDeleteMenu}
-                processing={processing}
+                processing={deleteProcessing}
             />
 
             {/* Toast Notifications */}

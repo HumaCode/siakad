@@ -213,7 +213,7 @@ export default function ConfirmationModal({
                     >
                         {processing ? (
                             <>
-                                <span className="spinner-border spinner-border-sm animate-spin inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full mr-1" />
+                                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true" />
                                 Sedang proses...
                             </>
                         ) : (
