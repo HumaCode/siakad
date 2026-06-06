@@ -22,6 +22,11 @@ class ProdiResource extends JsonResource
             'jenjang' => $this->jenjang,
             'kaprodi' => $this->kaprodi,
             'status' => $this->status,
+            'deskripsi' => $this->deskripsi,
+            'sks' => $this->sks,
+            'lama_studi' => $this->lama_studi,
+            'akreditasi' => $this->akreditasi,
+            'tahun' => $this->tahun,
             'fakultas' => $this->relationLoaded('fakultas') && $this->fakultas ? [
                 'id' => $this->fakultas->id,
                 'nama' => $this->fakultas->nama,

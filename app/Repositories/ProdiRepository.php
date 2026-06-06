@@ -28,6 +28,33 @@ class ProdiRepository implements ProdiRepositoryInterface
             'jenjang' => $data['jenjang'],
             'kaprodi' => $data['kaprodi'] ?? null,
             'status' => $data['status'] ?? 'Aktif',
+            'deskripsi' => $data['deskripsi'] ?? null,
+            'sks' => $data['sks'] ?? 144,
+            'lama_studi' => $data['lama_studi'] ?? 8,
+            'akreditasi' => $data['akreditasi'] ?? 'Unggul',
+            'tahun' => $data['tahun'] ?? 2024,
         ]);
+    }
+
+    /**
+     * Update an existing program of study.
+     */
+    public function updateProdi(Prodi $prodi, array $data): Prodi
+    {
+        $prodi->update([
+            'fakultas_id' => $data['fakultas_id'],
+            'kode' => $data['kode'],
+            'nama' => $data['nama'],
+            'jenjang' => $data['jenjang'],
+            'kaprodi' => $data['kaprodi'] ?? null,
+            'status' => $data['status'] ?? 'Aktif',
+            'deskripsi' => $data['deskripsi'] ?? null,
+            'sks' => $data['sks'] ?? 144,
+            'lama_studi' => $data['lama_studi'] ?? 8,
+            'akreditasi' => $data['akreditasi'] ?? 'Unggul',
+            'tahun' => $data['tahun'] ?? 2024,
+        ]);
+
+        return $prodi;
     }
 }

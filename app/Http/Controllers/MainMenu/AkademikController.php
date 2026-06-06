@@ -9,6 +9,7 @@ use App\Models\Ruangan;
 use App\Models\Fakultas;
 use App\Services\ProdiService;
 use App\Http\Requests\StoreProdiRequest;
+use App\Http\Requests\UpdateProdiRequest;
 use App\Http\Resources\ProdiResource;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -57,5 +58,15 @@ class AkademikController extends Controller
         $this->prodiService->storeProdi($request->validated());
 
         return redirect()->back()->with('success', 'Program Studi baru berhasil disimpan.');
+    }
+
+    /**
+     * Update an existing program of study.
+     */
+    public function update(UpdateProdiRequest $request, Prodi $prodi): RedirectResponse
+    {
+        $this->prodiService->updateProdi($prodi, $request->validated());
+
+        return redirect()->back()->with('success', 'Program Studi berhasil diperbarui.');
     }
 }

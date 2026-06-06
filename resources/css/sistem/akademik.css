@@ -164,6 +164,10 @@
 .kc-hk::before{background:linear-gradient(180deg,#7c3aed,#a78bfa);}
 .kc-kd::before{background:linear-gradient(180deg,#e11d48,#fb7185);}
 .kc-te::before{background:linear-gradient(180deg,#16a34a,#4ade80);}
+.kurikulum-card.kc-tidak-aktif{opacity:.55;filter:grayscale(0.8);border-color:rgba(0,0,0,.06);cursor:default;}
+.kurikulum-card.kc-tidak-aktif::before{background:linear-gradient(180deg,#94a3b8,#cbd5e1)!important;}
+.kurikulum-card.kc-tidak-aktif:hover{transform:none;box-shadow:var(--shadow-card);}
+.dark .kurikulum-card.kc-tidak-aktif{border-color:rgba(255,255,255,.03);background:rgba(30,41,59,.45);}
 .kc-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;}
 .kc-icon{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;}
 .kc-title{font-size:.9rem;font-weight:800;color:var(--text-dark);margin-bottom:2px;}

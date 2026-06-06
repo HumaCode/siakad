@@ -19,6 +19,11 @@ use Spatie\Activitylog\LogOptions;
     'jenjang',
     'kaprodi',
     'status',
+    'deskripsi',
+    'sks',
+    'lama_studi',
+    'akreditasi',
+    'tahun',
 ])]
 class Prodi extends Model
 {

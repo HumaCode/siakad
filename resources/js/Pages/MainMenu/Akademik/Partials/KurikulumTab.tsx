@@ -21,7 +21,7 @@ interface KurikulumItem {
 interface KurikulumTabProps {
     fakultas: any[];
     prodis: any[];
-    onOpenModal: () => void;
+    onOpenModal: (prodi?: any) => void;
 }
 
 const getProdiStylePreset = (kode: string) => {
@@ -107,13 +107,20 @@ export default function KurikulumTab({ fakultas, prodis, onOpenModal }: Kurikulu
     const kurikulumList = (prodis || []).map((p: any) => {
         const preset = getProdiStylePreset(p.kode);
         return {
+            ...preset,
             id: p.id,
+            kode: p.kode,
+            nama: p.nama,
             prodi: p.nama,
             jenjang: p.jenjang,
             kaprodi: p.kaprodi || 'Belum Ditentukan',
             fakultas_id: p.fakultas_id,
             fakultas_nama: p.fakultas?.nama || '',
-            ...preset,
+            deskripsi: p.deskripsi || preset.deskripsi,
+            sks: p.sks || preset.sks,
+            semesters: p.lama_studi || preset.semesters,
+            akreditasi: p.akreditasi || preset.akreditasi,
+            tahun: p.tahun || preset.tahun,
             status: p.status || preset.status || 'Aktif',
         };
     });
@@ -187,7 +194,7 @@ export default function KurikulumTab({ fakultas, prodis, onOpenModal }: Kurikulu
             {/* Kurikulum Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredKurikulum.map((item) => (
-                    <div key={item.id} className={`kurikulum-card ${item.classPrefix}`}>
+                    <div key={item.id} className={`kurikulum-card ${item.classPrefix} ${item.status === 'Tidak Aktif' ? 'kc-tidak-aktif' : ''}`}>
                         <div className="kc-header">
                             <div className="flex items-center gap-3 flex-1">
                                 <div
@@ -233,7 +240,7 @@ export default function KurikulumTab({ fakultas, prodis, onOpenModal }: Kurikulu
                                 <button className="btn-icon bi-detail" title="Detail kurikulum">
                                     <i className="bi bi-eye" />
                                 </button>
-                                <button className="btn-icon bi-edit" title="Edit" onClick={onOpenModal}>
+                                <button className="btn-icon bi-edit" title="Edit" onClick={() => onOpenModal(item)}>
                                     <i className="bi bi-pencil" />
                                 </button>
                             </div>

@@ -33,4 +33,12 @@ class ProdiService
     {
         return $this->prodiRepository->createProdi($data);
     }
+
+    /**
+     * Update an existing program of study.
+     */
+    public function updateProdi(Prodi $prodi, array $data): Prodi
+    {
+        return $this->prodiRepository->updateProdi($prodi, $data);
+    }
 }

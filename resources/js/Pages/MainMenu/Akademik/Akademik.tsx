@@ -34,6 +34,12 @@ export default function Akademik({ stats, fakultas, prodis }: PageProps) {
     const [isMKModalOpen, setIsMKModalOpen] = useState(false);
     const [isJadwalModalOpen, setIsJadwalModalOpen] = useState(false);
     const [isKalenderModalOpen, setIsKalenderModalOpen] = useState(false);
+    const [editingProdi, setEditingProdi] = useState<any | null>(null);
+
+    const handleOpenKurikulumModal = (prodi?: any) => {
+        setEditingProdi(prodi && prodi.id ? prodi : null);
+        setIsKurikulumModalOpen(true);
+    };
 
     // Toast state
     const [toast, setToast] = useState<{ show: boolean; msg: string; type: 'success' | 'danger' } | null>(null);
@@ -80,18 +86,14 @@ export default function Akademik({ stats, fakultas, prodis }: PageProps) {
                         <p>Kelola kurikulum, mata kuliah, jadwal perkuliahan, dan kalender akademik Semester Gasal 2025/2026</p>
                     </div>
                     <div className="ph-right">
-                        <button 
-                            className="btn-ph btn-ph-white cursor-pointer"
-                            onClick={() => setIsKurikulumModalOpen(true)}
-                        >
-                            <i className="bi bi-plus-lg" /> Tambah Kurikulum
-                        </button>
-                        <button 
-                            className="btn-ph btn-ph-solid cursor-pointer"
-                            onClick={() => setIsMKModalOpen(true)}
-                        >
-                            <i className="bi bi-journal-plus" /> Tambah Mata Kuliah
-                        </button>
+                        <div className="flex items-center gap-2.5 bg-white/15 dark:bg-slate-900/40 border border-white/10 dark:border-slate-800/60 px-4 py-2 rounded-xl text-xs font-bold text-white dark:text-slate-200 backdrop-blur-md">
+                            <i className="bi bi-calendar3 text-blue-300 dark:text-blue-400" />
+                            <span>Semester Gasal 2025/2026</span>
+                            <span className="flex h-2 w-2 relative ml-1">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                            </span>
+                        </div>
                     </div>
                 </div>
 
@@ -177,7 +179,7 @@ export default function Akademik({ stats, fakultas, prodis }: PageProps) {
                     <KurikulumTab 
                         fakultas={fakultas} 
                         prodis={prodis}
-                        onOpenModal={() => setIsKurikulumModalOpen(true)} 
+                        onOpenModal={handleOpenKurikulumModal} 
                     />
                 )}
                 {activeTab === 'matakuliah' && (
@@ -209,9 +211,13 @@ export default function Akademik({ stats, fakultas, prodis }: PageProps) {
             {/* MODALS */}
             <KurikulumModal 
                 isOpen={isKurikulumModalOpen} 
-                onClose={() => setIsKurikulumModalOpen(false)} 
+                onClose={() => {
+                    setIsKurikulumModalOpen(false);
+                    setEditingProdi(null);
+                }} 
                 onSave={handleSaveModal}
                 fakultas={fakultas}
+                prodi={editingProdi}
             />
             <MataKuliahModal 
                 isOpen={isMKModalOpen} 

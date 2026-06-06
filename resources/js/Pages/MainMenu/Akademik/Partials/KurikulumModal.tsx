@@ -1,16 +1,17 @@
 import React from 'react';
 import { useForm } from '@inertiajs/react';
-import { store as storeProdi } from '@/actions/App/Http/Controllers/MainMenu/AkademikController';
+import { store as storeProdi, update as updateProdi } from '@/actions/App/Http/Controllers/MainMenu/AkademikController';
 
 interface KurikulumModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSave: (msg: string) => void;
     fakultas: any[];
+    prodi: any | null;
 }
 
-export default function KurikulumModal({ isOpen, onClose, onSave, fakultas }: KurikulumModalProps) {
-    const { data, setData, post, processing, errors, reset } = useForm({
+export default function KurikulumModal({ isOpen, onClose, onSave, fakultas, prodi }: KurikulumModalProps) {
+    const { data, setData, post, put, processing, errors, reset } = useForm({
         fakultas_id: '',
         kode: '',
         nama: '',
@@ -27,41 +28,50 @@ export default function KurikulumModal({ isOpen, onClose, onSave, fakultas }: Ku
     React.useEffect(() => {
         if (isOpen) {
             setData({
-                fakultas_id: fakultas[0]?.id || '',
-                kode: '',
-                nama: '',
-                jenjang: 'S1',
-                kaprodi: '',
-                tahun: 2024,
-                sks: 144,
-                lama_studi: 8,
-                akreditasi: 'Unggul',
-                status: 'Aktif',
-                deskripsi: '',
+                fakultas_id: prodi ? prodi.fakultas_id : (fakultas[0]?.id || ''),
+                kode: prodi ? prodi.kode : '',
+                nama: prodi ? prodi.nama : '',
+                jenjang: prodi ? prodi.jenjang : 'S1',
+                kaprodi: prodi ? prodi.kaprodi : '',
+                tahun: prodi ? (prodi.tahun || 2024) : 2024,
+                sks: prodi ? (prodi.sks || 144) : 144,
+                lama_studi: prodi ? (prodi.lama_studi || prodi.semesters || 8) : 8,
+                akreditasi: prodi ? (prodi.akreditasi || 'Unggul') : 'Unggul',
+                status: prodi ? (prodi.status || 'Aktif') : 'Aktif',
+                deskripsi: prodi ? (prodi.deskripsi || '') : '',
             });
         }
-    }, [isOpen, fakultas]);
+    }, [isOpen, prodi, fakultas]);
 
     if (!isOpen) return null;
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post(storeProdi.url(), {
-            onSuccess: () => {
-                reset();
-                onSave('Program Studi baru berhasil disimpan');
-            }
-        });
+        if (prodi) {
+            put(updateProdi.url(prodi.id), {
+                onSuccess: () => {
+                    reset();
+                    onSave('Program Studi berhasil diperbarui');
+                }
+            });
+        } else {
+            post(storeProdi.url(), {
+                onSuccess: () => {
+                    reset();
+                    onSave('Program Studi baru berhasil disimpan');
+                }
+            });
+        }
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-all duration-300">
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-all duration-300">
             <div className="bg-white dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl w-full max-w-5xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
                 {/* Header */}
                 <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/50">
                     <div>
                         <h3 className="text-sm font-extrabold text-slate-800 dark:text-slate-200">
-                            Tambah / Edit Kurikulum
+                            {prodi ? 'Edit Kurikulum' : 'Tambah Kurikulum'}
                         </h3>
                         <p className="text-[10px] text-slate-400">
                             Data program studi dan kurikulum aktif

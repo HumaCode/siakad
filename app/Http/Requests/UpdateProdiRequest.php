@@ -3,8 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class StoreProdiRequest extends FormRequest
+class UpdateProdiRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,9 +22,19 @@ class StoreProdiRequest extends FormRequest
      */
     public function rules(): array
     {
+        $prodiId = $this->route('prodi');
+        if ($prodiId instanceof \App\Models\Prodi) {
+            $prodiId = $prodiId->id;
+        }
+
         return [
             'fakultas_id' => ['required', 'string', 'exists:fakultas,id'],
-            'kode' => ['required', 'string', 'max:50', 'unique:prodis,kode'],
+            'kode' => [
+                'required',
+                'string',
+                'max:50',
+                Rule::unique('prodis', 'kode')->ignore($prodiId),
+            ],
             'nama' => ['required', 'string', 'max:255'],
             'jenjang' => ['required', 'string', 'in:D3,S1,S2,S3'],
             'kaprodi' => ['nullable', 'string', 'max:255'],

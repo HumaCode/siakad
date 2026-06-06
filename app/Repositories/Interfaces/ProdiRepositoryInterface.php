@@ -16,4 +16,9 @@ interface ProdiRepositoryInterface
      * Store a new program of study.
      */
     public function createProdi(array $data): Prodi;
+
+    /**
+     * Update an existing program of study.
+     */
+    public function updateProdi(Prodi $prodi, array $data): Prodi;
 }

@@ -39,7 +39,12 @@ test('authenticated user can store a new prodi', function () {
             'nama' => 'Teknik Industri Test',
             'jenjang' => 'S1',
             'kaprodi' => 'Kaprodi Industri Test',
-            'status' => 'Aktif'
+            'status' => 'Aktif',
+            'deskripsi' => 'Deskripsi Test',
+            'sks' => 144,
+            'lama_studi' => 8,
+            'akreditasi' => 'Unggul',
+            'tahun' => 2024
         ])
         ->assertSessionHasNoErrors()
         ->assertRedirect();
@@ -49,6 +54,65 @@ test('authenticated user can store a new prodi', function () {
         'nama' => 'Teknik Industri Test',
         'jenjang' => 'S1',
         'kaprodi' => 'Kaprodi Industri Test',
-        'status' => 'Aktif'
+        'status' => 'Aktif',
+        'deskripsi' => 'Deskripsi Test',
+        'sks' => 144,
+        'lama_studi' => 8,
+        'akreditasi' => 'Unggul',
+        'tahun' => 2024
+    ]);
+});
+
+test('authenticated user can update an existing prodi', function () {
+    $user = User::factory()->create();
+    $fakultas = Fakultas::create([
+        'kode' => 'FT_TEST',
+        'nama' => 'Fakultas Teknik Test',
+        'dekan' => 'Dekan Teknik Test'
+    ]);
+
+    $prodi = Prodi::create([
+        'fakultas_id' => $fakultas->id,
+        'kode' => 'TISTEST',
+        'nama' => 'Teknik Industri Test',
+        'jenjang' => 'S1',
+        'kaprodi' => 'Kaprodi Industri Test',
+        'status' => 'Aktif',
+        'deskripsi' => 'Deskripsi Test',
+        'sks' => 144,
+        'lama_studi' => 8,
+        'akreditasi' => 'Unggul',
+        'tahun' => 2024
+    ]);
+
+    $this->actingAs($user)
+        ->put("/akademik/prodi/{$prodi->id}", [
+            'fakultas_id' => $fakultas->id,
+            'kode' => 'TISTEST',
+            'nama' => 'Teknik Industri Updated',
+            'jenjang' => 'S2',
+            'kaprodi' => 'Kaprodi Baru',
+            'status' => 'Revisi',
+            'deskripsi' => 'Deskripsi Updated',
+            'sks' => 140,
+            'lama_studi' => 8,
+            'akreditasi' => 'A',
+            'tahun' => 2025
+        ])
+        ->assertSessionHasNoErrors()
+        ->assertRedirect();
+
+    $this->assertDatabaseHas('prodis', [
+        'id' => $prodi->id,
+        'kode' => 'TISTEST',
+        'nama' => 'Teknik Industri Updated',
+        'jenjang' => 'S2',
+        'kaprodi' => 'Kaprodi Baru',
+        'status' => 'Revisi',
+        'deskripsi' => 'Deskripsi Updated',
+        'sks' => 140,
+        'lama_studi' => 8,
+        'akreditasi' => 'A',
+        'tahun' => 2025
     ]);
 });
