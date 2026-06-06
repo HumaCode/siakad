@@ -211,7 +211,7 @@ export default function MenuFormModal({
                                     <input 
                                         type="text" 
                                         placeholder="Cari ikon (cth: gear, student, cash)..." 
-                                        className="form-ctrl w-full pl-9 pr-24 text-xs font-semibold py-2.5" 
+                                        className="form-ctrl w-full !pl-9 !pr-24 text-xs font-semibold py-2.5" 
                                         value={iconSearch}
                                         onChange={(e) => {
                                             setIconSearch(e.target.value);
