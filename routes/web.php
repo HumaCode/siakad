@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Sistem\RoleController;
+use App\Http\Controllers\Sistem\PermissionController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -29,6 +30,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/sistem/roles', [RoleController::class, 'store'])->name('sistem.roles.store');
     Route::put('/sistem/roles/{role}', [RoleController::class, 'update'])->name('sistem.roles.update');
     Route::delete('/sistem/roles/{role}', [RoleController::class, 'destroy'])->name('sistem.roles.destroy');
+
+    Route::get('/sistem/permissions', [PermissionController::class, 'index'])->name('sistem.permissions.index');
+    Route::post('/sistem/permissions', [PermissionController::class, 'store'])->name('sistem.permissions.store');
+    Route::put('/sistem/permissions/{permission}', [PermissionController::class, 'update'])->name('sistem.permissions.update');
+    Route::delete('/sistem/permissions/{permission}', [PermissionController::class, 'destroy'])->name('sistem.permissions.destroy');
 });
 
 require __DIR__.'/auth.php';

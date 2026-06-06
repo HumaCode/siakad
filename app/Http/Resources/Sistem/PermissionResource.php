@@ -19,6 +19,7 @@ class PermissionResource extends JsonResource
             'name' => $this->name,
             'guard_name' => $this->guard_name,
             'is_active' => (bool) $this->is_active,
+            'roles_count' => (int) $this->roles_count,
         ];
     }
 }
