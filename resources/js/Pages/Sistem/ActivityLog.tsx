@@ -224,9 +224,9 @@ export default function ActivityLog({ logs, stats, logNames, events, filters }: 
                             <h5 className="text-base font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2 mb-4">
                                 <i className="bi bi-funnel-fill text-blue-600" /> Filter &amp; Pencarian Log
                             </h5>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                            <div className="filter-bar">
                                 {/* Search */}
-                                <div className="relative">
+                                <div className="relative flex-1 min-w-[220px]">
                                     <i className="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm" />
                                     <input
                                         type="text"
@@ -237,19 +237,20 @@ export default function ActivityLog({ logs, stats, logNames, events, filters }: 
                                     />
                                 </div>
                                 {/* Module */}
-                                <select className="filter-select" value={logName} onChange={e => { setLogName(e.target.value); runFilters({ log_name: e.target.value }); }}>
+                                <select className="filter-select min-w-[160px]" value={logName} onChange={e => { setLogName(e.target.value); runFilters({ log_name: e.target.value }); }}>
                                     <option value="">Semua Modul</option>
                                     {logNames.map(n => <option key={n} value={n}>{n}</option>)}
                                 </select>
                                 {/* Event */}
-                                <select className="filter-select" value={event} onChange={e => { setEvent(e.target.value); runFilters({ event: e.target.value }); }}>
+                                <select className="filter-select min-w-[130px]" value={event} onChange={e => { setEvent(e.target.value); runFilters({ event: e.target.value }); }}>
                                     <option value="">Semua Event</option>
                                     {events.map(ev => <option key={ev} value={ev}>{getEventCfg(ev).label}</option>)}
                                 </select>
                                 {/* Date range */}
-                                <div className="flex gap-2">
-                                    <input type="date" className="filter-input flex-1 text-xs" value={dateFrom} onChange={e => { setDateFrom(e.target.value); runFilters({ date_from: e.target.value }); }} title="Dari tanggal" />
-                                    <input type="date" className="filter-input flex-1 text-xs" value={dateTo} onChange={e => { setDateTo(e.target.value); runFilters({ date_to: e.target.value }); }} title="Sampai tanggal" />
+                                <div className="flex items-center gap-2 min-w-[280px]">
+                                    <input type="date" className="filter-input flex-1 text-xs !pl-3 !pr-2 !min-w-0" value={dateFrom} onChange={e => { setDateFrom(e.target.value); runFilters({ date_from: e.target.value }); }} title="Dari tanggal" />
+                                    <span className="text-slate-400 dark:text-slate-500 text-xs font-semibold shrink-0">s/d</span>
+                                    <input type="date" className="filter-input flex-1 text-xs !pl-3 !pr-2 !min-w-0" value={dateTo} onChange={e => { setDateTo(e.target.value); runFilters({ date_to: e.target.value }); }} title="Sampai tanggal" />
                                 </div>
                             </div>
                         </div>
