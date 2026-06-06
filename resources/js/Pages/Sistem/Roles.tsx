@@ -366,6 +366,47 @@ export default function RolesIndex({ roles, permissions, users, filters, stats }
 
     const groupedPermissions = groupPermissions();
 
+    const getFilteredLinks = () => {
+        const totalLinks = users.links.length;
+        if (totalLinks <= 3) return users.links;
+
+        const prevLink = users.links[0];
+        const nextLink = users.links[totalLinks - 1];
+        const pageLinks = users.links.slice(1, totalLinks - 1);
+
+        const currentPage = users.current_page;
+        const lastPage = users.last_page;
+
+        const delta = 1;
+        const range: number[] = [];
+        const rangeWithDots: any[] = [];
+        let l: number | undefined;
+
+        for (let i = 1; i <= lastPage; i++) {
+            if (
+                i === 1 ||
+                i === lastPage ||
+                (i >= currentPage - delta && i <= currentPage + delta)
+            ) {
+                range.push(i);
+            }
+        }
+
+        for (const i of range) {
+            if (l !== undefined) {
+                if (i - l === 2) {
+                    rangeWithDots.push(pageLinks[l]);
+                } else if (i - l > 2) {
+                    rangeWithDots.push({ url: null, label: '...', active: false });
+                }
+            }
+            rangeWithDots.push(pageLinks[i - 1]);
+            l = i;
+        }
+
+        return [prevLink, ...rangeWithDots, nextLink];
+    };
+
     return (
         <AuthenticatedLayout header="Roles & Akses">
             <Head title="Roles & Akses" />
@@ -757,7 +798,7 @@ export default function RolesIndex({ roles, permissions, users, filters, stats }
                                                 Menampilkan <strong>{users.from || 0}–{users.to || 0}</strong> dari <strong>{users.total}</strong> pengguna
                                             </div>
                                             <div className="flex gap-1">
-                                                {users.links.map((link, idx) => {
+                                                {getFilteredLinks().map((link, idx) => {
                                                     if (!link.url) {
                                                         return (
                                                             <span 
