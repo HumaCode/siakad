@@ -1,4 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link } from '@inertiajs/react';
+
+interface PaginatedProdis {
+    data: any[];
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+    from: number;
+    to: number;
+    links: {
+        url: string | null;
+        label: string;
+        active: boolean;
+    }[];
+}
 
 interface KurikulumItem {
     id: number;
@@ -20,8 +36,13 @@ interface KurikulumItem {
 
 interface KurikulumTabProps {
     fakultas: any[];
-    prodis: any[];
+    prodis: PaginatedProdis;
+    initialSearch: string;
+    initialFakultas: string;
+    initialTahun: string;
+    onFiltersChange: (search: string, fakultas: string, tahun: string) => void;
     onOpenModal: (prodi?: any) => void;
+    onDelete: (prodi: any) => void;
 }
 
 const getProdiStylePreset = (kode: string) => {
@@ -99,12 +120,28 @@ const getProdiStylePreset = (kode: string) => {
     }
 };
 
-export default function KurikulumTab({ fakultas, prodis, onOpenModal }: KurikulumTabProps) {
-    const [search, setSearch] = useState('');
-    const [selectedFakultas, setSelectedFakultas] = useState('Semua Fakultas');
-    const [selectedTahun, setSelectedTahun] = useState('Semua Tahun');
+export default function KurikulumTab({ 
+    fakultas, 
+    prodis, 
+    initialSearch, 
+    initialFakultas, 
+    initialTahun, 
+    onFiltersChange, 
+    onOpenModal, 
+    onDelete 
+}: KurikulumTabProps) {
+    const [search, setSearch] = useState(initialSearch || '');
+    const [selectedFakultas, setSelectedFakultas] = useState(initialFakultas || 'Semua Fakultas');
+    const [selectedTahun, setSelectedTahun] = useState(initialTahun || 'Semua Tahun');
 
-    const kurikulumList = (prodis || []).map((p: any) => {
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            onFiltersChange(search, selectedFakultas, selectedTahun);
+        }, 400);
+        return () => clearTimeout(handler);
+    }, [search, selectedFakultas, selectedTahun]);
+
+    const kurikulumList = (prodis.data || []).map((p: any) => {
         const preset = getProdiStylePreset(p.kode);
         return {
             ...preset,
@@ -125,13 +162,48 @@ export default function KurikulumTab({ fakultas, prodis, onOpenModal }: Kurikulu
         };
     });
 
-    const filteredKurikulum = kurikulumList.filter(item => {
-        const matchesSearch = item.prodi.toLowerCase().includes(search.toLowerCase()) ||
-            item.kaprodi.toLowerCase().includes(search.toLowerCase());
-        const matchesTahun = selectedTahun === 'Semua Tahun' || item.tahun.toString() === selectedTahun;
-        const matchesFakultas = selectedFakultas === 'Semua Fakultas' || item.fakultas_nama === selectedFakultas;
-        return matchesSearch && matchesTahun && matchesFakultas;
-    });
+    const filteredKurikulum = kurikulumList;
+
+    const getFilteredLinks = () => {
+        const links = prodis.links;
+        if (!links || links.length <= 10) return links || [];
+
+        const current = prodis.current_page;
+        const last = prodis.last_page;
+        const delta = 2;
+
+        const range = [];
+        for (let i = Math.max(2, current - delta); i <= Math.min(last - 1, current + delta); i++) {
+            range.push(i);
+        }
+
+        if (current - delta > 2) {
+            range.unshift('...');
+        }
+        if (current + delta < last - 1) {
+            range.push('...');
+        }
+
+        range.unshift(1);
+        if (last > 1) {
+            range.push(last);
+        }
+
+        const filtered = [];
+        filtered.push(links[0]); // Previous link
+
+        range.forEach((page) => {
+            if (page === '...') {
+                filtered.push({ url: null, label: '...', active: false });
+            } else {
+                const found = links.find(l => l.label === page.toString());
+                if (found) filtered.push(found);
+            }
+        });
+
+        filtered.push(links[links.length - 1]); // Next link
+        return filtered;
+    };
 
     const getStatusBadgeClass = (status: string) => {
         switch (status) {
@@ -243,11 +315,50 @@ export default function KurikulumTab({ fakultas, prodis, onOpenModal }: Kurikulu
                                 <button className="btn-icon bi-edit" title="Edit" onClick={() => onOpenModal(item)}>
                                     <i className="bi bi-pencil" />
                                 </button>
+                                <button className="btn-icon bi-del" title="Hapus" onClick={() => onDelete(item)}>
+                                    <i className="bi bi-trash" />
+                                </button>
                             </div>
                         </div>
                     </div>
                 ))}
             </div>
+
+            {/* Pagination Links */}
+            {prodis.last_page > 1 && (
+                <div className="flex items-center justify-between mt-6 flex-wrap gap-4 px-2">
+                    <div className="text-xs text-slate-500 dark:text-slate-400">
+                        Menampilkan <strong>{prodis.from || 0}–{prodis.to || 0}</strong> dari <strong>{prodis.total}</strong> program studi
+                    </div>
+                    <div className="flex gap-1">
+                        {getFilteredLinks().map((link, idx) => {
+                            if (!link.url) {
+                                return (
+                                    <span 
+                                        key={idx} 
+                                        className="px-3 py-1.5 border border-slate-200 dark:border-slate-800 rounded-lg text-xs font-semibold text-slate-300 dark:text-slate-600 pointer-events-none"
+                                        dangerouslySetInnerHTML={{ __html: link.label }}
+                                    />
+                                );
+                            }
+                            return (
+                                <Link
+                                    key={idx}
+                                    href={link.url}
+                                    className={`px-3 py-1.5 border rounded-lg text-xs font-semibold transition-all ${
+                                        link.active 
+                                            ? 'bg-blue-600 text-white border-blue-600 shadow-sm' 
+                                            : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'
+                                    }`}
+                                    preserveState
+                                    preserveScroll
+                                    dangerouslySetInnerHTML={{ __html: link.label }}
+                                />
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

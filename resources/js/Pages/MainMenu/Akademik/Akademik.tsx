@@ -1,6 +1,8 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import React, { useState, useEffect } from 'react';
+import ConfirmationModal from '@/Components/ConfirmationModal';
+import { destroy as destroyProdi } from '@/actions/App/Http/Controllers/MainMenu/AkademikController';
 
 // Partials
 import KurikulumTab from './Partials/KurikulumTab';
@@ -20,13 +22,33 @@ interface Stats {
     ruangan_count: number;
 }
 
+interface PaginatedProdis {
+    data: any[];
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+    from: number;
+    to: number;
+    links: {
+        url: string | null;
+        label: string;
+        active: boolean;
+    }[];
+}
+
 interface PageProps {
     stats: Stats;
     fakultas: any[];
-    prodis: any[];
+    prodis: PaginatedProdis;
+    filters: {
+        search: string | null;
+        fakultas: string | null;
+        tahun: string | null;
+    };
 }
 
-export default function Akademik({ stats, fakultas, prodis }: PageProps) {
+export default function Akademik({ stats, fakultas, prodis, filters }: PageProps) {
     const [activeTab, setActiveTab] = useState<'kurikulum' | 'matakuliah' | 'jadwal' | 'kalender'>('kurikulum');
     
     // Modal Open states
@@ -39,6 +61,30 @@ export default function Akademik({ stats, fakultas, prodis }: PageProps) {
     const handleOpenKurikulumModal = (prodi?: any) => {
         setEditingProdi(prodi && prodi.id ? prodi : null);
         setIsKurikulumModalOpen(true);
+    };
+
+    // Delete Prodi states & handlers
+    const [prodiToDelete, setProdiToDelete] = useState<any | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    const handleDeleteProdi = (prodi: any) => {
+        setProdiToDelete(prodi);
+    };
+
+    const confirmDeleteProdi = () => {
+        if (!prodiToDelete) return;
+        setIsDeleting(true);
+        router.delete(destroyProdi.url(prodiToDelete.id), {
+            onSuccess: () => {
+                setProdiToDelete(null);
+                setIsDeleting(false);
+                triggerToast('Program Studi berhasil dihapus.', 'success');
+            },
+            onError: () => {
+                setIsDeleting(false);
+                triggerToast('Gagal menghapus Program Studi.', 'danger');
+            }
+        });
     };
 
     // Toast state
@@ -179,7 +225,21 @@ export default function Akademik({ stats, fakultas, prodis }: PageProps) {
                     <KurikulumTab 
                         fakultas={fakultas} 
                         prodis={prodis}
+                        initialSearch={filters?.search || ''}
+                        initialFakultas={filters?.fakultas || 'Semua Fakultas'}
+                        initialTahun={filters?.tahun || 'Semua Tahun'}
+                        onFiltersChange={(searchVal, fakultasVal, tahunVal) => {
+                            router.get('/akademik', {
+                                search: searchVal || null,
+                                fakultas: fakultasVal !== 'Semua Fakultas' ? fakultasVal : null,
+                                tahun: tahunVal !== 'Semua Tahun' ? tahunVal : null,
+                            }, {
+                                preserveState: true,
+                                preserveScroll: true,
+                            });
+                        }}
                         onOpenModal={handleOpenKurikulumModal} 
+                        onDelete={handleDeleteProdi}
                     />
                 )}
                 {activeTab === 'matakuliah' && (
@@ -233,6 +293,24 @@ export default function Akademik({ stats, fakultas, prodis }: PageProps) {
                 isOpen={isKalenderModalOpen} 
                 onClose={() => setIsKalenderModalOpen(false)} 
                 onSave={handleSaveModal} 
+            />
+
+            {/* DELETE CONFIRMATION MODAL */}
+            <ConfirmationModal
+                show={prodiToDelete !== null}
+                title="Hapus Program Studi"
+                description={
+                    <>
+                        Apakah Anda yakin ingin menghapus program studi <strong>{prodiToDelete?.prodi}</strong> ({prodiToDelete?.jenjang}) beserta seluruh data kurikulum terkait?
+                    </>
+                }
+                warningText="Tindakan ini tidak dapat dibatalkan. Seluruh data kurikulum, mata kuliah, dan jadwal terkait program studi ini akan terpengaruh."
+                confirmText="Hapus Program Studi"
+                cancelText="Batal"
+                onClose={() => setProdiToDelete(null)}
+                onConfirm={confirmDeleteProdi}
+                processing={isDeleting}
+                variant="danger"
             />
 
             {/* TOAST */}

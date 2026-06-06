@@ -27,26 +27,35 @@ class AkademikController extends Controller
         $this->prodiService = $prodiService;
     }
 
-    /**
-     * Display the academic dashboard.
-     */
-    public function index(): Response
+    public function index(\Illuminate\Http\Request $request): Response
     {
-        $prodis = $this->prodiService->getAllProdis();
+        $search = $request->query('search');
+        $fakultasFilter = $request->query('fakultas');
+        $tahunFilter = $request->query('tahun');
+
+        $paginatedProdis = $this->prodiService->getPaginatedProdis($search, $fakultasFilter, $tahunFilter, 6);
 
         $stats = [
-            'prodi_count' => $prodis->count(),
+            'prodi_count' => Prodi::count(),
             'dosen_count' => Dosen::count(),
             'ruangan_count' => Ruangan::count(),
         ];
 
         $fakultas = Fakultas::orderBy('nama')->get(['id', 'nama', 'kode']);
-        $prodisResource = ProdiResource::collection($prodis)->resolve();
+        
+        $prodisResource = $paginatedProdis->through(function ($prodi) {
+            return (new ProdiResource($prodi))->resolve();
+        });
 
         return Inertia::render('MainMenu/Akademik/Akademik', [
             'stats' => $stats,
             'fakultas' => $fakultas,
             'prodis' => $prodisResource,
+            'filters' => [
+                'search' => $search,
+                'fakultas' => $fakultasFilter,
+                'tahun' => $tahunFilter,
+            ],
         ]);
     }
 
@@ -68,5 +77,15 @@ class AkademikController extends Controller
         $this->prodiService->updateProdi($prodi, $request->validated());
 
         return redirect()->back()->with('success', 'Program Studi berhasil diperbarui.');
+    }
+
+    /**
+     * Delete an existing program of study.
+     */
+    public function destroy(Prodi $prodi): RedirectResponse
+    {
+        $this->prodiService->deleteProdi($prodi);
+
+        return redirect()->back()->with('success', 'Program Studi berhasil dihapus.');
     }
 }

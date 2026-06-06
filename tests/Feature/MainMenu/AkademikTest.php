@@ -116,3 +116,35 @@ test('authenticated user can update an existing prodi', function () {
         'tahun' => 2025
     ]);
 });
+
+test('authenticated user can delete an existing prodi', function () {
+    $user = User::factory()->create();
+    $fakultas = Fakultas::create([
+        'kode' => 'FT_TEST',
+        'nama' => 'Fakultas Teknik Test',
+        'dekan' => 'Dekan Teknik Test'
+    ]);
+
+    $prodi = Prodi::create([
+        'fakultas_id' => $fakultas->id,
+        'kode' => 'TISTEST',
+        'nama' => 'Teknik Industri Test',
+        'jenjang' => 'S1',
+        'kaprodi' => 'Kaprodi Industri Test',
+        'status' => 'Aktif',
+        'deskripsi' => 'Deskripsi Test',
+        'sks' => 144,
+        'lama_studi' => 8,
+        'akreditasi' => 'Unggul',
+        'tahun' => 2024
+    ]);
+
+    $this->actingAs($user)
+        ->delete("/akademik/prodi/{$prodi->id}")
+        ->assertSessionHasNoErrors()
+        ->assertRedirect();
+
+    $this->assertSoftDeleted('prodis', [
+        'id' => $prodi->id
+    ]);
+});

@@ -27,6 +27,14 @@ class ProdiService
     }
 
     /**
+     * Get paginated program of studies with filters.
+     */
+    public function getPaginatedProdis(?string $search, ?string $fakultas, ?string $tahun, int $perPage = 6): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    {
+        return $this->prodiRepository->getPaginatedProdis($search, $fakultas, $tahun, $perPage);
+    }
+
+    /**
      * Store a new program of study.
      */
     public function storeProdi(array $data): Prodi
@@ -40,5 +48,13 @@ class ProdiService
     public function updateProdi(Prodi $prodi, array $data): Prodi
     {
         return $this->prodiRepository->updateProdi($prodi, $data);
+    }
+
+    /**
+     * Delete an existing program of study.
+     */
+    public function deleteProdi(Prodi $prodi): bool
+    {
+        return $this->prodiRepository->deleteProdi($prodi);
     }
 }

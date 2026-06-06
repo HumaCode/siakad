@@ -17,6 +17,34 @@ class ProdiRepository implements ProdiRepositoryInterface
     }
 
     /**
+     * Get paginated program of studies with search query and filters.
+     */
+    public function getPaginatedProdis(?string $search, ?string $fakultas, ?string $tahun, int $perPage = 6): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    {
+        $query = Prodi::with('fakultas')->orderBy('nama');
+
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%")
+                  ->orWhere('kode', 'like', "%{$search}%")
+                  ->orWhere('kaprodi', 'like', "%{$search}%");
+            });
+        }
+
+        if (!empty($fakultas) && $fakultas !== 'Semua Fakultas') {
+            $query->whereHas('fakultas', function ($q) use ($fakultas) {
+                $q->where('nama', $fakultas);
+            });
+        }
+
+        if (!empty($tahun) && $tahun !== 'Semua Tahun') {
+            $query->where('tahun', $tahun);
+        }
+
+        return $query->paginate($perPage)->withQueryString();
+    }
+
+    /**
      * Store a new program of study.
      */
     public function createProdi(array $data): Prodi
@@ -56,5 +84,13 @@ class ProdiRepository implements ProdiRepositoryInterface
         ]);
 
         return $prodi;
+    }
+
+    /**
+     * Delete an existing program of study.
+     */
+    public function deleteProdi(Prodi $prodi): bool
+    {
+        return $prodi->delete();
     }
 }
