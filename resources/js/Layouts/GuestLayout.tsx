@@ -111,14 +111,16 @@ export default function GuestLayout({ children }: PropsWithChildren) {
                 <div className="shape shape-5"></div>
 
                 {/* Floating academic icons */}
-                <div className="icon-float">🎓</div>
-                <div className="icon-float">📚</div>
-                <div className="icon-float">🔬</div>
-                <div className="icon-float">✏️</div>
-                <div className="icon-float">📐</div>
-                <div className="icon-float">🏛️</div>
-                <div className="icon-float">📖</div>
-                <div className="icon-float">💡</div>
+                <div className="icons-float-container">
+                    <div className="icon-float">🎓</div>
+                    <div className="icon-float">📚</div>
+                    <div className="icon-float">🔬</div>
+                    <div className="icon-float">✏️</div>
+                    <div className="icon-float">📐</div>
+                    <div className="icon-float">🏛️</div>
+                    <div className="icon-float">📖</div>
+                    <div className="icon-float">💡</div>
+                </div>
             </div>
 
             <canvas id="particle-canvas" ref={canvasRef}></canvas>

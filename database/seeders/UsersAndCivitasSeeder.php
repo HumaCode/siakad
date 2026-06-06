@@ -20,14 +20,25 @@ class UsersAndCivitasSeeder extends Seeder
         $superAdmin = User::create([
             'name' => 'Super Administrator',
             'email' => 'superadmin@siakad.com',
+            'username' => 'superadmin',
             'password' => Hash::make('password'),
         ]);
         $superAdmin->assignRole('super_admin');
+
+        // Create Developer
+        $developer = User::create([
+            'name' => 'Developer SIAKAD',
+            'email' => 'developer@siakad.com',
+            'username' => 'dev',
+            'password' => Hash::make('password'),
+        ]);
+        $developer->assignRole('dev');
 
         // 2. Create Admin
         $admin = User::create([
             'name' => 'Admin SIAKAD',
             'email' => 'admin@siakad.com',
+            'username' => 'admin',
             'password' => Hash::make('password'),
         ]);
         $admin->assignRole('admin');
@@ -36,6 +47,7 @@ class UsersAndCivitasSeeder extends Seeder
         $akademik = User::create([
             'name' => 'Budi Setiawan (Staf Akademik)',
             'email' => 'akademik@siakad.com',
+            'username' => 'akademik',
             'password' => Hash::make('password'),
         ]);
         $akademik->assignRole('akademik');
@@ -44,6 +56,7 @@ class UsersAndCivitasSeeder extends Seeder
         $keuangan = User::create([
             'name' => 'Siti Rahma (Staf Keuangan)',
             'email' => 'keuangan@siakad.com',
+            'username' => 'keuangan',
             'password' => Hash::make('password'),
         ]);
         $keuangan->assignRole('keuangan');

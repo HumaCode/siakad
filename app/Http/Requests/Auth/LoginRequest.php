@@ -43,22 +43,32 @@ class LoginRequest extends FormRequest
         $this->ensureIsNotRateLimited();
 
         $loginInput = $this->string('email');
-        $email = $loginInput;
+        $user = null;
 
-        // If it's not a valid email, check if it's a NIM or NIDN
-        if (!filter_var($loginInput, FILTER_VALIDATE_EMAIL)) {
-            // Check Mahasiswa
-            $mahasiswa = \App\Models\Mahasiswa::where('nim', $loginInput)->first();
-            if ($mahasiswa) {
-                $email = $mahasiswa->user->email;
-            } else {
-                // Check Dosen
+        if (filter_var($loginInput, FILTER_VALIDATE_EMAIL)) {
+            $user = \App\Models\User::where('email', $loginInput)->first();
+        } else {
+            // Check by username
+            $user = \App\Models\User::where('username', $loginInput)->first();
+
+            // Check by NIM (Mahasiswa)
+            if (!$user) {
+                $mahasiswa = \App\Models\Mahasiswa::where('nim', $loginInput)->first();
+                if ($mahasiswa) {
+                    $user = $mahasiswa->user;
+                }
+            }
+
+            // Check by NIDN (Dosen)
+            if (!$user) {
                 $dosen = \App\Models\Dosen::where('nidn', $loginInput)->first();
                 if ($dosen) {
-                    $email = $dosen->user->email;
+                    $user = $dosen->user;
                 }
             }
         }
+
+        $email = $user ? $user->email : $loginInput;
 
         if (! Auth::attempt(['email' => $email, 'password' => $this->string('password')], $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());

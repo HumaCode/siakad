@@ -11,16 +11,17 @@ File ini mencantumkan semua akun default hasil *seeding* database untuk keperlua
 
 Semua akun di bawah ini menggunakan password default: **`password`**
 
-| Nama | Email | Role | Detail Tambahan | Deskripsi Akses |
+| Nama | Email | Username / NIM / NIDN | Role | Deskripsi Akses |
 | :--- | :--- | :--- | :--- | :--- |
-| **Super Administrator** | `superadmin@siakad.com` | `super_admin` | - | Akses penuh ke seluruh modul sistem. |
-| **Admin SIAKAD** | `admin@siakad.com` | `admin` | - | Pengelola civitas akademik, user, & prodi. |
-| **Budi Setiawan** | `akademik@siakad.com` | `akademik` | Staf Akademik | Pengelola jadwal, kurikulum, matakuliah, & KRS. |
-| **Siti Rahma** | `keuangan@siakad.com` | `keuangan` | Staf Keuangan | Pengelola tagihan & verifikasi pembayaran. |
-| **Hendra Wijaya, S.T., M.T.** | `hendra.dosen@siakad.com` | `dosen` | NIDN: `0412038901` (Prodi: Informatika) | Input nilai, presensi, & persetujuan KRS. |
-| **Dr. Lutfi Hakim, S.Kom., M.T.I.** | `lutfi.dosen@siakad.com` | `dosen` | NIDN: `0420078202` (Prodi: Sistem Informasi) | Input nilai, presensi, & persetujuan KRS. |
-| **Aditya Pratama** | `aditya.mhs@siakad.com` | `mahasiswa` | NIM: `251011526101` (Prodi: Informatika) | Pengisian KRS, melihat jadwal, presensi, & nilai. |
-| **Nabila Putri** | `nabila.mhs@siakad.com` | `mahasiswa` | NIM: `251011526202` (Prodi: Sistem Informasi) | Pengisian KRS, melihat jadwal, presensi, & nilai. |
+| **Super Administrator** | `superadmin@siakad.com` | Username: `superadmin` | `super_admin` | Akses penuh ke seluruh modul sistem. |
+| **Developer SIAKAD** | `developer@siakad.com` | Username: `dev` | `dev` | Developer role dengan akses penuh ke seluruh menu sistem. |
+| **Admin SIAKAD** | `admin@siakad.com` | Username: `admin` | `admin` | Pengelola civitas akademik, user, & prodi. |
+| **Budi Setiawan** | `akademik@siakad.com` | Username: `akademik` | `akademik` | Pengelola jadwal, kurikulum, matakuliah, & KRS. |
+| **Siti Rahma** | `keuangan@siakad.com` | Username: `keuangan` | `keuangan` | Pengelola tagihan & verifikasi pembayaran. |
+| **Hendra Wijaya, S.T., M.T.** | `hendra.dosen@siakad.com` | NIDN: `0412038901` | `dosen` | Input nilai, presensi, & persetujuan KRS. |
+| **Dr. Lutfi Hakim, S.Kom., M.T.I.** | `lutfi.dosen@siakad.com` | NIDN: `0420078202` | `dosen` | Input nilai, presensi, & persetujuan KRS. |
+| **Aditya Pratama** | `aditya.mhs@siakad.com` | NIM: `251011526101` | `mahasiswa` | Pengisian KRS, melihat jadwal, presensi, & nilai. |
+| **Nabila Putri** | `nabila.mhs@siakad.com` | NIM: `251011526202` | `mahasiswa` | Pengisian KRS, melihat jadwal, presensi, & nilai. |
 
 ---
 

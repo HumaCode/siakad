@@ -24,6 +24,20 @@ test('users can authenticate using the login screen', function () {
     $response->assertRedirect(route('dashboard', absolute: false));
 });
 
+test('users can authenticate using username', function () {
+    $user = User::factory()->create([
+        'username' => 'mycoolusername',
+    ]);
+
+    $response = $this->post('/login', [
+        'email' => 'mycoolusername',
+        'password' => 'password',
+    ]);
+
+    $this->assertAuthenticatedAs($user);
+    $response->assertRedirect(route('dashboard', absolute: false));
+});
+
 test('mahasiswa can authenticate using NIM', function () {
     $fakultas = Fakultas::create([
         'kode' => 'FT',

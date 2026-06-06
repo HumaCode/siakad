@@ -55,6 +55,12 @@ body.guest-page {
 }
 
 /* Academic floating icons */
+.icons-float-container {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+}
 .icon-float {
     position: absolute;
     font-size: 28px;
