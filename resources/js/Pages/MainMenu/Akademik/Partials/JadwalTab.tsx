@@ -68,9 +68,9 @@ export default function JadwalTab({ onOpenModal }: JadwalTabProps) {
 
     return (
         <div className="tab-panel active">
-            <div className="row g-3">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 {/* Schedule Grid */}
-                <div className="col-12 col-lg-9">
+                <div className="col-span-1 lg:col-span-9">
                     <div className="card-custom">
                         <div className="filter-bar border-b border-slate-100 dark:border-slate-800 pb-4">
                             <select
@@ -183,7 +183,7 @@ export default function JadwalTab({ onOpenModal }: JadwalTabProps) {
                 </div>
 
                 {/* SKS Load & Lecturers */}
-                <div className="col-12 col-lg-3">
+                <div className="col-span-1 lg:col-span-3">
                     {/* SKS Load */}
                     <div className="card-custom mb-3 p-4">
                         <div className="text-xs font-extrabold text-slate-800 dark:text-slate-200 mb-3 flex items-center">

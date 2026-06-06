@@ -144,9 +144,9 @@ export default function KalenderTab({ onOpenModal, onToast }: KalenderTabProps) 
 
     return (
         <div className="tab-panel active">
-            <div className="row g-3">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 {/* Calendar Grid */}
-                <div className="col-12 col-lg-8">
+                <div className="col-span-1 lg:col-span-8">
                     <div className="card-custom">
                         {/* Month Nav */}
                         <div className="p-5 flex flex-wrap items-center justify-between border-b border-slate-100 dark:border-slate-800/40">
@@ -240,7 +240,7 @@ export default function KalenderTab({ onOpenModal, onToast }: KalenderTabProps) 
                 </div>
 
                 {/* Agenda & Period timeline */}
-                <div className="col-12 col-lg-4">
+                <div className="col-span-1 lg:col-span-4">
                     {/* Upcoming events */}
                     <div className="card-custom mb-3 p-4">
                         <div className="flex justify-between items-center mb-3">
