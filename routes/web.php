@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Sistem\RoleController;
 use App\Http\Controllers\Sistem\PermissionController;
 use App\Http\Controllers\Sistem\MenuController;
+use App\Http\Controllers\Sistem\ActivityLogController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -42,6 +43,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/sistem/menu', [MenuController::class, 'store'])->name('sistem.menu.store');
     Route::put('/sistem/menu/{menu}', [MenuController::class, 'update'])->name('sistem.menu.update');
     Route::delete('/sistem/menu/{menu}', [MenuController::class, 'destroy'])->name('sistem.menu.destroy');
+
+    // Sistem Activity Log
+    Route::get('/sistem/activity-log', [ActivityLogController::class, 'index'])->name('sistem.activity-log.index');
+    Route::delete('/sistem/activity-log/{activity}', [ActivityLogController::class, 'destroy'])->name('sistem.activity-log.destroy');
+    Route::post('/sistem/activity-log/clear-all', [ActivityLogController::class, 'clearAll'])->name('sistem.activity-log.clear-all');
+    Route::post('/sistem/activity-log/clear-old', [ActivityLogController::class, 'clearOld'])->name('sistem.activity-log.clear-old');
 });
 
 require __DIR__.'/auth.php';
