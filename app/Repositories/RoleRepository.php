@@ -114,6 +114,10 @@ class RoleRepository implements RoleRepositoryInterface
             $role = Role::findOrFail($role);
         }
 
+        // Get current permissions (cast to integer to prevent comparison mismatches)
+        $oldPermissions = array_map('intval', $role->permissions()->pluck('id')->toArray());
+        $newPermissions = array_map('intval', $data['permissions'] ?? []);
+
         $role->update([
             'name' => $data['name'],
             'slug' => $data['slug'],
@@ -126,6 +130,17 @@ class RoleRepository implements RoleRepositoryInterface
         ]);
 
         $role->syncPermissions($data['permissions'] ?? []);
+
+        // Sort both arrays to compare their values regardless of order
+        sort($oldPermissions);
+        sort($newPermissions);
+
+        // If the permissions list actually changed, clear the menu cache
+        if ($oldPermissions !== $newPermissions) {
+            if (function_exists('clearMenuCache')) {
+                clearMenuCache();
+            }
+        }
 
         return $role;
     }

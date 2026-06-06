@@ -18,6 +18,8 @@ interface MenuItem {
 }
 
 const mapIcon = (iconName: string | null) => {
+    if (!iconName) return 'bi-circle-fill';
+    if (iconName.startsWith('bi-')) return iconName;
     switch (iconName) {
         case 'academic-cap': return 'bi-mortarboard-fill';
         case 'user-group': return 'bi-people-fill';
