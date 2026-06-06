@@ -182,6 +182,7 @@ export default function MenuFormModal({
                             </div>
                             <div className="flex-1">
                                 <FormInput 
+                                    label=""
                                     placeholder="cth: bi-shield-check, bi-gear, bi-person-badge" 
                                     value={icon}
                                     onChange={(e) => setIcon(e.target.value)}
