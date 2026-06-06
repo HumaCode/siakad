@@ -297,7 +297,7 @@ export default function PermissionsIndex({ permissions, filters, stats }: PagePr
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                         {/* Card 1: Total Permission */}
                         <div className="card-custom flex items-center gap-4 p-5 hover:-translate-y-0.5 transition-all duration-300">
-                            <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xl shrink-0">
+                            <div className="rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center text-lg shrink-0" style={{ width: '46px', height: '46px' }}>
                                 <i className="bi bi-key-fill" />
                             </div>
                             <div>
@@ -310,7 +310,7 @@ export default function PermissionsIndex({ permissions, filters, stats }: PagePr
 
                         {/* Card 2: Active */}
                         <div className="card-custom flex items-center gap-4 p-5 hover:-translate-y-0.5 transition-all duration-300">
-                            <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl shrink-0">
+                            <div className="rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-lg shrink-0" style={{ width: '46px', height: '46px' }}>
                                 <i className="bi bi-check-circle-fill" />
                             </div>
                             <div>
@@ -326,7 +326,7 @@ export default function PermissionsIndex({ permissions, filters, stats }: PagePr
 
                         {/* Card 3: Inactive */}
                         <div className="card-custom flex items-center gap-4 p-5 hover:-translate-y-0.5 transition-all duration-300">
-                            <div className="w-12 h-12 rounded-2xl bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 flex items-center justify-center text-xl shrink-0">
+                            <div className="rounded-xl bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 flex items-center justify-center text-lg shrink-0" style={{ width: '46px', height: '46px' }}>
                                 <i className="bi bi-x-circle-fill" />
                             </div>
                             <div>
