@@ -33,53 +33,7 @@ class MenuSeeder extends Seeder
         $this->attachMenupermission($akademik, ['menu', 'read'], ['super_admin', 'admin', 'akademik', 'dosen', 'mahasiswa']);
         $this->attachMenupermission($akademik, ['read'], ['dev']);
 
-        // 1.1 Kurikulum (Submenu)
-        $kurikulum = Menu::updateOrCreate(
-            ['url' => 'akademik/kurikulum'],
-            [
-                'name' => 'Kurikulum',
-                'category' => $categoryMain,
-                'icon' => null,
-                'active' => true,
-                'orders' => 11,
-                'main_menu_id' => $akademik->id,
-            ]
-        );
-        $this->attachMenupermission($kurikulum, null, ['super_admin', 'admin', 'akademik']);
-        $this->attachMenupermission($kurikulum, ['menu', 'read'], ['dosen', 'mahasiswa']);
-        $this->attachMenupermission($kurikulum, null, ['dev']);
 
-        // 1.2 Mata Kuliah (Submenu)
-        $matakuliah = Menu::updateOrCreate(
-            ['url' => 'akademik/mata-kuliah'],
-            [
-                'name' => 'Mata Kuliah',
-                'category' => $categoryMain,
-                'icon' => null,
-                'active' => true,
-                'orders' => 12,
-                'main_menu_id' => $akademik->id,
-            ]
-        );
-        $this->attachMenupermission($matakuliah, null, ['super_admin', 'admin', 'akademik']);
-        $this->attachMenupermission($matakuliah, ['menu', 'read'], ['dosen', 'mahasiswa']);
-        $this->attachMenupermission($matakuliah, null, ['dev']);
-
-        // 1.3 Jadwal Kuliah (Submenu)
-        $jadwal = Menu::updateOrCreate(
-            ['url' => 'akademik/jadwal-kuliah'],
-            [
-                'name' => 'Jadwal Kuliah',
-                'category' => $categoryMain,
-                'icon' => null,
-                'active' => true,
-                'orders' => 13,
-                'main_menu_id' => $akademik->id,
-            ]
-        );
-        $this->attachMenupermission($jadwal, null, ['super_admin', 'admin', 'akademik']);
-        $this->attachMenupermission($jadwal, ['menu', 'read'], ['dosen', 'mahasiswa']);
-        $this->attachMenupermission($jadwal, null, ['dev']);
 
         // 2. Mahasiswa
         $mahasiswa = Menu::updateOrCreate(
