@@ -446,3 +446,92 @@
     100% { transform: translate(0,0) scale(1); }
 }
 
+/* ============================================================
+   MOBILE RESPONSIVENESS MEDIA QUERIES
+   ============================================================ */
+@media (max-width: 767px) {
+    /* Topbar spanning full width */
+    .topbar {
+        left: 0 !important;
+        padding: 0 12px;
+        gap: 8px;
+    }
+
+    /* Adjust main content wrapper */
+    .main-wrapper {
+        margin-left: 0 !important;
+    }
+
+    /* Sidebar as a drawer */
+    .sidebar {
+        transform: translateX(-100%);
+        z-index: 1060;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        width: var(--sidebar-w) !important;
+    }
+
+    /* When sidebar is open (wrapper does NOT have sidebar-collapsed) */
+    .min-h-screen:not(.sidebar-collapsed) .sidebar {
+        transform: translateX(0);
+    }
+    
+    /* Ensure text labels are visible when sidebar is drawer slide-in */
+    .min-h-screen:not(.sidebar-collapsed) .sidebar .nav-label,
+    .min-h-screen:not(.sidebar-collapsed) .sidebar .nav-section-title,
+    .min-h-screen:not(.sidebar-collapsed) .sidebar .sidebar-user-info,
+    .min-h-screen:not(.sidebar-collapsed) .sidebar .brand-text {
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        width: auto !important;
+        overflow: visible !important;
+    }
+
+    /* Hide less important buttons in topbar to save space */
+    .topbar-btn[title="Pesan"],
+    .topbar-btn[title="Bantuan"] {
+        display: none !important;
+    }
+
+    /* Truncate page title so it doesn't wrap */
+    .topbar-breadcrumb {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .topbar-breadcrumb .page-title {
+        font-size: 0.9rem !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 130px;
+        line-height: 1.2;
+    }
+
+    .topbar-breadcrumb .breadcrumb-trail {
+        display: none !important;
+    }
+
+    /* Mobile backdrop overlay for open sidebar drawer */
+    .sidebar-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(4px);
+        z-index: 1050;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+
+    .min-h-screen:not(.sidebar-collapsed) .sidebar-overlay {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    /* Adjust avatar padding on small screens */
+    .topbar-user {
+        padding: 4px !important;
+        gap: 4px !important;
+    }
+}
+

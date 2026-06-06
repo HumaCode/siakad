@@ -54,6 +54,16 @@ export default function Authenticated({
 
     useEffect(() => {
         setIsDark(document.documentElement.classList.contains('dark'));
+        
+        const checkMobile = () => {
+            if (window.innerWidth < 768) {
+                setIsCollapsed(true);
+            }
+        };
+        
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
     const toggleTheme = () => {
@@ -89,6 +99,12 @@ export default function Authenticated({
 
     return (
         <div className={`min-h-screen relative overflow-x-hidden transition-colors duration-300 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 ${isCollapsed ? 'sidebar-collapsed' : ''}`}>
+
+            {/* Mobile Sidebar Overlay */}
+            <div 
+                className="sidebar-overlay" 
+                onClick={() => setIsCollapsed(true)}
+            />
 
             {/* Dotted Grid & Orbs Background */}
             <div className="bg-anim">
