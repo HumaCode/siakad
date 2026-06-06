@@ -69,7 +69,7 @@ export default function Akademik({ stats, fakultas }: PageProps) {
         >
             <Head title="SIAKAD — Akademik" />
 
-            <div className="main-content p-0">
+            <div className="py-6 px-4 sm:px-6 lg:px-8 relative min-h-screen">
                 {/* PAGE HEADER */}
                 <div className="page-header" data-aos="fade-down" data-aos-duration="550">
                     <div className="page-header-inner">
