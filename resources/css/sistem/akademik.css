@@ -187,7 +187,7 @@
 }
 
 /* ===== SCHEDULE / JADWAL ===== */
-.jadwal-grid{display:grid;grid-template-columns:80px repeat(5,1fr);gap:1px;background:var(--border);border-radius:var(--radius-md);overflow:hidden;font-size:.76rem;}
+.jadwal-grid{display:grid;grid-template-columns:80px repeat(7,1fr);gap:1px;background:var(--border);border-radius:var(--radius-md);overflow:hidden;font-size:.76rem;}
 .jg-header{background:var(--sidebar-bg);color:#fff;font-weight:700;text-align:center;padding:10px 6px;font-size:.72rem;}
 .jg-time{background:rgba(26,86,219,.05);color:var(--text-muted);font-weight:700;text-align:center;padding:10px 4px;font-size:.68rem;display:flex;align-items:center;justify-content:center;}
 .jg-cell{background:rgba(255,255,255,.9);padding:4px;min-height:56px;display:flex;align-items:stretch;}
@@ -201,6 +201,11 @@
 .dark .jadwal-grid { background: rgba(255, 255, 255, 0.05); }
 .dark .jg-cell { background: rgba(30, 41, 59, 0.8); }
 .dark .jg-cell.empty { background: rgba(15, 23, 42, 0.4); }
+.jg-time { flex-direction: column; gap: 1px; line-height: 1.4; }
+.jg-cell.weekend { background: rgba(251, 191, 36, 0.04); }
+.jg-cell.weekend.empty { background: rgba(251, 191, 36, 0.06); }
+.dark .jg-cell.weekend { background: rgba(251, 191, 36, 0.06); }
+.dark .jg-cell.weekend.empty { background: rgba(251, 191, 36, 0.04); }
 
 /* ===== CALENDAR ===== */
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}

@@ -54,7 +54,9 @@ interface JadwalTabProps {
 }
 
 const times = ['07:00–08:40', '08:40–10:20', '10:20–12:00', '13:00–14:40', '14:40–16:20', '16:20–18:00'];
-const days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
+const days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+const weekdays = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
+const weekends = ['Sabtu', 'Minggu'];
 
 export default function JadwalTab({ jadwals = [], allProdis = [], allKelas = [], onOpenModal, onDeleteJadwal }: JadwalTabProps) {
     const [selectedDetailJadwal, setSelectedDetailJadwal] = useState<ScheduleItem | null>(null);
@@ -225,7 +227,12 @@ export default function JadwalTab({ jadwals = [], allProdis = [], allKelas = [],
                                 {/* Header Row */}
                                 <div className="jg-header">Waktu</div>
                                 {days.map(d => (
-                                    <div key={d} className="jg-header">{d}</div>
+                                    <div key={d} className={`jg-header ${weekends.includes(d) ? 'opacity-70' : ''}`}>
+                                        {d}
+                                        {weekends.includes(d) && (
+                                            <span className="ml-1 text-[8px] text-amber-400 font-bold">WE</span>
+                                        )}
+                                    </div>
                                 ))}
 
                                 {/* Data Rows */}
@@ -234,10 +241,10 @@ export default function JadwalTab({ jadwals = [], allProdis = [], allKelas = [],
                                     const start = slotParts[0]?.trim();
                                     return (
                                         <React.Fragment key={t}>
-                                            <div className="jg-time text-[10px] py-3">
-                                                {t.split('–').map((time, idx) => (
-                                                    <div key={idx}>{time}</div>
-                                                ))}
+                                            <div className="jg-time text-[10px] py-3 flex flex-col justify-center">
+                                                <span>{t.split('–')[0]}</span>
+                                                <span className="text-slate-300 dark:text-slate-600 my-0.5">–</span>
+                                                <span>{t.split('–')[1]}</span>
                                             </div>
                                             {days.map(d => {
                                                 const item = filteredJadwals.find(j => 
@@ -252,7 +259,7 @@ export default function JadwalTab({ jadwals = [], allProdis = [], allKelas = [],
                                                 }
 
                                                 return (
-                                                    <div key={d} className={`jg-cell ${!item ? 'empty' : ''}`}>
+                                                    <div key={d} className={`jg-cell ${!item ? 'empty' : ''} ${weekends.includes(d) ? 'weekend' : ''}`}>
                                                         {item ? (
                                                             <div
                                                                 className="jg-subject text-white cursor-pointer"
