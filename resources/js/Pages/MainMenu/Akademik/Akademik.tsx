@@ -15,6 +15,7 @@ import KurikulumModal from './Partials/KurikulumModal';
 import MataKuliahModal from './Partials/MataKuliahModal';
 import JadwalModal from './Partials/JadwalModal';
 import KalenderModal from './Partials/KalenderModal';
+import KurikulumDetailModal from './Partials/KurikulumDetailModal';
 
 interface Stats {
     prodi_count: number;
@@ -57,6 +58,11 @@ export default function Akademik({ stats, fakultas, prodis, filters }: PageProps
     const [isJadwalModalOpen, setIsJadwalModalOpen] = useState(false);
     const [isKalenderModalOpen, setIsKalenderModalOpen] = useState(false);
     const [editingProdi, setEditingProdi] = useState<any | null>(null);
+    const [detailProdi, setDetailProdi] = useState<any | null>(null);
+
+    const handleOpenDetailModal = (prodi: any) => {
+        setDetailProdi(prodi);
+    };
 
     const handleOpenKurikulumModal = (prodi?: any) => {
         setEditingProdi(prodi && prodi.id ? prodi : null);
@@ -240,6 +246,7 @@ export default function Akademik({ stats, fakultas, prodis, filters }: PageProps
                         }}
                         onOpenModal={handleOpenKurikulumModal} 
                         onDelete={handleDeleteProdi}
+                        onViewDetail={handleOpenDetailModal}
                     />
                 )}
                 {activeTab === 'matakuliah' && (
@@ -293,6 +300,11 @@ export default function Akademik({ stats, fakultas, prodis, filters }: PageProps
                 isOpen={isKalenderModalOpen} 
                 onClose={() => setIsKalenderModalOpen(false)} 
                 onSave={handleSaveModal} 
+            />
+            <KurikulumDetailModal 
+                isOpen={detailProdi !== null} 
+                onClose={() => setDetailProdi(null)} 
+                prodi={detailProdi}
             />
 
             {/* DELETE CONFIRMATION MODAL */}

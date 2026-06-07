@@ -43,6 +43,7 @@ interface KurikulumTabProps {
     onFiltersChange: (search: string, fakultas: string, tahun: string) => void;
     onOpenModal: (prodi?: any) => void;
     onDelete: (prodi: any) => void;
+    onViewDetail: (prodi: any) => void;
 }
 
 const getProdiStylePreset = (kode: string) => {
@@ -128,7 +129,8 @@ export default function KurikulumTab({
     initialTahun, 
     onFiltersChange, 
     onOpenModal, 
-    onDelete 
+    onDelete,
+    onViewDetail
 }: KurikulumTabProps) {
     const [search, setSearch] = useState(initialSearch || '');
     const [selectedFakultas, setSelectedFakultas] = useState(initialFakultas || 'Semua Fakultas');
@@ -309,7 +311,7 @@ export default function KurikulumTab({
                                 Kaprodi: <strong className="text-slate-700 dark:text-slate-300">{item.kaprodi}</strong>
                             </div>
                             <div className="flex gap-1.5">
-                                <button className="btn-icon bi-detail" title="Detail kurikulum">
+                                <button className="btn-icon bi-detail" title="Detail kurikulum" onClick={() => onViewDetail(item)}>
                                     <i className="bi bi-eye" />
                                 </button>
                                 <button className="btn-icon bi-edit" title="Edit" onClick={() => onOpenModal(item)}>
