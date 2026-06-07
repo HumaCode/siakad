@@ -16,6 +16,8 @@ use Spatie\Activitylog\LogOptions;
     'kode',
     'nama',
     'sks',
+    'sks_teori',
+    'sks_praktik',
     'sem',
     'jenis',
     'prasyarat',

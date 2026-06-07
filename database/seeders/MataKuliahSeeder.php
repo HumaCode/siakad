@@ -171,6 +171,9 @@ class MataKuliahSeeder extends Seeder
 
         foreach ($courses as $c) {
             if ($c['prodi_id'] && $c['dosen_id']) {
+                $totalSks = (int)$c['sks'];
+                $c['sks_praktik'] = $totalSks % 2 === 0 ? 0 : 1;
+                $c['sks_teori'] = $totalSks - $c['sks_praktik'];
                 MataKuliah::create($c);
             }
         }

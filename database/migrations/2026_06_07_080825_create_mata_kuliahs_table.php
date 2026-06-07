@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('kode')->unique();
             $table->string('nama');
             $table->integer('sks');
+            $table->integer('sks_teori')->default(0);
+            $table->integer('sks_praktik')->default(0);
             $table->integer('sem');
             $table->enum('jenis', ['Wajib', 'Pilihan', 'Praktikum'])->default('Wajib');
             $table->string('prasyarat')->nullable();

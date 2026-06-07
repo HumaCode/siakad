@@ -48,21 +48,15 @@ export default function MataKuliahModal({
     const [dosenSearch, setDosenSearch] = useState('');
     const dropdownRef = useRef<HTMLDivElement>(null);
 
-    // Initialize/Reset form on opening or changing course
     useEffect(() => {
         if (isOpen) {
             if (mataKuliah) {
-                // Determine theory and practice SKS split
-                const totalSks = parseInt(mataKuliah.sks) || 3;
-                const sksP = totalSks % 2 === 0 ? 0 : 1;
-                const sksT = totalSks - sksP;
-
                 setData({
                     prodi_id: mataKuliah.prodi_id || '',
                     kode: mataKuliah.kode || '',
                     nama: mataKuliah.nama || '',
-                    sks_teori: sksT,
-                    sks_praktik: sksP,
+                    sks_teori: typeof mataKuliah.sks_teori !== 'undefined' ? parseInt(mataKuliah.sks_teori) : 0,
+                    sks_praktik: typeof mataKuliah.sks_praktik !== 'undefined' ? parseInt(mataKuliah.sks_praktik) : 0,
                     sem: parseInt(mataKuliah.sem) || 1,
                     jenis: mataKuliah.jenis || 'Wajib',
                     prasyarat: mataKuliah.prasyarat || '',
