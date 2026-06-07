@@ -54,6 +54,7 @@ class AkademikController extends Controller
             'dosen_count' => Dosen::count(),
             'ruangan_count' => Ruangan::count(),
             'matakuliah_count' => MataKuliah::count(),
+            'jadwal_count' => \App\Models\JadwalKuliah::count(),
         ];
 
         $fakultas = Fakultas::orderBy('nama')->get(['id', 'nama', 'kode']);
@@ -74,6 +75,35 @@ class AkademikController extends Controller
             ];
         });
 
+        $jadwals = \App\Models\JadwalKuliah::with(['mataKuliah', 'ruangan', 'dosen', 'prodi'])->get();
+        $ruangans = \App\Models\Ruangan::orderBy('nama_ruangan')->get()->map(function ($r) {
+            return [
+                'id' => $r->id,
+                'nama' => $r->nama_ruangan,
+                'gedung' => $r->nama_gedung,
+                'kapasitas' => $r->kapasitas,
+            ];
+        });
+        $allMataKuliahs = \App\Models\MataKuliah::orderBy('nama')->get()->map(function ($mk) {
+            return [
+                'id' => $mk->id,
+                'kode' => $mk->kode,
+                'nama' => $mk->nama,
+                'dosen_id' => $mk->dosen_id,
+                'prodi_id' => $mk->prodi_id,
+                'sks_teori' => $mk->sks_teori,
+                'sks_praktik' => $mk->sks_praktik,
+            ];
+        });
+        $allKelas = \App\Models\Kelas::orderBy('nama')->get()->map(function ($k) {
+            return [
+                'id' => $k->id,
+                'nama' => $k->nama,
+                'prodi_id' => $k->prodi_id,
+                'status' => $k->status,
+            ];
+        });
+
         return Inertia::render('MainMenu/Akademik/Akademik', [
             'stats' => $stats,
             'fakultas' => $fakultas,
@@ -81,6 +111,10 @@ class AkademikController extends Controller
             'mata_kuliahs' => $mataKuliahsResource,
             'all_prodis' => Prodi::orderBy('nama')->get(['id', 'nama']),
             'all_dosens' => $dosens,
+            'all_ruangans' => $ruangans,
+            'all_mata_kuliahs_raw' => $allMataKuliahs,
+            'all_kelas' => $allKelas,
+            'jadwals' => \App\Http\Resources\JadwalResource::collection($jadwals)->resolve(),
             'filters' => [
                 'search' => $search,
                 'fakultas' => $fakultasFilter,
@@ -151,5 +185,75 @@ class AkademikController extends Controller
         $this->mataKuliahService->deleteMataKuliah($matakuliah);
 
         return redirect()->back()->with('success', 'Mata Kuliah berhasil dihapus.');
+    }
+
+    /**
+     * Store a new class schedule.
+     */
+    public function storeJadwal(\App\Http\Requests\StoreJadwalRequest $request): RedirectResponse
+    {
+        $mk = \App\Models\MataKuliah::findOrFail($request->mata_kuliah_id);
+
+        \App\Models\JadwalKuliah::create(array_merge($request->validated(), [
+            'prodi_id' => $mk->prodi_id,
+            'dosen_id' => $mk->dosen_id,
+        ]));
+
+        return redirect()->back()->with('success', 'Jadwal kuliah baru berhasil disimpan.');
+    }
+
+    /**
+     * Update an existing class schedule.
+     */
+    public function updateJadwal(\App\Http\Requests\UpdateJadwalRequest $request, \App\Models\JadwalKuliah $jadwal): RedirectResponse
+    {
+        $mk = \App\Models\MataKuliah::findOrFail($request->mata_kuliah_id);
+
+        $jadwal->update(array_merge($request->validated(), [
+            'prodi_id' => $mk->prodi_id,
+            'dosen_id' => $mk->dosen_id,
+        ]));
+
+        return redirect()->back()->with('success', 'Jadwal kuliah berhasil diperbarui.');
+    }
+
+    /**
+     * Delete an existing class schedule.
+     */
+    public function destroyJadwal(\App\Models\JadwalKuliah $jadwal): RedirectResponse
+    {
+        $jadwal->delete();
+
+        return redirect()->back()->with('success', 'Jadwal kuliah berhasil dihapus.');
+    }
+
+    /**
+     * Store a new class.
+     */
+    public function storeKelas(\App\Http\Requests\StoreKelasRequest $request): RedirectResponse
+    {
+        \App\Models\Kelas::create($request->validated());
+
+        return redirect()->back()->with('success', 'Kelas baru berhasil disimpan.');
+    }
+
+    /**
+     * Update an existing class.
+     */
+    public function updateKelas(\App\Http\Requests\UpdateKelasRequest $request, \App\Models\Kelas $kelas): RedirectResponse
+    {
+        $kelas->update($request->validated());
+
+        return redirect()->back()->with('success', 'Kelas berhasil diperbarui.');
+    }
+
+    /**
+     * Delete an existing class.
+     */
+    public function destroyKelas(\App\Models\Kelas $kelas): RedirectResponse
+    {
+        $kelas->delete();
+
+        return redirect()->back()->with('success', 'Kelas berhasil dihapus.');
     }
 }

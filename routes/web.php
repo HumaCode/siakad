@@ -59,6 +59,14 @@ Route::middleware('auth')->group(function () {
     Route::post('/akademik/matakuliah', [\App\Http\Controllers\MainMenu\AkademikController::class, 'storeMataKuliah'])->name('akademik.matakuliah.store');
     Route::put('/akademik/matakuliah/{matakuliah}', [\App\Http\Controllers\MainMenu\AkademikController::class, 'updateMataKuliah'])->name('akademik.matakuliah.update');
     Route::delete('/akademik/matakuliah/{matakuliah}', [\App\Http\Controllers\MainMenu\AkademikController::class, 'destroyMataKuliah'])->name('akademik.matakuliah.destroy');
+
+    Route::post('/akademik/jadwal', [\App\Http\Controllers\MainMenu\AkademikController::class, 'storeJadwal'])->name('akademik.jadwal.store');
+    Route::put('/akademik/jadwal/{jadwal}', [\App\Http\Controllers\MainMenu\AkademikController::class, 'updateJadwal'])->name('akademik.jadwal.update');
+    Route::delete('/akademik/jadwal/{jadwal}', [\App\Http\Controllers\MainMenu\AkademikController::class, 'destroyJadwal'])->name('akademik.jadwal.destroy');
+
+    Route::post('/akademik/kelas', [\App\Http\Controllers\MainMenu\AkademikController::class, 'storeKelas'])->name('akademik.kelas.store');
+    Route::put('/akademik/kelas/{kelas}', [\App\Http\Controllers\MainMenu\AkademikController::class, 'updateKelas'])->name('akademik.kelas.update');
+    Route::delete('/akademik/kelas/{kelas}', [\App\Http\Controllers\MainMenu\AkademikController::class, 'destroyKelas'])->name('akademik.kelas.destroy');
 });
 
 require __DIR__.'/auth.php';

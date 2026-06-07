@@ -20,6 +20,8 @@ class DatabaseSeeder extends Seeder
             UsersAndCivitasSeeder::class,
             MenuSeeder::class,
             MataKuliahSeeder::class,
+            KelasSeeder::class,
+            JadwalKuliahSeeder::class,
         ]);
     }
 }

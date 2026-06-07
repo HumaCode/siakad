@@ -333,3 +333,357 @@ test('authenticated user can delete an existing mata kuliah', function () {
         'id' => $matakuliah->id
     ]);
 });
+
+test('authenticated user can store a new jadwal kuliah', function () {
+    $user = User::factory()->create();
+    $fakultas = Fakultas::create([
+        'kode' => 'FT_TEST',
+        'nama' => 'Fakultas Teknik Test',
+        'dekan' => 'Dekan Teknik Test'
+    ]);
+    $prodi = Prodi::create([
+        'fakultas_id' => $fakultas->id,
+        'kode' => 'TISTEST',
+        'nama' => 'Teknik Industri Test',
+        'jenjang' => 'S1',
+        'kaprodi' => 'Kaprodi Industri Test',
+        'status' => 'Aktif',
+        'deskripsi' => 'Deskripsi Test',
+        'sks' => 144,
+        'lama_studi' => 8,
+        'akreditasi' => 'Unggul',
+        'tahun' => 2024
+    ]);
+    $dosenUser = User::factory()->create();
+    $dosen = \App\Models\Dosen::create([
+        'user_id' => $dosenUser->id,
+        'nidn' => '1234567890',
+        'nama' => 'Dosen Pengampu Test',
+        'prodi_id' => $prodi->id,
+        'status_dosen' => 'tetap'
+    ]);
+    $matakuliah = \App\Models\MataKuliah::create([
+        'prodi_id' => $prodi->id,
+        'kode' => 'MKTEST1',
+        'nama' => 'Mata Kuliah Test',
+        'sks' => 3,
+        'sem' => 3,
+        'jenis' => 'Wajib',
+        'prasyarat' => 'MKPRE',
+        'dosen_id' => $dosen->id,
+        'deskripsi' => 'Deskripsi MK Test',
+        'status' => 'Aktif'
+    ]);
+    $ruangan = \App\Models\Ruangan::create([
+        'nama_gedung' => 'Gedung Test',
+        'nama_ruangan' => 'Ruang 101 Test',
+        'kapasitas' => 30
+    ]);
+    $kelas = \App\Models\Kelas::create([
+        'prodi_id' => $prodi->id,
+        'nama' => 'Kelas A',
+        'status' => 'Aktif'
+    ]);
+
+    $this->actingAs($user)
+        ->post('/akademik/jadwal', [
+            'mata_kuliah_id' => $matakuliah->id,
+            'hari' => 'Senin',
+            'kelas_id' => $kelas->id,
+            'jam_mulai' => '07:00',
+            'jam_selesai' => '08:40',
+            'ruangan_id' => $ruangan->id,
+            'tipe' => 'Teori'
+        ])
+        ->assertSessionHasNoErrors()
+        ->assertRedirect();
+
+    $this->assertDatabaseHas('jadwal_kuliahs', [
+        'mata_kuliah_id' => $matakuliah->id,
+        'hari' => 'Senin',
+        'kelas_id' => $kelas->id,
+        'jam_mulai' => '07:00',
+        'jam_selesai' => '08:40',
+        'ruangan_id' => $ruangan->id,
+        'tipe' => 'Teori',
+        'prodi_id' => $prodi->id,
+        'dosen_id' => $dosen->id
+    ]);
+});
+
+test('authenticated user can update an existing jadwal kuliah', function () {
+    $user = User::factory()->create();
+    $fakultas = Fakultas::create([
+        'kode' => 'FT_TEST',
+        'nama' => 'Fakultas Teknik Test',
+        'dekan' => 'Dekan Teknik Test'
+    ]);
+    $prodi = Prodi::create([
+        'fakultas_id' => $fakultas->id,
+        'kode' => 'TISTEST',
+        'nama' => 'Teknik Industri Test',
+        'jenjang' => 'S1',
+        'kaprodi' => 'Kaprodi Industri Test',
+        'status' => 'Aktif',
+        'deskripsi' => 'Deskripsi Test',
+        'sks' => 144,
+        'lama_studi' => 8,
+        'akreditasi' => 'Unggul',
+        'tahun' => 2024
+    ]);
+    $dosenUser = User::factory()->create();
+    $dosen = \App\Models\Dosen::create([
+        'user_id' => $dosenUser->id,
+        'nidn' => '1234567890',
+        'nama' => 'Dosen Pengampu Test',
+        'prodi_id' => $prodi->id,
+        'status_dosen' => 'tetap'
+    ]);
+    $matakuliah = \App\Models\MataKuliah::create([
+        'prodi_id' => $prodi->id,
+        'kode' => 'MKTEST1',
+        'nama' => 'Mata Kuliah Test',
+        'sks' => 3,
+        'sem' => 3,
+        'jenis' => 'Wajib',
+        'prasyarat' => 'MKPRE',
+        'dosen_id' => $dosen->id,
+        'deskripsi' => 'Deskripsi MK Test',
+        'status' => 'Aktif'
+    ]);
+    $ruangan = \App\Models\Ruangan::create([
+        'nama_gedung' => 'Gedung Test',
+        'nama_ruangan' => 'Ruang 101 Test',
+        'kapasitas' => 30
+    ]);
+    $kelasA = \App\Models\Kelas::create([
+        'prodi_id' => $prodi->id,
+        'nama' => 'Kelas A',
+        'status' => 'Aktif'
+    ]);
+    $kelasB = \App\Models\Kelas::create([
+        'prodi_id' => $prodi->id,
+        'nama' => 'Kelas B',
+        'status' => 'Aktif'
+    ]);
+    $jadwal = \App\Models\JadwalKuliah::create([
+        'mata_kuliah_id' => $matakuliah->id,
+        'hari' => 'Senin',
+        'kelas_id' => $kelasA->id,
+        'jam_mulai' => '07:00',
+        'jam_selesai' => '08:40',
+        'ruangan_id' => $ruangan->id,
+        'tipe' => 'Teori',
+        'prodi_id' => $prodi->id,
+        'dosen_id' => $dosen->id
+    ]);
+
+    $this->actingAs($user)
+        ->put("/akademik/jadwal/{$jadwal->id}", [
+            'mata_kuliah_id' => $matakuliah->id,
+            'hari' => 'Selasa',
+            'kelas_id' => $kelasB->id,
+            'jam_mulai' => '08:40',
+            'jam_selesai' => '10:20',
+            'ruangan_id' => $ruangan->id,
+            'tipe' => 'Praktikum'
+        ])
+        ->assertSessionHasNoErrors()
+        ->assertRedirect();
+
+    $this->assertDatabaseHas('jadwal_kuliahs', [
+        'id' => $jadwal->id,
+        'hari' => 'Selasa',
+        'kelas_id' => $kelasB->id,
+        'jam_mulai' => '08:40',
+        'jam_selesai' => '10:20',
+        'tipe' => 'Praktikum'
+    ]);
+});
+
+test('authenticated user can delete an existing jadwal kuliah', function () {
+    $user = User::factory()->create();
+    $fakultas = Fakultas::create([
+        'kode' => 'FT_TEST',
+        'nama' => 'Fakultas Teknik Test',
+        'dekan' => 'Dekan Teknik Test'
+    ]);
+    $prodi = Prodi::create([
+        'fakultas_id' => $fakultas->id,
+        'kode' => 'TISTEST',
+        'nama' => 'Teknik Industri Test',
+        'jenjang' => 'S1',
+        'kaprodi' => 'Kaprodi Industri Test',
+        'status' => 'Aktif',
+        'deskripsi' => 'Deskripsi Test',
+        'sks' => 144,
+        'lama_studi' => 8,
+        'akreditasi' => 'Unggul',
+        'tahun' => 2024
+    ]);
+    $dosenUser = User::factory()->create();
+    $dosen = \App\Models\Dosen::create([
+        'user_id' => $dosenUser->id,
+        'nidn' => '1234567890',
+        'nama' => 'Dosen Pengampu Test',
+        'prodi_id' => $prodi->id,
+        'status_dosen' => 'tetap'
+    ]);
+    $matakuliah = \App\Models\MataKuliah::create([
+        'prodi_id' => $prodi->id,
+        'kode' => 'MKTEST1',
+        'nama' => 'Mata Kuliah Test',
+        'sks' => 3,
+        'sem' => 3,
+        'jenis' => 'Wajib',
+        'prasyarat' => 'MKPRE',
+        'dosen_id' => $dosen->id,
+        'deskripsi' => 'Deskripsi MK Test',
+        'status' => 'Aktif'
+    ]);
+    $ruangan = \App\Models\Ruangan::create([
+        'nama_gedung' => 'Gedung Test',
+        'nama_ruangan' => 'Ruang 101 Test',
+        'kapasitas' => 30
+    ]);
+    $kelas = \App\Models\Kelas::create([
+        'prodi_id' => $prodi->id,
+        'nama' => 'Kelas A',
+        'status' => 'Aktif'
+    ]);
+    $jadwal = \App\Models\JadwalKuliah::create([
+        'mata_kuliah_id' => $matakuliah->id,
+        'hari' => 'Senin',
+        'kelas_id' => $kelas->id,
+        'jam_mulai' => '07:00',
+        'jam_selesai' => '08:40',
+        'ruangan_id' => $ruangan->id,
+        'tipe' => 'Teori',
+        'prodi_id' => $prodi->id,
+        'dosen_id' => $dosen->id
+    ]);
+
+    $this->actingAs($user)
+        ->delete("/akademik/jadwal/{$jadwal->id}")
+        ->assertSessionHasNoErrors()
+        ->assertRedirect();
+
+    $this->assertSoftDeleted('jadwal_kuliahs', [
+        'id' => $jadwal->id
+    ]);
+});
+
+test('authenticated user can store a new kelas', function () {
+    $user = User::factory()->create();
+    $fakultas = Fakultas::create([
+        'kode' => 'FT_TEST',
+        'nama' => 'Fakultas Teknik Test',
+        'dekan' => 'Dekan Teknik Test'
+    ]);
+    $prodi = Prodi::create([
+        'fakultas_id' => $fakultas->id,
+        'kode' => 'TISTEST',
+        'nama' => 'Teknik Industri Test',
+        'jenjang' => 'S1',
+        'kaprodi' => 'Kaprodi Industri Test',
+        'status' => 'Aktif',
+        'deskripsi' => 'Deskripsi Test',
+        'sks' => 144,
+        'lama_studi' => 8,
+        'akreditasi' => 'Unggul',
+        'tahun' => 2024
+    ]);
+
+    $this->actingAs($user)
+        ->post('/akademik/kelas', [
+            'prodi_id' => $prodi->id,
+            'nama' => 'Kelas Baru Test',
+            'status' => 'Aktif'
+        ])
+        ->assertSessionHasNoErrors()
+        ->assertRedirect();
+
+    $this->assertDatabaseHas('kelas', [
+        'prodi_id' => $prodi->id,
+        'nama' => 'Kelas Baru Test',
+        'status' => 'Aktif'
+    ]);
+});
+
+test('authenticated user can update an existing kelas', function () {
+    $user = User::factory()->create();
+    $fakultas = Fakultas::create([
+        'kode' => 'FT_TEST',
+        'nama' => 'Fakultas Teknik Test',
+        'dekan' => 'Dekan Teknik Test'
+    ]);
+    $prodi = Prodi::create([
+        'fakultas_id' => $fakultas->id,
+        'kode' => 'TISTEST',
+        'nama' => 'Teknik Industri Test',
+        'jenjang' => 'S1',
+        'kaprodi' => 'Kaprodi Industri Test',
+        'status' => 'Aktif',
+        'deskripsi' => 'Deskripsi Test',
+        'sks' => 144,
+        'lama_studi' => 8,
+        'akreditasi' => 'Unggul',
+        'tahun' => 2024
+    ]);
+    $kelas = \App\Models\Kelas::create([
+        'prodi_id' => $prodi->id,
+        'nama' => 'Kelas A',
+        'status' => 'Aktif'
+    ]);
+
+    $this->actingAs($user)
+        ->put("/akademik/kelas/{$kelas->id}", [
+            'prodi_id' => $prodi->id,
+            'nama' => 'Kelas A Updated',
+            'status' => 'Nonaktif'
+        ])
+        ->assertSessionHasNoErrors()
+        ->assertRedirect();
+
+    $this->assertDatabaseHas('kelas', [
+        'id' => $kelas->id,
+        'nama' => 'Kelas A Updated',
+        'status' => 'Nonaktif'
+    ]);
+});
+
+test('authenticated user can delete an existing kelas', function () {
+    $user = User::factory()->create();
+    $fakultas = Fakultas::create([
+        'kode' => 'FT_TEST',
+        'nama' => 'Fakultas Teknik Test',
+        'dekan' => 'Dekan Teknik Test'
+    ]);
+    $prodi = Prodi::create([
+        'fakultas_id' => $fakultas->id,
+        'kode' => 'TISTEST',
+        'nama' => 'Teknik Industri Test',
+        'jenjang' => 'S1',
+        'kaprodi' => 'Kaprodi Industri Test',
+        'status' => 'Aktif',
+        'deskripsi' => 'Deskripsi Test',
+        'sks' => 144,
+        'lama_studi' => 8,
+        'akreditasi' => 'Unggul',
+        'tahun' => 2024
+    ]);
+    $kelas = \App\Models\Kelas::create([
+        'prodi_id' => $prodi->id,
+        'nama' => 'Kelas A',
+        'status' => 'Aktif'
+    ]);
+
+    $this->actingAs($user)
+        ->delete("/akademik/kelas/{$kelas->id}")
+        ->assertSessionHasNoErrors()
+        ->assertRedirect();
+
+    $this->assertSoftDeleted('kelas', [
+        'id' => $kelas->id
+    ]);
+});

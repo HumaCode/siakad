@@ -1,70 +1,151 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import JadwalDetailModal from './JadwalDetailModal';
 
 interface ScheduleItem {
-    name: string;
-    room: string;
-    dosen: string;
-    color: string;
-    type: string;
-}
-
-interface DosenItem {
-    initials: string;
-    name: string;
-    mk: string;
-    color: string;
-    count: number;
+    id: string;
+    mata_kuliah_id: string;
+    mata_kuliah: {
+        id: string;
+        kode: string;
+        nama: string;
+        sks: number;
+        sks_teori: number;
+        sks_praktik: number;
+        sem: number;
+        jenis: string;
+    };
+    ruangan_id: string;
+    ruangan: {
+        id: string;
+        nama_gedung: string;
+        nama_ruangan: string;
+        kapasitas: number;
+    };
+    dosen_id: string;
+    dosen: {
+        id: string;
+        nama: string;
+        nidn: string;
+        initials: string;
+    };
+    prodi_id: string;
+    prodi: {
+        id: string;
+        nama: string;
+        kode: string;
+    };
+    hari: string;
+    kelas_id: string;
+    kelas: {
+        id: string;
+        nama: string;
+    };
+    jam_mulai: string;
+    jam_selesai: string;
+    tipe: string;
 }
 
 interface JadwalTabProps {
-    onOpenModal: () => void;
+    jadwals: ScheduleItem[];
+    allProdis: any[];
+    allKelas?: any[];
+    onOpenModal: (jadwal?: any) => void;
+    onDeleteJadwal: (jadwal: any) => void;
 }
 
 const times = ['07:00–08:40', '08:40–10:20', '10:20–12:00', '13:00–14:40', '14:40–16:20', '16:20–18:00'];
 const days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
 
-const jadwalData: Record<string, Record<string, ScheduleItem>> = {
-    '07:00–08:40': {
-        Senin: { name: 'Algoritma & Pemrog.', room: 'R.304', dosen: 'Dr. Budi S.', color: '#1a56db', type: 'Teori' },
-        Selasa: { name: 'Jaringan Komputer', room: 'Lab Jaringan', dosen: 'Ir. Surya P.', color: '#16a34a', type: 'Praktikum' },
-        Rabu: { name: 'Metode Penelitian', room: 'R.101', dosen: 'Prof. Agus M.', color: '#f59e0b', type: 'Teori' },
-    },
-    '08:40–10:20': {
-        Senin: { name: 'Basis Data Lanjut', room: 'Lab TI', dosen: 'Dr. Rina W.', color: '#0d9488', type: 'Praktikum' },
-        Kamis: { name: 'Rekayasa PL', room: 'R.205', dosen: 'Drs. Hendra', color: '#7c3aed', type: 'Teori' },
-        Jumat: { name: 'Algoritma & Pemrog.', room: 'R.304', dosen: 'Dr. Budi S.', color: '#1a56db', type: 'Teori' },
-    },
-    '10:20–12:00': {
-        Selasa: { name: 'Rekayasa PL', room: 'R.205', dosen: 'Drs. Hendra', color: '#7c3aed', type: 'Teori' },
-        Rabu: { name: 'Basis Data Lanjut', room: 'Lab TI', dosen: 'Dr. Rina W.', color: '#0d9488', type: 'Praktikum' },
-        Kamis: { name: 'Keamanan Siber', room: 'Lab TI', dosen: 'Dr. Andi K.', color: '#e11d48', type: 'Praktikum' },
-    },
-    '13:00–14:40': {
-        Senin: { name: 'Metode Penelitian', room: 'R.101', dosen: 'Prof. Agus M.', color: '#f59e0b', type: 'Teori' },
-        Rabu: { name: 'Keamanan Siber', room: 'R.304', dosen: 'Dr. Andi K.', color: '#e11d48', type: 'Teori' },
-        Jumat: { name: 'Jaringan Komputer', room: 'R.302', dosen: 'Ir. Surya P.', color: '#16a34a', type: 'Teori' },
-    },
-    '14:40–16:20': {
-        Selasa: { name: 'Machine Learning', room: 'Lab AI', dosen: 'Dr. Fajar N.', color: '#4338ca', type: 'Praktikum' },
-        Kamis: { name: 'Algoritma & Pemrog.', room: 'Lab TI', dosen: 'Dr. Budi S.', color: '#1a56db', type: 'Praktikum' },
-    },
-    '16:20–18:00': {
-        Jumat: { name: 'Rekayasa PL', room: 'R.205', dosen: 'Drs. Hendra', color: '#7c3aed', type: 'Studio' },
-    }
-};
+export default function JadwalTab({ jadwals = [], allProdis = [], allKelas = [], onOpenModal, onDeleteJadwal }: JadwalTabProps) {
+    const [selectedDetailJadwal, setSelectedDetailJadwal] = useState<ScheduleItem | null>(null);
+    // Initialize selected prodi to first available prodi id
+    const [selectedProdiId, setSelectedProdiId] = useState(allProdis[0]?.id || '');
+    const [selectedSem, setSelectedSem] = useState(5);
+    
+    // Filter classes belonging to selected prodi
+    const prodiKelas = allKelas.filter(k => k.prodi_id === selectedProdiId);
+    
+    const [selectedKelasId, setSelectedKelasId] = useState('');
+    const activeKelas = prodiKelas.find(k => k.id === selectedKelasId);
+    const selectedKelas = activeKelas ? activeKelas.nama : '';
 
-const dosenData: DosenItem[] = [
-    { initials: 'BS', name: 'Dr. Budi S., M.Kom', mk: 'Algoritma & Pemrog.', color: 'linear-gradient(135deg,#1a56db,#4f83f0)', count: 3 },
-    { initials: 'RW', name: 'Dr. Rina W., M.T', mk: 'Basis Data Lanjut', color: 'linear-gradient(135deg,#0d9488,#2dd4bf)', count: 2 },
-    { initials: 'DH', name: 'Drs. Hendra, M.Cs', mk: 'Rekayasa PL', color: 'linear-gradient(135deg,#7c3aed,#a78bfa)', count: 3 },
-    { initials: 'SP', name: 'Ir. Surya P., M.T', mk: 'Jaringan Komputer', color: 'linear-gradient(135deg,#16a34a,#4ade80)', count: 2 },
-    { initials: 'AM', name: 'Prof. Agus M., Ph.D', mk: 'Metode Penelitian', color: 'linear-gradient(135deg,#f59e0b,#fbbf24)', count: 2 },
-];
+    // Update selected class when prodi changes or classes load
+    useEffect(() => {
+        if (prodiKelas.length > 0) {
+            if (!prodiKelas.some(k => k.id === selectedKelasId)) {
+                setSelectedKelasId(prodiKelas[0].id);
+            }
+        } else {
+            setSelectedKelasId('');
+        }
+    }, [selectedProdiId, allKelas]);
 
-export default function JadwalTab({ onOpenModal }: JadwalTabProps) {
-    const [selectedProdi, setSelectedProdi] = useState('Teknik Informatika');
-    const [selectedSem, setSelectedSem] = useState('Semester 5');
-    const [selectedKelas, setSelectedKelas] = useState('Kelas A');
+    // Find the prodi name for header display
+    const currentProdi = allProdis.find(p => p.id === selectedProdiId);
+    const prodiNameDisplay = currentProdi ? currentProdi.nama : 'Teknik Informatika';
+
+    const currentKelas = prodiKelas.find(k => k.id === selectedKelasId);
+    const kelasNameDisplay = currentKelas ? currentKelas.nama : '';
+
+    // Filter schedules
+    const filteredJadwals = jadwals.filter(j => 
+        j.prodi_id === selectedProdiId &&
+        j.kelas_id === selectedKelasId &&
+        (j.mata_kuliah?.sem === selectedSem || (selectedSem === 5 && !j.mata_kuliah?.sem))
+    );
+
+    // Compute Beban SKS aggregates
+    const coursesSks: Record<string, { sks: number; color: string; textColor: string }> = {};
+    filteredJadwals.forEach(j => {
+        const name = j.mata_kuliah?.nama;
+        if (name && !coursesSks[name]) {
+            let colorClass = 'from-blue-600 to-blue-400';
+            let textClass = 'text-blue-600 dark:text-blue-400';
+            if (j.tipe === 'Praktikum') {
+                colorClass = 'from-teal-600 to-teal-400';
+                textClass = 'text-teal-600 dark:text-teal-400';
+            } else if (j.tipe === 'Studio') {
+                colorClass = 'from-purple-600 to-purple-400';
+                textClass = 'text-purple-600 dark:text-purple-400';
+            }
+            coursesSks[name] = { 
+                sks: parseInt(j.mata_kuliah?.sks as any) || 0,
+                color: colorClass,
+                textColor: textClass,
+            };
+        }
+    });
+
+    const totalSks = Object.values(coursesSks).reduce((sum, c) => sum + c.sks, 0);
+
+    // Compute distinct Dosen Pengampu in the active filters
+    const lecturersMap: Record<string, { initials: string; name: string; mk: string; color: string; count: number }> = {};
+    filteredJadwals.forEach(j => {
+        const dName = j.dosen?.nama;
+        const dInit = j.dosen?.initials || 'DS';
+        const mkName = j.mata_kuliah?.nama || '';
+        if (dName) {
+            if (!lecturersMap[dName]) {
+                let color = 'linear-gradient(135deg,#1a56db,#4f83f0)';
+                const charCode = dInit.charCodeAt(0) || 65;
+                if (charCode % 5 === 0) color = 'linear-gradient(135deg,#0d9488,#2dd4bf)';
+                else if (charCode % 5 === 1) color = 'linear-gradient(135deg,#7c3aed,#a78bfa)';
+                else if (charCode % 5 === 2) color = 'linear-gradient(135deg,#16a34a,#4ade80)';
+                else if (charCode % 5 === 3) color = 'linear-gradient(135deg,#f59e0b,#fbbf24)';
+                else if (charCode % 5 === 4) color = 'linear-gradient(135deg,#e11d48,#fda4af)';
+                
+                lecturersMap[dName] = {
+                    initials: dInit,
+                    name: dName,
+                    mk: mkName,
+                    color: color,
+                    count: 0,
+                };
+            }
+            lecturersMap[dName].count += 1;
+        }
+    });
+    const dosenData = Object.values(lecturersMap);
 
     return (
         <div className="tab-panel active">
@@ -75,31 +156,33 @@ export default function JadwalTab({ onOpenModal }: JadwalTabProps) {
                         <div className="filter-bar border-b border-slate-100 dark:border-slate-800 pb-4">
                             <select
                                 className="fsel"
-                                value={selectedProdi}
-                                onChange={(e) => setSelectedProdi(e.target.value)}
+                                value={selectedProdiId}
+                                onChange={(e) => setSelectedProdiId(e.target.value)}
                             >
-                                <option>Teknik Informatika</option>
-                                <option>Sistem Informasi</option>
-                                <option>Manajemen Bisnis</option>
+                                {allProdis.map(p => (
+                                    <option key={p.id} value={p.id}>{p.nama}</option>
+                                ))}
                             </select>
                             <select
                                 className="fsel"
                                 value={selectedSem}
-                                onChange={(e) => setSelectedSem(e.target.value)}
+                                onChange={(e) => setSelectedSem(parseInt(e.target.value) || 1)}
                             >
-                                <option>Semester 1</option>
-                                <option>Semester 3</option>
-                                <option>Semester 5</option>
-                                <option>Semester 7</option>
+                                {[1, 2, 3, 4, 5, 6, 7, 8].map(s => (
+                                    <option key={s} value={s}>Semester {s}</option>
+                                ))}
                             </select>
                             <select
                                 className="fsel"
-                                value={selectedKelas}
-                                onChange={(e) => setSelectedKelas(e.target.value)}
+                                value={selectedKelasId}
+                                onChange={(e) => setSelectedKelasId(e.target.value)}
                             >
-                                <option>Kelas A</option>
-                                <option>Kelas B</option>
-                                <option>Kelas C</option>
+                                {prodiKelas.map(k => (
+                                    <option key={k.id} value={k.id}>{k.nama}</option>
+                                ))}
+                                {prodiKelas.length === 0 && (
+                                    <option value="">Tidak ada kelas</option>
+                                )}
                             </select>
                             <button className="btn-add cursor-pointer" onClick={onOpenModal}>
                                 <i className="bi bi-plus-lg" /> Tambah Jadwal
@@ -113,7 +196,7 @@ export default function JadwalTab({ onOpenModal }: JadwalTabProps) {
                         <div className="p-5 flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800/40">
                             <div>
                                 <div className="text-sm font-extrabold text-slate-800 dark:text-slate-200">
-                                    Jadwal Kuliah — {selectedProdi} · {selectedKelas} · {selectedSem}
+                                    Jadwal Kuliah — {prodiNameDisplay} · {kelasNameDisplay} · Semester {selectedSem}
                                 </div>
                                 <div className="text-xs text-slate-400">
                                     Semester Gasal 2025/2026 · 16 pertemuan per mata kuliah
@@ -127,7 +210,7 @@ export default function JadwalTab({ onOpenModal }: JadwalTabProps) {
                                     <span className="w-2.5 h-2.5 rounded-sm bg-[#0d9488] inline-block" /> Praktikum
                                 </span>
                                 <span className="text-[10px] font-bold flex items-center gap-1">
-                                    <span className="w-2.5 h-2.5 rounded-sm bg-[#7c3aed] inline-block" /> Studio
+                                    <span className="w-2.5 h-2.5 rounded-sm bg-[#7c3aed] inline-block" /> Praktikum & Teori
                                 </span>
                             </div>
                         </div>
@@ -146,37 +229,52 @@ export default function JadwalTab({ onOpenModal }: JadwalTabProps) {
                                 ))}
 
                                 {/* Data Rows */}
-                                {times.map(t => (
-                                    <React.Fragment key={t}>
-                                        <div className="jg-time text-[10px] py-3">
-                                            {t.split('–').map((time, idx) => (
-                                                <div key={idx}>{time}</div>
-                                            ))}
-                                        </div>
-                                        {days.map(d => {
-                                            const item = jadwalData[t]?.[d];
-                                            return (
-                                                <div key={d} className={`jg-cell ${!item ? 'empty' : ''}`}>
-                                                    {item ? (
-                                                        <div
-                                                            className="jg-subject text-white"
-                                                            style={{ backgroundColor: item.color }}
-                                                            title={`${item.name} · ${item.room} · ${item.dosen}`}
-                                                        >
-                                                            <div className="jg-name text-[10px] font-bold mb-0.5">{item.name}</div>
-                                                            <div className="jg-meta text-[9px] opacity-90">
-                                                                <i className="bi bi-door-open me-0.5" /> {item.room}
+                                {times.map(t => {
+                                    const slotParts = t.split('–');
+                                    const start = slotParts[0]?.trim();
+                                    return (
+                                        <React.Fragment key={t}>
+                                            <div className="jg-time text-[10px] py-3">
+                                                {t.split('–').map((time, idx) => (
+                                                    <div key={idx}>{time}</div>
+                                                ))}
+                                            </div>
+                                            {days.map(d => {
+                                                const item = filteredJadwals.find(j => 
+                                                    j.hari === d && 
+                                                    j.jam_mulai === start
+                                                );
+
+                                                let itemColor = '#1a56db';
+                                                if (item) {
+                                                    if (item.tipe === 'Praktikum') itemColor = '#0d9488';
+                                                    else if (item.tipe === 'Studio') itemColor = '#7c3aed';
+                                                }
+
+                                                return (
+                                                    <div key={d} className={`jg-cell ${!item ? 'empty' : ''}`}>
+                                                        {item ? (
+                                                            <div
+                                                                className="jg-subject text-white cursor-pointer"
+                                                                style={{ backgroundColor: itemColor }}
+                                                                title={`${item.mata_kuliah?.nama} · ${item.ruangan?.nama_ruangan} · ${item.dosen?.nama}`}
+                                                                onClick={() => setSelectedDetailJadwal(item)}
+                                                            >
+                                                                <div className="jg-name text-[10px] font-bold mb-0.5 truncate">{item.mata_kuliah?.nama}</div>
+                                                                <div className="jg-meta text-[9px] opacity-90 truncate">
+                                                                    <i className="bi bi-door-open me-0.5" /> {item.ruangan?.nama_ruangan}
+                                                                </div>
+                                                                <span className="jg-sks text-[8px] mt-1 font-extrabold uppercase">
+                                                                    {item.tipe}
+                                                                </span>
                                                             </div>
-                                                            <span className="jg-sks text-[8px] mt-1 font-extrabold uppercase">
-                                                                {item.type}
-                                                            </span>
-                                                        </div>
-                                                    ) : null}
-                                                </div>
-                                            );
-                                        })}
-                                    </React.Fragment>
-                                ))}
+                                                        ) : null}
+                                                    </div>
+                                                );
+                                            })}
+                                        </React.Fragment>
+                                    );
+                                })}
                             </div>
                         </div>
                     </div>
@@ -190,54 +288,25 @@ export default function JadwalTab({ onOpenModal }: JadwalTabProps) {
                             <i className="bi bi-bar-chart-fill text-blue-600 me-2" /> Beban SKS {selectedKelas}
                         </div>
                         <div className="flex flex-col gap-3">
-                            <div>
-                                <div className="flex justify-between text-[11px] font-bold mb-1">
-                                    <span>Algoritma & Pemrog.</span>
-                                    <span className="text-blue-600">3 SKS</span>
+                            {Object.entries(coursesSks).map(([name, data]) => (
+                                <div key={name}>
+                                    <div className="flex justify-between text-[11px] font-bold mb-1">
+                                        <span className="truncate max-w-[70%]">{name}</span>
+                                        <span className={data.textColor}>{data.sks} SKS</span>
+                                    </div>
+                                    <div className="prog-bar-bg">
+                                        <div className={`prog-bar-fill bg-gradient-to-r ${data.color}`} style={{ width: `${Math.min(100, (data.sks / 4) * 100)}%` }} />
+                                    </div>
                                 </div>
-                                <div className="prog-bar-bg">
-                                    <div className="prog-bar-fill bg-gradient-to-r from-blue-600 to-blue-400 w-3/4" />
+                            ))}
+                            {Object.keys(coursesSks).length === 0 && (
+                                <div className="text-xs text-slate-400 py-2 text-center">
+                                    Belum ada mata kuliah dijadwalkan.
                                 </div>
-                            </div>
-                            <div>
-                                <div className="flex justify-between text-[11px] font-bold mb-1">
-                                    <span>Basis Data Lanjut</span>
-                                    <span className="text-teal-600">3 SKS</span>
-                                </div>
-                                <div className="prog-bar-bg">
-                                    <div className="prog-bar-fill bg-gradient-to-r from-teal-600 to-teal-400 w-3/4" />
-                                </div>
-                            </div>
-                            <div>
-                                <div className="flex justify-between text-[11px] font-bold mb-1">
-                                    <span>Rekayasa Perangkat Lunak</span>
-                                    <span className="text-purple-600">3 SKS</span>
-                                </div>
-                                <div className="prog-bar-bg">
-                                    <div className="prog-bar-fill bg-gradient-to-r from-purple-600 to-purple-400 w-3/4" />
-                                </div>
-                            </div>
-                            <div>
-                                <div className="flex justify-between text-[11px] font-bold mb-1">
-                                    <span>Jaringan Komputer</span>
-                                    <span className="text-green-600">2 SKS</span>
-                                </div>
-                                <div className="prog-bar-bg">
-                                    <div className="prog-bar-fill bg-gradient-to-r from-green-600 to-green-400 w-1/2" />
-                                </div>
-                            </div>
-                            <div>
-                                <div className="flex justify-between text-[11px] font-bold mb-1">
-                                    <span>Metode Penelitian</span>
-                                    <span className="text-amber-600">2 SKS</span>
-                                </div>
-                                <div className="prog-bar-bg">
-                                    <div className="prog-bar-fill bg-gradient-to-r from-amber-600 to-amber-400 w-1/2" />
-                                </div>
-                            </div>
+                            )}
                             <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-950/20 rounded-xl flex justify-between items-center">
                                 <span className="text-xs font-extrabold text-blue-600 dark:text-blue-400">Total SKS Semester</span>
-                                <span className="text-sm font-extrabold text-blue-700 dark:text-blue-300">20 SKS</span>
+                                <span className="text-sm font-extrabold text-blue-700 dark:text-blue-300">{totalSks} SKS</span>
                             </div>
                         </div>
                     </div>
@@ -249,7 +318,7 @@ export default function JadwalTab({ onOpenModal }: JadwalTabProps) {
                         </div>
                         <div className="flex flex-col gap-3">
                             {dosenData.map((d) => (
-                                <div key={d.initials} className="flex items-center gap-3 py-1.5 border-b border-slate-50 dark:border-slate-800/40 last:border-0">
+                                <div key={d.name} className="flex items-center gap-3 py-1.5 border-b border-slate-50 dark:border-slate-800/40 last:border-0">
                                     <div
                                         className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
                                         style={{ background: d.color }}
@@ -266,10 +335,31 @@ export default function JadwalTab({ onOpenModal }: JadwalTabProps) {
                                     </div>
                                 </div>
                             ))}
+                            {dosenData.length === 0 && (
+                                <div className="text-xs text-slate-400 py-2 text-center">
+                                    Tidak ada dosen pengampu.
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
             </div>
+
+            <JadwalDetailModal
+                isOpen={selectedDetailJadwal !== null}
+                onClose={() => setSelectedDetailJadwal(null)}
+                jadwal={selectedDetailJadwal}
+                onEdit={() => {
+                    const temp = selectedDetailJadwal;
+                    setSelectedDetailJadwal(null);
+                    onOpenModal(temp);
+                }}
+                onDelete={() => {
+                    const temp = selectedDetailJadwal;
+                    setSelectedDetailJadwal(null);
+                    onDeleteJadwal(temp);
+                }}
+            />
         </div>
     );
 }

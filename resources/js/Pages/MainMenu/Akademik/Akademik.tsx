@@ -7,12 +7,14 @@ import { destroy as destroyProdi, destroyMataKuliah } from '@/actions/App/Http/C
 // Partials
 import KurikulumTab from './Partials/KurikulumTab';
 import MataKuliahTab from './Partials/MataKuliahTab';
+import KelasTab from './Partials/KelasTab';
 import JadwalTab from './Partials/JadwalTab';
 import KalenderTab from './Partials/KalenderTab';
 
 // Modals
 import KurikulumModal from './Partials/KurikulumModal';
 import MataKuliahModal from './Partials/MataKuliahModal';
+import KelasModal from './Partials/KelasModal';
 import JadwalModal from './Partials/JadwalModal';
 import KalenderModal from './Partials/KalenderModal';
 import KurikulumDetailModal from './Partials/KurikulumDetailModal';
@@ -23,6 +25,7 @@ interface Stats {
     dosen_count: number;
     ruangan_count: number;
     matakuliah_count: number;
+    jadwal_count: number;
 }
 
 interface PaginatedProdis {
@@ -62,6 +65,10 @@ interface PageProps {
     mata_kuliahs: PaginatedMataKuliahs;
     all_prodis: any[];
     all_dosens: any[];
+    all_ruangans?: any[];
+    all_mata_kuliahs_raw?: any[];
+    jadwals?: any[];
+    all_kelas?: any[];
     filters: {
         search: string | null;
         fakultas: string | null;
@@ -73,8 +80,8 @@ interface PageProps {
     };
 }
 
-export default function Akademik({ stats, fakultas, prodis, mata_kuliahs, all_prodis, all_dosens, filters }: PageProps) {
-    const [activeTab, setActiveTab] = useState<'kurikulum' | 'matakuliah' | 'jadwal' | 'kalender'>('kurikulum');
+export default function Akademik({ stats, fakultas, prodis, mata_kuliahs, all_prodis, all_dosens, all_ruangans = [], all_mata_kuliahs_raw = [], all_kelas = [], jadwals = [], filters }: PageProps) {
+    const [activeTab, setActiveTab] = useState<'kurikulum' | 'matakuliah' | 'kelas' | 'jadwal' | 'kalender'>('kurikulum');
     
     // Modal Open states
     const [isKurikulumModalOpen, setIsKurikulumModalOpen] = useState(false);
@@ -144,6 +151,59 @@ export default function Akademik({ stats, fakultas, prodis, mata_kuliahs, all_pr
         });
     };
 
+    // Kelas states & handlers
+    const [isKelasModalOpen, setIsKelasModalOpen] = useState(false);
+    const [editingKelas, setEditingKelas] = useState<any | null>(null);
+    const [kelasToDelete, setKelasToDelete] = useState<any | null>(null);
+    const [isDeletingKelas, setIsDeletingKelas] = useState(false);
+
+    const handleOpenKelasModal = (kelas?: any) => {
+        setEditingKelas(kelas && kelas.id ? kelas : null);
+        setIsKelasModalOpen(true);
+    };
+
+    const confirmDeleteKelas = () => {
+        if (!kelasToDelete) return;
+        setIsDeletingKelas(true);
+        router.delete(route('akademik.kelas.destroy', kelasToDelete.id), {
+            onSuccess: () => {
+                setKelasToDelete(null);
+                setIsDeletingKelas(false);
+                triggerToast('Kelas berhasil dihapus.', 'success');
+            },
+            onError: () => {
+                setIsDeletingKelas(false);
+                triggerToast('Gagal menghapus Kelas.', 'danger');
+            }
+        });
+    };
+
+    // Jadwal states & handlers
+    const [editingJadwal, setEditingJadwal] = useState<any | null>(null);
+    const [jadwalToDelete, setJadwalToDelete] = useState<any | null>(null);
+    const [isDeletingJadwal, setIsDeletingJadwal] = useState(false);
+
+    const handleOpenJadwalModal = (jadwal?: any) => {
+        setEditingJadwal(jadwal && jadwal.id ? jadwal : null);
+        setIsJadwalModalOpen(true);
+    };
+
+    const confirmDeleteJadwal = () => {
+        if (!jadwalToDelete) return;
+        setIsDeletingJadwal(true);
+        router.delete(route('akademik.jadwal.destroy', jadwalToDelete.id), {
+            onSuccess: () => {
+                setJadwalToDelete(null);
+                setIsDeletingJadwal(false);
+                triggerToast('Jadwal kuliah berhasil dihapus.', 'success');
+            },
+            onError: () => {
+                setIsDeletingJadwal(false);
+                triggerToast('Gagal menghapus Jadwal kuliah.', 'danger');
+            }
+        });
+    };
+
     // Toast state
     const [toast, setToast] = useState<{ show: boolean; msg: string; type: 'success' | 'danger' } | null>(null);
 
@@ -168,8 +228,13 @@ export default function Akademik({ stats, fakultas, prodis, mata_kuliahs, all_pr
     const handleSaveModal = (msg: string) => {
         setIsKurikulumModalOpen(false);
         setIsMKModalOpen(false);
+        setIsKelasModalOpen(false);
         setIsJadwalModalOpen(false);
         setIsKalenderModalOpen(false);
+        setEditingProdi(null);
+        setEditingMataKuliah(null);
+        setEditingKelas(null);
+        setEditingJadwal(null);
         triggerToast(msg, 'success');
     };
 
@@ -210,14 +275,14 @@ export default function Akademik({ stats, fakultas, prodis, mata_kuliahs, all_pr
                         </div>
                     </div>
                     <div className="stat-mini">
-                        <div className="stat-mini-num text-teal-600 dark:text-teal-400">246</div>
+                        <div className="stat-mini-num text-teal-600 dark:text-teal-400">{stats.matakuliah_count}</div>
                         <div className="stat-mini-lbl">Mata Kuliah</div>
                         <div className="stat-mini-badge bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400">
                             Semester ini
                         </div>
                     </div>
                     <div className="stat-mini">
-                        <div className="stat-mini-num text-purple-600 dark:text-purple-400">892</div>
+                        <div className="stat-mini-num text-purple-600 dark:text-purple-400">{stats.jadwal_count}</div>
                         <div className="stat-mini-lbl">Sesi Jadwal</div>
                         <div className="stat-mini-badge bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400">
                             Mingguan
@@ -263,11 +328,18 @@ export default function Akademik({ stats, fakultas, prodis, mata_kuliahs, all_pr
                         <span className="tab-count ms-1">{stats.matakuliah_count}</span>
                     </button>
                     <button 
+                        className={`main-tab cursor-pointer ${activeTab === 'kelas' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('kelas')}
+                    >
+                        <i className="bi bi-people-fill" /> Kelas 
+                        <span className="tab-count ms-1">{all_kelas.length}</span>
+                    </button>
+                    <button 
                         className={`main-tab cursor-pointer ${activeTab === 'jadwal' ? 'active' : ''}`}
                         onClick={() => setActiveTab('jadwal')}
                     >
                         <i className="bi bi-calendar3-week-fill" /> Jadwal Kuliah 
-                        <span className="tab-count ms-1">892</span>
+                        <span className="tab-count ms-1">{stats.jadwal_count}</span>
                     </button>
                     <button 
                         className={`main-tab cursor-pointer ${activeTab === 'kalender' ? 'active' : ''}`}
@@ -325,9 +397,21 @@ export default function Akademik({ stats, fakultas, prodis, mata_kuliahs, all_pr
                         onDelete={(mk) => setMataKuliahToDelete(mk)} 
                     />
                 )}
+                {activeTab === 'kelas' && (
+                    <KelasTab 
+                        allKelas={all_kelas}
+                        allProdis={all_prodis}
+                        onOpenModal={handleOpenKelasModal}
+                        onDelete={(kelas) => setKelasToDelete(kelas)} 
+                    />
+                )}
                 {activeTab === 'jadwal' && (
                     <JadwalTab 
-                        onOpenModal={() => setIsJadwalModalOpen(true)} 
+                        jadwals={jadwals}
+                        allProdis={all_prodis}
+                        allKelas={all_kelas}
+                        onOpenModal={handleOpenJadwalModal} 
+                        onDeleteJadwal={(jadwal) => setJadwalToDelete(jadwal)}
                     />
                 )}
                 {activeTab === 'kalender' && (
@@ -370,8 +454,26 @@ export default function Akademik({ stats, fakultas, prodis, mata_kuliahs, all_pr
             />
             <JadwalModal 
                 isOpen={isJadwalModalOpen} 
-                onClose={() => setIsJadwalModalOpen(false)} 
+                onClose={() => {
+                    setIsJadwalModalOpen(false);
+                    setEditingJadwal(null);
+                }} 
                 onSave={handleSaveModal} 
+                ruangans={all_ruangans}
+                mataKuliahs={all_mata_kuliahs_raw}
+                dosens={all_dosens}
+                allKelas={all_kelas}
+                jadwal={editingJadwal}
+            />
+            <KelasModal 
+                isOpen={isKelasModalOpen} 
+                onClose={() => {
+                    setIsKelasModalOpen(false);
+                    setEditingKelas(null);
+                }} 
+                onSave={handleSaveModal} 
+                prodis={all_prodis}
+                kelas={editingKelas}
             />
             <KalenderModal 
                 isOpen={isKalenderModalOpen} 
@@ -405,6 +507,23 @@ export default function Akademik({ stats, fakultas, prodis, mata_kuliahs, all_pr
                 variant="danger"
             />
 
+            <ConfirmationModal
+                show={kelasToDelete !== null}
+                title="Hapus Kelas"
+                description={
+                    <>
+                        Apakah Anda yakin ingin menghapus kelas <strong>{kelasToDelete?.nama}</strong>?
+                    </>
+                }
+                warningText="Tindakan ini tidak dapat dibatalkan. Seluruh jadwal kuliah yang dikaitkan dengan kelas ini juga akan terhapus."
+                confirmText="Hapus Kelas"
+                cancelText="Batal"
+                onClose={() => setKelasToDelete(null)}
+                onConfirm={confirmDeleteKelas}
+                processing={isDeletingKelas}
+                variant="danger"
+            />
+
             {/* DELETE CONFIRMATION MODAL */}
             <ConfirmationModal
                 show={prodiToDelete !== null}
@@ -420,6 +539,24 @@ export default function Akademik({ stats, fakultas, prodis, mata_kuliahs, all_pr
                 onClose={() => setProdiToDelete(null)}
                 onConfirm={confirmDeleteProdi}
                 processing={isDeleting}
+                variant="danger"
+            />
+
+            {/* DELETE CONFIRMATION MODAL FOR JADWAL */}
+            <ConfirmationModal
+                show={jadwalToDelete !== null}
+                title="Hapus Jadwal Kuliah"
+                description={
+                    <>
+                        Apakah Anda yakin ingin menghapus sesi jadwal kuliah untuk mata kuliah <strong>{jadwalToDelete?.mata_kuliah?.nama}</strong>?
+                    </>
+                }
+                warningText="Tindakan ini tidak dapat dibatalkan. Sesi perkuliahan ini akan dihapus permanen dari sistem akademik."
+                confirmText="Hapus Jadwal"
+                cancelText="Batal"
+                onClose={() => setJadwalToDelete(null)}
+                onConfirm={confirmDeleteJadwal}
+                processing={isDeletingJadwal}
                 variant="danger"
             />
 
