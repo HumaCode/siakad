@@ -80,7 +80,7 @@ export default function MataKuliahModal({
                     sem: 1,
                     jenis: 'Wajib',
                     prasyarat: '',
-                    dosen_id: dosens[0]?.id || '',
+                    dosen_id: '',
                     deskripsi: '',
                     status: 'Aktif',
                 });
