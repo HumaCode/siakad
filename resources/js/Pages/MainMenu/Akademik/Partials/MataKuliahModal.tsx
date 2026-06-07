@@ -193,9 +193,10 @@ export default function MataKuliahModal({
                             <input 
                                 className={`form-ctrl ${errors.sks_teori ? 'border-red-500' : ''}`} 
                                 type="number" 
+                                min="0"
                                 placeholder="2" 
                                 value={data.sks_teori}
-                                onChange={(e) => setData('sks_teori', parseInt(e.target.value) || 0)}
+                                onChange={(e) => setData('sks_teori', Math.max(0, parseInt(e.target.value) || 0))}
                                 required 
                             />
                             {errors.sks_teori && (
@@ -207,9 +208,10 @@ export default function MataKuliahModal({
                             <input 
                                 className={`form-ctrl ${errors.sks_praktik ? 'border-red-500' : ''}`} 
                                 type="number" 
+                                min="0"
                                 placeholder="1" 
                                 value={data.sks_praktik}
-                                onChange={(e) => setData('sks_praktik', parseInt(e.target.value) || 0)}
+                                onChange={(e) => setData('sks_praktik', Math.max(0, parseInt(e.target.value) || 0))}
                                 required 
                             />
                             {errors.sks_praktik && (
