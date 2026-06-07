@@ -356,12 +356,12 @@ export default function Akademik({ stats, fakultas, prodis, mata_kuliahs, all_pr
                         prodis={prodis}
                         initialSearch={filters?.search || ''}
                         initialFakultas={filters?.fakultas || 'Semua Fakultas'}
-                        initialTahun={filters?.tahun || 'Semua Tahun'}
+                        initialTahun={filters?.tahun || 'all'}
                         onFiltersChange={(searchVal, fakultasVal, tahunVal) => {
                             router.get('/akademik', {
                                 search: searchVal || null,
                                 fakultas: fakultasVal !== 'Semua Fakultas' ? fakultasVal : null,
-                                tahun: tahunVal !== 'Semua Tahun' ? tahunVal : null,
+                                tahun: tahunVal,
                             }, {
                                 preserveState: true,
                                 preserveScroll: true,

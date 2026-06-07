@@ -134,7 +134,7 @@ export default function KurikulumTab({
 }: KurikulumTabProps) {
     const [search, setSearch] = useState(initialSearch || '');
     const [selectedFakultas, setSelectedFakultas] = useState(initialFakultas || 'Semua Fakultas');
-    const [selectedTahun, setSelectedTahun] = useState(initialTahun || 'Semua Tahun');
+    const [selectedTahun, setSelectedTahun] = useState(initialTahun || 'all');
 
     useEffect(() => {
         const handler = setTimeout(() => {
@@ -245,11 +245,11 @@ export default function KurikulumTab({
                         value={selectedTahun}
                         onChange={(e) => setSelectedTahun(e.target.value)}
                     >
-                        <option>Semua Tahun</option>
-                        <option>2024</option>
-                        <option>2023</option>
-                        <option>2022</option>
-                        <option>2021</option>
+                        <option value="all">Semua Tahun</option>
+                        {Array.from({ length: 6 }, (_, i) => {
+                            const year = new Date().getFullYear() - i;
+                            return <option key={year} value={year.toString()}>{year}</option>;
+                        })}
                     </select>
                     <button className="btn-add cursor-pointer" onClick={onOpenModal}>
                         <i className="bi bi-plus-lg" /> Tambah Prodi
@@ -266,65 +266,106 @@ export default function KurikulumTab({
             </div>
 
             {/* Kurikulum Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredKurikulum.map((item) => (
-                    <div key={item.id} className={`kurikulum-card ${item.classPrefix} ${item.status === 'Tidak Aktif' ? 'kc-tidak-aktif' : ''}`}>
-                        <div className="kc-header">
-                            <div className="flex items-center gap-3 flex-1">
-                                <div
-                                    className="kc-icon"
-                                    style={{ backgroundColor: item.bgIcon, color: item.colorIcon }}
-                                >
-                                    <i className={`bi ${item.icon}`} />
-                                </div>
-                                <div>
-                                    <div className="kc-title">{item.prodi}</div>
-                                    <div className="kc-sub">
-                                        {item.jenjang} · Kurikulum {item.tahun} · Akreditasi{' '}
-                                        <strong className="text-amber-500">{item.akreditasi}</strong>
-                                    </div>
-                                </div>
-                            </div>
-                            <span className={`badge-pill ${getStatusBadgeClass(item.status)}`}>
-                                {item.status}
-                            </span>
-                        </div>
-                        <div className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-4">
-                            {item.deskripsi}
-                        </div>
-                        <div className="kc-stats">
-                            <div className="kcs-item">
-                                <span className="kcs-num text-blue-600 dark:text-blue-400">{item.sks}</span>
-                                <span className="kcs-lbl">SKS Total</span>
-                            </div>
-                            <div className="kcs-item">
-                                <span className="kcs-num text-teal-600 dark:text-teal-400">{item.mkCount}</span>
-                                <span className="kcs-lbl">Mata Kuliah</span>
-                            </div>
-                            <div className="kcs-item">
-                                <span className="kcs-num text-amber-600 dark:text-amber-400">{item.semesters}</span>
-                                <span className="kcs-lbl">Semester</span>
-                            </div>
-                        </div>
-                        <div className="kc-footer">
-                            <div className="text-xs text-slate-500">
-                                Kaprodi: <strong className="text-slate-700 dark:text-slate-300">{item.kaprodi}</strong>
-                            </div>
-                            <div className="flex gap-1.5">
-                                <button className="btn-icon bi-detail" title="Detail kurikulum" onClick={() => onViewDetail(item)}>
-                                    <i className="bi bi-eye" />
-                                </button>
-                                <button className="btn-icon bi-edit" title="Edit" onClick={() => onOpenModal(item)}>
-                                    <i className="bi bi-pencil" />
-                                </button>
-                                <button className="btn-icon bi-del" title="Hapus" onClick={() => onDelete(item)}>
-                                    <i className="bi bi-trash" />
-                                </button>
-                            </div>
+            {filteredKurikulum.length === 0 ? (
+                <div className="card-custom p-8 md:p-12 text-center flex flex-col items-center justify-center min-h-[350px] relative overflow-hidden group">
+                    {/* Animated background glowing orbs */}
+                    <div className="absolute -top-10 -left-10 w-40 h-40 rounded-full bg-blue-500/10 blur-2xl group-hover:scale-125 transition-transform duration-700 pointer-events-none" />
+                    <div className="absolute -bottom-10 -right-10 w-40 h-40 rounded-full bg-indigo-500/10 blur-2xl group-hover:scale-125 transition-transform duration-700 pointer-events-none" />
+                    
+                    {/* Floating and pulsing icon container (perfectly centered inset layout) */}
+                    <div className="relative w-24 h-24 mb-6 mx-auto">
+                        {/* Outer rotating ring */}
+                        <div className="absolute inset-0 border-2 border-dashed border-blue-500/30 rounded-full animate-[spin_20s_linear_infinite]" />
+                        {/* Pulse circle */}
+                        <div className="absolute inset-2 bg-blue-500/5 rounded-full animate-ping" />
+                        
+                        {/* Main floating icon box */}
+                        <div className="absolute inset-4 bg-gradient-to-tr from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center text-white text-3xl shadow-lg shadow-blue-500/20 transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 animate-[bounce_3s_infinite_ease-in-out]">
+                            <i className="bi bi-folder2-open" />
                         </div>
                     </div>
-                ))}
-            </div>
+
+                    {/* Typography & text */}
+                    <h3 className="font-bold text-lg text-slate-800 dark:text-slate-100 mb-2 tracking-wide">
+                        Tidak Ada Program Studi Ditemukan
+                    </h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto mb-6 leading-relaxed">
+                        Kami tidak menemukan program studi untuk kurikulum tahun <strong className="text-blue-600 dark:text-blue-400">{selectedTahun === 'all' ? 'semua tahun' : selectedTahun}</strong> dan fakultas <strong className="text-blue-600 dark:text-blue-400">{selectedFakultas}</strong>. Coba sesuaikan filter Anda.
+                    </p>
+
+                    {/* Interactive Reset Filter button */}
+                    <button 
+                        onClick={() => {
+                            setSearch('');
+                            setSelectedFakultas('Semua Fakultas');
+                            setSelectedTahun('all');
+                        }}
+                        className="btn-add flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-bold text-xs shadow-md shadow-blue-500/10 cursor-pointer transform hover:translate-y-[-2px] active:translate-y-[1px] transition-all"
+                    >
+                        <i className="bi bi-arrow-counterclockwise" /> Reset Filter Pencarian
+                    </button>
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filteredKurikulum.map((item) => (
+                        <div key={item.id} className={`kurikulum-card ${item.classPrefix} ${item.status === 'Tidak Aktif' ? 'kc-tidak-aktif' : ''}`}>
+                            <div className="kc-header">
+                                <div className="flex items-center gap-3 flex-1">
+                                    <div
+                                        className="kc-icon"
+                                        style={{ backgroundColor: item.bgIcon, color: item.colorIcon }}
+                                    >
+                                        <i className={`bi ${item.icon}`} />
+                                    </div>
+                                    <div>
+                                        <div className="kc-title">{item.prodi}</div>
+                                        <div className="kc-sub">
+                                            {item.jenjang} · Kurikulum {item.tahun} · Akreditasi{' '}
+                                            <strong className="text-amber-500">{item.akreditasi}</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span className={`badge-pill ${getStatusBadgeClass(item.status)}`}>
+                                    {item.status}
+                                </span>
+                            </div>
+                            <div className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-4">
+                                {item.deskripsi}
+                            </div>
+                            <div className="kc-stats">
+                                <div className="kcs-item">
+                                    <span className="kcs-num text-blue-600 dark:text-blue-400">{item.sks}</span>
+                                    <span className="kcs-lbl">SKS Total</span>
+                                </div>
+                                <div className="kcs-item">
+                                    <span className="kcs-num text-teal-600 dark:text-teal-400">{item.mkCount}</span>
+                                    <span className="kcs-lbl">Mata Kuliah</span>
+                                </div>
+                                <div className="kcs-item">
+                                    <span className="kcs-num text-amber-600 dark:text-amber-400">{item.semesters}</span>
+                                    <span className="kcs-lbl">Semester</span>
+                                </div>
+                            </div>
+                            <div className="kc-footer">
+                                <div className="text-xs text-slate-500">
+                                    Kaprodi: <strong className="text-slate-700 dark:text-slate-300">{item.kaprodi}</strong>
+                                </div>
+                                <div className="flex gap-1.5">
+                                    <button className="btn-icon bi-detail" title="Detail kurikulum" onClick={() => onViewDetail(item)}>
+                                        <i className="bi bi-eye" />
+                                    </button>
+                                    <button className="btn-icon bi-edit" title="Edit" onClick={() => onOpenModal(item)}>
+                                        <i className="bi bi-pencil" />
+                                    </button>
+                                    <button className="btn-icon bi-del" title="Hapus" onClick={() => onDelete(item)}>
+                                        <i className="bi bi-trash" />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
 
             {/* Pagination Links */}
             {prodis.last_page > 1 && (

@@ -40,6 +40,10 @@ class AkademikController extends Controller
         $fakultasFilter = $request->query('fakultas');
         $tahunFilter = $request->query('tahun');
 
+        if (is_null($tahunFilter) || $tahunFilter === '') {
+            $tahunFilter = (string) date('Y');
+        }
+
         // Mata Kuliah filters
         $searchMk = $request->query('search_mk');
         $prodiMk = $request->query('prodi_mk');

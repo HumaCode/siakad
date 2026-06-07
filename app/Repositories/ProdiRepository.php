@@ -37,7 +37,7 @@ class ProdiRepository implements ProdiRepositoryInterface
             });
         }
 
-        if (!empty($tahun) && $tahun !== 'Semua Tahun') {
+        if (!empty($tahun) && $tahun !== 'Semua Tahun' && $tahun !== 'all') {
             $query->where('tahun', $tahun);
         }
 
