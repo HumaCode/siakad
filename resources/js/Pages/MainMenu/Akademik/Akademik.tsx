@@ -64,6 +64,7 @@ interface PageProps {
     prodis: PaginatedProdis;
     mata_kuliahs: PaginatedMataKuliahs;
     all_prodis: any[];
+    all_prodis_with_years?: any[];
     all_dosens: any[];
     all_ruangans?: any[];
     all_mata_kuliahs_raw?: any[];
@@ -80,7 +81,7 @@ interface PageProps {
     };
 }
 
-export default function Akademik({ stats, fakultas, prodis, mata_kuliahs, all_prodis, all_dosens, all_ruangans = [], all_mata_kuliahs_raw = [], all_kelas = [], jadwals = [], filters }: PageProps) {
+export default function Akademik({ stats, fakultas, prodis, mata_kuliahs, all_prodis, all_prodis_with_years = [], all_dosens, all_ruangans = [], all_mata_kuliahs_raw = [], all_kelas = [], jadwals = [], filters }: PageProps) {
     const [activeTab, setActiveTab] = useState<'kurikulum' | 'matakuliah' | 'kelas' | 'jadwal' | 'kalender'>('kurikulum');
     
     // Modal Open states
@@ -370,6 +371,8 @@ export default function Akademik({ stats, fakultas, prodis, mata_kuliahs, all_pr
                         onOpenModal={handleOpenKurikulumModal} 
                         onDelete={handleDeleteProdi}
                         onViewDetail={handleOpenDetailModal}
+                        allProdisWithYears={all_prodis_with_years}
+                        onCopySuccess={(msg) => triggerToast(msg, 'success')}
                     />
                 )}
                 {activeTab === 'matakuliah' && (

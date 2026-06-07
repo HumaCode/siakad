@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreProdiRequest extends FormRequest
 {
@@ -23,7 +24,12 @@ class StoreProdiRequest extends FormRequest
     {
         return [
             'fakultas_id' => ['required', 'string', 'exists:fakultas,id'],
-            'kode' => ['required', 'string', 'max:50', 'unique:prodis,kode'],
+            'kode' => [
+                'required',
+                'string',
+                'max:50',
+                Rule::unique('prodis', 'kode')->where('tahun', $this->tahun),
+            ],
             'nama' => ['required', 'string', 'max:255'],
             'jenjang' => ['required', 'string', 'in:D3,S1,S2,S3'],
             'kaprodi' => ['nullable', 'string', 'max:255'],

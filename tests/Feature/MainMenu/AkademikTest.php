@@ -66,6 +66,74 @@ test('authenticated user can store a new prodi', function () {
     ]);
 });
 
+test('authenticated user can copy prodis from a previous year', function () {
+    $user = User::factory()->create();
+    $fakultas = Fakultas::create([
+        'kode' => 'FT_TEST',
+        'nama' => 'Fakultas Teknik Test',
+        'dekan' => 'Dekan Teknik Test'
+    ]);
+
+    $prodi = Prodi::create([
+        'fakultas_id' => $fakultas->id,
+        'kode' => 'IF_OLD',
+        'nama' => 'Teknik Informatika Old',
+        'jenjang' => 'S1',
+        'kaprodi' => 'Kaprodi Old',
+        'status' => 'Aktif',
+        'deskripsi' => 'Deskripsi Old',
+        'sks' => 144,
+        'lama_studi' => 8,
+        'akreditasi' => 'Unggul',
+        'tahun' => 2024
+    ]);
+
+    // Create a mock Mata Kuliah and Kelas for that Prodi
+    $mk = \App\Models\MataKuliah::create([
+        'prodi_id' => $prodi->id,
+        'kode' => 'MK_OLD',
+        'nama' => 'Mata Kuliah Old',
+        'sks' => 3,
+        'sks_teori' => 2,
+        'sks_praktik' => 1,
+        'sem' => 1,
+        'jenis' => 'Wajib',
+        'status' => 'Aktif',
+    ]);
+
+    $kelas = \App\Models\Kelas::create([
+        'prodi_id' => $prodi->id,
+        'nama' => 'Kelas A Old',
+        'status' => 'Aktif',
+    ]);
+
+    // Send copy request to copy to 2026
+    $this->actingAs($user)
+        ->post('/akademik/prodi/copy', [
+            'source_tahun' => 2024,
+            'target_tahun' => 2026,
+            'prodi_ids' => [$prodi->id]
+        ])
+        ->assertSessionHasNoErrors()
+        ->assertRedirect();
+
+    // Verify the new prodi exists in 2026
+    $newProdi = Prodi::where('kode', 'IF_OLD')->where('tahun', 2026)->first();
+    expect($newProdi)->not->toBeNull();
+    expect($newProdi->id)->not->toBe($prodi->id);
+
+    // Verify the replicated Mata Kuliah and Kelas exist for the new prodi
+    $newMk = \App\Models\MataKuliah::where('prodi_id', $newProdi->id)->first();
+    expect($newMk)->not->toBeNull();
+    expect($newMk->kode)->toBe('MK_OLD');
+    expect($newMk->id)->not->toBe($mk->id);
+
+    $newK = \App\Models\Kelas::where('prodi_id', $newProdi->id)->first();
+    expect($newK)->not->toBeNull();
+    expect($newK->nama)->toBe('Kelas A Old');
+    expect($newK->id)->not->toBe($kelas->id);
+});
+
 test('authenticated user can update an existing prodi', function () {
     $user = User::factory()->create();
     $fakultas = Fakultas::create([

@@ -33,7 +33,7 @@ class UpdateProdiRequest extends FormRequest
                 'required',
                 'string',
                 'max:50',
-                Rule::unique('prodis', 'kode')->ignore($prodiId),
+                Rule::unique('prodis', 'kode')->ignore($prodiId)->where('tahun', $this->tahun),
             ],
             'nama' => ['required', 'string', 'max:255'],
             'jenjang' => ['required', 'string', 'in:D3,S1,S2,S3'],

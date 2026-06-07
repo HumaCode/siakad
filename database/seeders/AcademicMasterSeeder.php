@@ -42,6 +42,12 @@ class AcademicMasterSeeder extends Seeder
             'nama' => 'Teknik Informatika',
             'jenjang' => 'S1',
             'kaprodi' => 'Hendra Wijaya, S.T., M.T.',
+            'status' => 'Aktif',
+            'sks' => 148,
+            'lama_studi' => 8,
+            'akreditasi' => 'Unggul',
+            'tahun' => 2025,
+            'deskripsi' => 'Kurikulum berbasis KKNI Level 6, menekankan rekayasa perangkat lunak, kecerdasan buatan, dan keamanan siber.',
         ]);
 
         $prodiSI = Prodi::create([
@@ -50,6 +56,12 @@ class AcademicMasterSeeder extends Seeder
             'nama' => 'Sistem Informasi',
             'jenjang' => 'S1',
             'kaprodi' => 'Lutfi Hakim, S.Kom., M.T.I.',
+            'status' => 'Aktif',
+            'sks' => 144,
+            'lama_studi' => 8,
+            'akreditasi' => 'Unggul',
+            'tahun' => 2025,
+            'deskripsi' => 'Fokus pada perancangan dan pengelolaan sistem informasi bisnis, analitik data, dan transformasi digital.',
         ]);
 
         // FMIPA
@@ -59,6 +71,12 @@ class AcademicMasterSeeder extends Seeder
             'nama' => 'Matematika',
             'jenjang' => 'S1',
             'kaprodi' => 'Dr. Eko Prasetyo, M.Si.',
+            'status' => 'Aktif',
+            'sks' => 144,
+            'lama_studi' => 8,
+            'akreditasi' => 'A',
+            'tahun' => 2025,
+            'deskripsi' => 'Mata kuliah dasar matematika murni, aplikasi terapan komputer, sains data, serta optimisasi sistem.',
         ]);
 
         // FEB
@@ -68,6 +86,12 @@ class AcademicMasterSeeder extends Seeder
             'nama' => 'Manajemen',
             'jenjang' => 'S1',
             'kaprodi' => 'Siti Aminah, S.E., M.B.A.',
+            'status' => 'Aktif',
+            'sks' => 144,
+            'lama_studi' => 8,
+            'akreditasi' => 'A',
+            'tahun' => 2025,
+            'deskripsi' => 'Mengembangkan kompetensi manajemen strategis, kewirausahaan, pemasaran, dan keuangan bisnis modern.',
         ]);
 
         // 3. Seed Tahun Akademik

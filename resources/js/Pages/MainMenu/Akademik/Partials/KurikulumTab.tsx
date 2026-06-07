@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from '@inertiajs/react';
+import KurikulumCopyModal from './KurikulumCopyModal';
 
 interface PaginatedProdis {
     data: any[];
@@ -44,6 +45,8 @@ interface KurikulumTabProps {
     onOpenModal: (prodi?: any) => void;
     onDelete: (prodi: any) => void;
     onViewDetail: (prodi: any) => void;
+    allProdisWithYears?: any[];
+    onCopySuccess?: (msg: string) => void;
 }
 
 const getProdiStylePreset = (kode: string) => {
@@ -130,11 +133,14 @@ export default function KurikulumTab({
     onFiltersChange, 
     onOpenModal, 
     onDelete,
-    onViewDetail
+    onViewDetail,
+    allProdisWithYears = [],
+    onCopySuccess,
 }: KurikulumTabProps) {
     const [search, setSearch] = useState(initialSearch || '');
     const [selectedFakultas, setSelectedFakultas] = useState(initialFakultas || 'Semua Fakultas');
     const [selectedTahun, setSelectedTahun] = useState(initialTahun || 'all');
+    const [isCopyModalOpen, setIsCopyModalOpen] = useState(false);
 
     useEffect(() => {
         const handler = setTimeout(() => {
@@ -216,6 +222,7 @@ export default function KurikulumTab({
     };
 
     return (
+        <>
         <div className="tab-panel active">
             {/* Filter */}
             <div className="card-custom mb-6 p-4">
@@ -254,8 +261,12 @@ export default function KurikulumTab({
                     <button className="btn-add cursor-pointer" onClick={onOpenModal}>
                         <i className="bi bi-plus-lg" /> Tambah Prodi
                     </button>
-                    <button className="btn-outline cursor-pointer">
-                        <i className="bi bi-download" /> Export
+                    <button
+                        className="btn-outline cursor-pointer"
+                        onClick={() => setIsCopyModalOpen(true)}
+                        title="Salin kurikulum dari tahun sebelumnya"
+                    >
+                        <i className="bi bi-files" /> Salin dari Tahun Lalu
                     </button>
                 </div>
                 <div className="mt-3 px-1">
@@ -403,5 +414,18 @@ export default function KurikulumTab({
                 </div>
             )}
         </div>
+
+        {/* Copy Modal */}
+        <KurikulumCopyModal
+            isOpen={isCopyModalOpen}
+            onClose={() => setIsCopyModalOpen(false)}
+            onSuccess={(msg) => {
+                setIsCopyModalOpen(false);
+                onCopySuccess?.(msg);
+            }}
+            allProdisWithYears={allProdisWithYears}
+            currentTahun={selectedTahun}
+        />
+        </>
     );
 }

@@ -114,6 +114,18 @@ class AkademikController extends Controller
             'prodis' => $prodisResource,
             'mata_kuliahs' => $mataKuliahsResource,
             'all_prodis' => Prodi::orderBy('nama')->get(['id', 'nama']),
+            'all_prodis_with_years' => Prodi::with('fakultas')->orderBy('nama')->get()->map(function ($p) {
+                return [
+                    'id' => $p->id,
+                    'kode' => $p->kode,
+                    'nama' => $p->nama,
+                    'jenjang' => $p->jenjang,
+                    'tahun' => $p->tahun,
+                    'fakultas' => $p->fakultas ? $p->fakultas->nama : '',
+                    'sks' => $p->sks,
+                    'mkCount' => \App\Models\MataKuliah::where('prodi_id', $p->id)->count(),
+                ];
+            }),
             'all_dosens' => $dosens,
             'all_ruangans' => $ruangans,
             'all_mata_kuliahs_raw' => $allMataKuliahs,
@@ -259,5 +271,63 @@ class AkademikController extends Controller
         $kelas->delete();
 
         return redirect()->back()->with('success', 'Kelas berhasil dihapus.');
+    }
+
+    /**
+     * Copy program of study (and its courses/classes) from a previous year.
+     */
+    public function copyProdi(\Illuminate\Http\Request $request): RedirectResponse
+    {
+        $request->validate([
+            'source_tahun' => ['required', 'integer'],
+            'target_tahun' => ['required', 'integer'],
+            'prodi_ids' => ['required', 'array'],
+            'prodi_ids.*' => ['required', 'string', 'exists:prodis,id'],
+        ]);
+
+        $sourceTahun = $request->input('source_tahun');
+        $targetTahun = $request->input('target_tahun');
+        $prodiIds = $request->input('prodi_ids');
+
+        \Illuminate\Support\Facades\DB::transaction(function () use ($prodiIds, $targetTahun) {
+            $prodis = Prodi::whereIn('id', $prodiIds)->get();
+
+            foreach ($prodis as $prodi) {
+                // Check if a Prodi with the same code already exists in the target year
+                $exists = Prodi::where('kode', $prodi->kode)
+                    ->where('tahun', $targetTahun)
+                    ->exists();
+
+                if ($exists) {
+                    continue; // Skip if already exists in target year
+                }
+
+                // Copy the Prodi record
+                $newProdi = $prodi->replicate();
+                $newProdi->tahun = $targetTahun;
+                $newProdi->id = (string) \Illuminate\Support\Str::ulid();
+                $newProdi->save();
+
+                // Copy associated Mata Kuliahs
+                $mataKuliahs = \App\Models\MataKuliah::where('prodi_id', $prodi->id)->get();
+                foreach ($mataKuliahs as $mk) {
+                    $newMk = $mk->replicate();
+                    $newMk->prodi_id = $newProdi->id;
+                    $newMk->id = (string) \Illuminate\Support\Str::ulid();
+                    $newMk->save();
+                }
+
+                // Copy associated Kelas
+                $kelas = \App\Models\Kelas::where('prodi_id', $prodi->id)->get();
+                foreach ($kelas as $k) {
+                    $newK = $k->replicate();
+                    $newK->prodi_id = $newProdi->id;
+                    $newK->id = (string) \Illuminate\Support\Str::ulid();
+                    $newK->save();
+                }
+            }
+        });
+
+        return redirect()->back()->with('success', 'Kurikulum berhasil disalin ke tahun ' . $targetTahun . '.');
     }
 }

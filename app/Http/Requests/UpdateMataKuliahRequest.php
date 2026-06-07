@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateMataKuliahRequest extends FormRequest
 {
@@ -24,7 +25,12 @@ class UpdateMataKuliahRequest extends FormRequest
         $matakuliahId = $this->route('matakuliah')?->id;
 
         return [
-            'kode' => ['required', 'string', 'max:50', 'unique:mata_kuliahs,kode,' . $matakuliahId],
+            'kode' => [
+                'required',
+                'string',
+                'max:50',
+                Rule::unique('mata_kuliahs', 'kode')->ignore($matakuliahId)->where('prodi_id', $this->prodi_id),
+            ],
             'nama' => ['required', 'string', 'max:255'],
             'prodi_id' => ['required', 'string', 'exists:prodis,id'],
             'sks_teori' => ['required', 'integer', 'min:0'],

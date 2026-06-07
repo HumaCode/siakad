@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreMataKuliahRequest extends FormRequest
 {
@@ -22,7 +23,12 @@ class StoreMataKuliahRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'kode' => ['required', 'string', 'max:50', 'unique:mata_kuliahs,kode'],
+            'kode' => [
+                'required',
+                'string',
+                'max:50',
+                Rule::unique('mata_kuliahs', 'kode')->where('prodi_id', $this->prodi_id),
+            ],
             'nama' => ['required', 'string', 'max:255'],
             'prodi_id' => ['required', 'string', 'exists:prodis,id'],
             'sks_teori' => ['required', 'integer', 'min:0'],
