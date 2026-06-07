@@ -55,6 +55,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/akademik/prodi', [\App\Http\Controllers\MainMenu\AkademikController::class, 'store'])->name('akademik.prodi.store');
     Route::put('/akademik/prodi/{prodi}', [\App\Http\Controllers\MainMenu\AkademikController::class, 'update'])->name('akademik.prodi.update');
     Route::delete('/akademik/prodi/{prodi}', [\App\Http\Controllers\MainMenu\AkademikController::class, 'destroy'])->name('akademik.prodi.destroy');
+
+    Route::post('/akademik/matakuliah', [\App\Http\Controllers\MainMenu\AkademikController::class, 'storeMataKuliah'])->name('akademik.matakuliah.store');
+    Route::put('/akademik/matakuliah/{matakuliah}', [\App\Http\Controllers\MainMenu\AkademikController::class, 'updateMataKuliah'])->name('akademik.matakuliah.update');
+    Route::delete('/akademik/matakuliah/{matakuliah}', [\App\Http\Controllers\MainMenu\AkademikController::class, 'destroyMataKuliah'])->name('akademik.matakuliah.destroy');
 });
 
 require __DIR__.'/auth.php';

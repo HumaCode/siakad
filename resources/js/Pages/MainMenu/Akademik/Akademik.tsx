@@ -2,7 +2,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, router } from '@inertiajs/react';
 import React, { useState, useEffect } from 'react';
 import ConfirmationModal from '@/Components/ConfirmationModal';
-import { destroy as destroyProdi } from '@/actions/App/Http/Controllers/MainMenu/AkademikController';
+import { destroy as destroyProdi, destroyMataKuliah } from '@/actions/App/Http/Controllers/MainMenu/AkademikController';
 
 // Partials
 import KurikulumTab from './Partials/KurikulumTab';
@@ -16,14 +16,31 @@ import MataKuliahModal from './Partials/MataKuliahModal';
 import JadwalModal from './Partials/JadwalModal';
 import KalenderModal from './Partials/KalenderModal';
 import KurikulumDetailModal from './Partials/KurikulumDetailModal';
+import MataKuliahDetailModal from './Partials/MataKuliahDetailModal';
 
 interface Stats {
     prodi_count: number;
     dosen_count: number;
     ruangan_count: number;
+    matakuliah_count: number;
 }
 
 interface PaginatedProdis {
+    data: any[];
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+    from: number;
+    to: number;
+    links: {
+        url: string | null;
+        label: string;
+        active: boolean;
+    }[];
+}
+
+interface PaginatedMataKuliahs {
     data: any[];
     current_page: number;
     last_page: number;
@@ -42,14 +59,21 @@ interface PageProps {
     stats: Stats;
     fakultas: any[];
     prodis: PaginatedProdis;
+    mata_kuliahs: PaginatedMataKuliahs;
+    all_prodis: any[];
+    all_dosens: any[];
     filters: {
         search: string | null;
         fakultas: string | null;
         tahun: string | null;
+        search_mk: string | null;
+        prodi_mk: string | null;
+        sem_mk: string | null;
+        jenis_mk: string | null;
     };
 }
 
-export default function Akademik({ stats, fakultas, prodis, filters }: PageProps) {
+export default function Akademik({ stats, fakultas, prodis, mata_kuliahs, all_prodis, all_dosens, filters }: PageProps) {
     const [activeTab, setActiveTab] = useState<'kurikulum' | 'matakuliah' | 'jadwal' | 'kalender'>('kurikulum');
     
     // Modal Open states
@@ -89,6 +113,33 @@ export default function Akademik({ stats, fakultas, prodis, filters }: PageProps
             onError: () => {
                 setIsDeleting(false);
                 triggerToast('Gagal menghapus Program Studi.', 'danger');
+            }
+        });
+    };
+
+    // Mata Kuliah states & handlers
+    const [editingMataKuliah, setEditingMataKuliah] = useState<any | null>(null);
+    const [detailMataKuliah, setDetailMataKuliah] = useState<any | null>(null);
+    const [mataKuliahToDelete, setMataKuliahToDelete] = useState<any | null>(null);
+    const [isDeletingMK, setIsDeletingMK] = useState(false);
+
+    const handleOpenMKModal = (mk?: any) => {
+        setEditingMataKuliah(mk && mk.id ? mk : null);
+        setIsMKModalOpen(true);
+    };
+
+    const confirmDeleteMataKuliah = () => {
+        if (!mataKuliahToDelete) return;
+        setIsDeletingMK(true);
+        router.delete(destroyMataKuliah.url(mataKuliahToDelete.id), {
+            onSuccess: () => {
+                setMataKuliahToDelete(null);
+                setIsDeletingMK(false);
+                triggerToast('Mata Kuliah berhasil dihapus.', 'success');
+            },
+            onError: () => {
+                setIsDeletingMK(false);
+                triggerToast('Gagal menghapus Mata Kuliah.', 'danger');
             }
         });
     };
@@ -209,7 +260,7 @@ export default function Akademik({ stats, fakultas, prodis, filters }: PageProps
                         onClick={() => setActiveTab('matakuliah')}
                     >
                         <i className="bi bi-journal-richtext" /> Mata Kuliah 
-                        <span className="tab-count ms-1">246</span>
+                        <span className="tab-count ms-1">{stats.matakuliah_count}</span>
                     </button>
                     <button 
                         className={`main-tab cursor-pointer ${activeTab === 'jadwal' ? 'active' : ''}`}
@@ -251,7 +302,27 @@ export default function Akademik({ stats, fakultas, prodis, filters }: PageProps
                 )}
                 {activeTab === 'matakuliah' && (
                     <MataKuliahTab 
-                        onOpenModal={() => setIsMKModalOpen(true)} 
+                        mataKuliahs={mata_kuliahs}
+                        allProdis={all_prodis}
+                        initialSearch={filters?.search_mk || ''}
+                        initialProdi={filters?.prodi_mk || ''}
+                        initialSem={filters?.sem_mk || ''}
+                        initialJenis={filters?.jenis_mk || ''}
+                        onFiltersChange={(searchVal, prodiVal, semVal, jenisVal) => {
+                            router.get('/akademik', {
+                                search_mk: searchVal || null,
+                                prodi_mk: prodiVal !== 'Semua Prodi' ? prodiVal : null,
+                                sem_mk: semVal !== 'Semua Semester' ? semVal : null,
+                                jenis_mk: jenisVal !== 'Semua Jenis' ? jenisVal : null,
+                            }, {
+                                preserveState: true,
+                                preserveScroll: true,
+                            });
+                        }}
+                        onOpenModal={() => handleOpenMKModal(null)} 
+                        onEdit={handleOpenMKModal}
+                        onDetail={(mk) => setDetailMataKuliah(mk)}
+                        onDelete={(mk) => setMataKuliahToDelete(mk)} 
                     />
                 )}
                 {activeTab === 'jadwal' && (
@@ -288,8 +359,14 @@ export default function Akademik({ stats, fakultas, prodis, filters }: PageProps
             />
             <MataKuliahModal 
                 isOpen={isMKModalOpen} 
-                onClose={() => setIsMKModalOpen(false)} 
+                onClose={() => {
+                    setIsMKModalOpen(false);
+                    setEditingMataKuliah(null);
+                }} 
                 onSave={handleSaveModal} 
+                dosens={all_dosens}
+                prodis={all_prodis}
+                mataKuliah={editingMataKuliah}
             />
             <JadwalModal 
                 isOpen={isJadwalModalOpen} 
@@ -305,6 +382,27 @@ export default function Akademik({ stats, fakultas, prodis, filters }: PageProps
                 isOpen={detailProdi !== null} 
                 onClose={() => setDetailProdi(null)} 
                 prodi={detailProdi}
+            />
+            <MataKuliahDetailModal 
+                isOpen={detailMataKuliah !== null} 
+                onClose={() => setDetailMataKuliah(null)} 
+                mataKuliah={detailMataKuliah}
+            />
+            <ConfirmationModal
+                show={mataKuliahToDelete !== null}
+                title="Hapus Mata Kuliah"
+                description={
+                    <>
+                        Apakah Anda yakin ingin menghapus mata kuliah <strong>{mataKuliahToDelete?.nama}</strong> ({mataKuliahToDelete?.kode})?
+                    </>
+                }
+                warningText="Tindakan ini tidak dapat dibatalkan. Data mata kuliah yang dihapus akan hilang secara permanen dari sistem."
+                confirmText="Hapus Mata Kuliah"
+                cancelText="Batal"
+                onClose={() => setMataKuliahToDelete(null)}
+                onConfirm={confirmDeleteMataKuliah}
+                processing={isDeletingMK}
+                variant="danger"
             />
 
             {/* DELETE CONFIRMATION MODAL */}

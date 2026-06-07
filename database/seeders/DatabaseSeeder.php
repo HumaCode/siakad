@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             AcademicMasterSeeder::class,
             UsersAndCivitasSeeder::class,
             MenuSeeder::class,
+            MataKuliahSeeder::class,
         ]);
     }
 }

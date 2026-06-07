@@ -1,62 +1,111 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link } from '@inertiajs/react';
 
-interface MKItem {
-    kode: string;
-    nama: string;
-    prodi: string;
-    sks: number;
-    sem: number;
-    jenis: 'Wajib' | 'Pilihan' | 'Praktikum';
-    prasyarat: string;
-    dosen: string;
-    status: 'Aktif' | 'Nonaktif';
+interface PaginatedMataKuliahs {
+    data: any[];
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+    from: number;
+    to: number;
+    links: {
+        url: string | null;
+        label: string;
+        active: boolean;
+    }[];
 }
 
 interface MataKuliahTabProps {
+    mataKuliahs: PaginatedMataKuliahs;
+    allProdis: any[];
+    initialSearch: string;
+    initialProdi: string;
+    initialSem: string;
+    initialJenis: string;
+    onFiltersChange: (search: string, prodi: string, sem: string, jenis: string) => void;
     onOpenModal: () => void;
+    onEdit: (mk: any) => void;
+    onDetail: (mk: any) => void;
+    onDelete: (mk: any) => void;
 }
 
-const mkData: MKItem[] = [
-    { kode: 'TI501', nama: 'Algoritma & Pemrograman', prodi: 'Teknik Informatika', sks: 3, sem: 5, jenis: 'Wajib', prasyarat: 'TI302', dosen: 'Dr. Budi S.', status: 'Aktif' },
-    { kode: 'TI502', nama: 'Basis Data Lanjut', prodi: 'Teknik Informatika', sks: 3, sem: 5, jenis: 'Wajib', prasyarat: 'TI301', dosen: 'Dr. Rina W.', status: 'Aktif' },
-    { kode: 'TI503', nama: 'Rekayasa Perangkat Lunak', prodi: 'Teknik Informatika', sks: 3, sem: 5, jenis: 'Wajib', prasyarat: '-', dosen: 'Drs. Hendra', status: 'Aktif' },
-    { kode: 'TI504', nama: 'Jaringan Komputer', prodi: 'Teknik Informatika', sks: 2, sem: 5, jenis: 'Wajib', prasyarat: '-', dosen: 'Ir. Surya P.', status: 'Aktif' },
-    { kode: 'TI505', nama: 'Metode Penelitian', prodi: 'Teknik Informatika', sks: 2, sem: 5, jenis: 'Wajib', prasyarat: '-', dosen: 'Prof. Agus M.', status: 'Aktif' },
-    { kode: 'TI506', nama: 'Keamanan Siber', prodi: 'Teknik Informatika', sks: 3, sem: 5, jenis: 'Pilihan', prasyarat: 'TI504', dosen: 'Dr. Andi K.', status: 'Aktif' },
-    { kode: 'SI401', nama: 'Analisis & Desain Sistem', prodi: 'Sistem Informasi', sks: 3, sem: 4, jenis: 'Wajib', prasyarat: '-', dosen: 'Dr. Maya S.', status: 'Aktif' },
-    { kode: 'SI402', nama: 'Manajemen Proyek SI', prodi: 'Sistem Informasi', sks: 2, sem: 4, jenis: 'Wajib', prasyarat: 'SI301', dosen: 'M. Rizal, M.Kom', status: 'Aktif' },
-    { kode: 'MB301', nama: 'Manajemen Strategis', prodi: 'Manajemen Bisnis', sks: 3, sem: 3, jenis: 'Wajib', prasyarat: '-', dosen: 'Prof. Hendra K.', status: 'Aktif' },
-    { kode: 'MB302', nama: 'Kewirausahaan Digital', prodi: 'Manajemen Bisnis', sks: 2, sem: 3, jenis: 'Pilihan', prasyarat: '-', dosen: 'Dr. Dewi A.', status: 'Aktif' },
-    { kode: 'TI507', nama: 'Machine Learning', prodi: 'Teknik Informatika', sks: 3, sem: 7, jenis: 'Pilihan', prasyarat: 'TI601', dosen: 'Dr. Fajar N.', status: 'Nonaktif' },
-    { kode: 'TI508', nama: 'Pengembangan Aplikasi Mobile', prodi: 'Teknik Informatika', sks: 3, sem: 6, jenis: 'Pilihan', prasyarat: 'TI501', dosen: 'M. Saleh, M.T', status: 'Aktif' },
-];
-
-const jenisStyle = {
+const jenisStyle: Record<string, string> = {
     Wajib: 'bp-blue',
     Pilihan: 'bp-teal',
     Praktikum: 'bp-purple',
 };
 
-const statusStyle = {
+const statusStyle: Record<string, string> = {
     Aktif: 'bp-green',
     Nonaktif: 'bp-rose',
 };
 
-export default function MataKuliahTab({ onOpenModal }: MataKuliahTabProps) {
-    const [search, setSearch] = useState('');
-    const [selectedProdi, setSelectedProdi] = useState('');
-    const [selectedSem, setSelectedSem] = useState('');
-    const [selectedJenis, setSelectedJenis] = useState('');
+export default function MataKuliahTab({
+    mataKuliahs,
+    allProdis,
+    initialSearch,
+    initialProdi,
+    initialSem,
+    initialJenis,
+    onFiltersChange,
+    onOpenModal,
+    onEdit,
+    onDetail,
+    onDelete,
+}: MataKuliahTabProps) {
+    const [search, setSearch] = useState(initialSearch || '');
+    const [selectedProdi, setSelectedProdi] = useState(initialProdi || '');
+    const [selectedSem, setSelectedSem] = useState(initialSem || '');
+    const [selectedJenis, setSelectedJenis] = useState(initialJenis || '');
 
-    const filteredMK = mkData.filter(m => {
-        const matchesSearch = m.nama.toLowerCase().includes(search.toLowerCase()) ||
-            m.kode.toLowerCase().includes(search.toLowerCase());
-        const matchesProdi = selectedProdi === '' || m.prodi === selectedProdi;
-        const matchesSem = selectedSem === '' || m.sem.toString() === selectedSem;
-        const matchesJenis = selectedJenis === '' || m.jenis === selectedJenis;
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            onFiltersChange(search, selectedProdi, selectedSem, selectedJenis);
+        }, 400);
+        return () => clearTimeout(handler);
+    }, [search, selectedProdi, selectedSem, selectedJenis]);
 
-        return matchesSearch && matchesProdi && matchesSem && matchesJenis;
-    });
+    const getFilteredLinks = () => {
+        const links = mataKuliahs.links;
+        if (!links || links.length <= 10) return links || [];
+
+        const current = mataKuliahs.current_page;
+        const last = mataKuliahs.last_page;
+        const delta = 2;
+
+        const range = [];
+        for (let i = Math.max(2, current - delta); i <= Math.min(last - 1, current + delta); i++) {
+            range.push(i);
+        }
+
+        if (current - delta > 2) {
+            range.unshift('...');
+        }
+        if (current + delta < last - 1) {
+            range.push('...');
+        }
+
+        range.unshift(1);
+        if (last > 1) {
+            range.push(last);
+        }
+
+        const filtered = [];
+        filtered.push(links[0]); // Previous link
+
+        range.forEach((page) => {
+            if (page === '...') {
+                filtered.push({ url: null, label: '...', active: false });
+            } else {
+                const found = links.find(l => l.label === page.toString());
+                if (found) filtered.push(found);
+            }
+        });
+
+        filtered.push(links[links.length - 1]); // Next link
+        return filtered;
+    };
 
     return (
         <div className="tab-panel active">
@@ -79,10 +128,11 @@ export default function MataKuliahTab({ onOpenModal }: MataKuliahTabProps) {
                         onChange={(e) => setSelectedProdi(e.target.value)}
                     >
                         <option value="">Semua Prodi</option>
-                        <option>Teknik Informatika</option>
-                        <option>Sistem Informasi</option>
-                        <option>Manajemen Bisnis</option>
-                        <option>Ilmu Hukum</option>
+                        {allProdis.map((p) => (
+                            <option key={p.id} value={p.nama}>
+                                {p.nama}
+                            </option>
+                        ))}
                     </select>
                     <select
                         className="fsel"
@@ -90,8 +140,10 @@ export default function MataKuliahTab({ onOpenModal }: MataKuliahTabProps) {
                         onChange={(e) => setSelectedSem(e.target.value)}
                     >
                         <option value="">Semua Semester</option>
-                        {[1, 2, 3, 4, 5, 6, 7, 8].map(s => (
-                            <option key={s} value={s.toString()}>Semester {s}</option>
+                        {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
+                            <option key={s} value={s.toString()}>
+                                Semester {s}
+                            </option>
                         ))}
                     </select>
                     <select
@@ -113,8 +165,8 @@ export default function MataKuliahTab({ onOpenModal }: MataKuliahTabProps) {
                 </div>
 
                 {/* Table */}
-                <div className="tbl-wrap px-5">
-                    <table className="data-table w-full">
+                <div className="tbl-wrap" style={{ padding: '0 20px 0' }}>
+                    <table className="data-table">
                         <thead>
                             <tr>
                                 <th>Kode MK</th>
@@ -130,36 +182,36 @@ export default function MataKuliahTab({ onOpenModal }: MataKuliahTabProps) {
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredMK.length === 0 ? (
+                            {(mataKuliahs.data || []).length === 0 ? (
                                 <tr>
                                     <td colSpan={10} className="text-center py-8 text-slate-400">
                                         Tidak ada data mata kuliah yang sesuai filter.
                                     </td>
                                 </tr>
                             ) : (
-                                filteredMK.map((m) => (
+                                mataKuliahs.data.map((m) => (
                                     <tr key={m.kode}>
                                         <td>
-                                            <span className="font-mono text-xs font-bold text-blue-600 dark:text-blue-400">
+                                            <span style={{ fontFamily: 'monospace', fontSize: '.8rem', fontWeight: 700, color: 'var(--primary)' }}>
                                                 {m.kode}
                                             </span>
                                         </td>
                                         <td>
-                                            <div className="font-bold text-xs text-slate-800 dark:text-slate-200">
+                                            <div style={{ fontWeight: 700, fontSize: '.82rem' }} className="text-slate-800 dark:text-slate-200">
                                                 {m.nama}
                                             </div>
                                         </td>
                                         <td>
-                                            <span className="text-xs text-slate-500 dark:text-slate-400">
-                                                {m.prodi}
+                                            <span style={{ fontSize: '.72rem' }} className="text-slate-500 dark:text-slate-400">
+                                                {m.prodi?.nama || '-'}
                                             </span>
                                         </td>
                                         <td>
-                                            <span className="font-bold text-slate-800 dark:text-slate-200 text-xs">
+                                            <span style={{ fontWeight: 800, color: 'var(--primary)', fontFamily: "'Playfair Display', serif", fontSize: '.95rem' }}>
                                                 {m.sks}
                                             </span>
                                         </td>
-                                        <td className="text-center">
+                                        <td style={{ textAlign: 'center' }}>
                                             <span className="badge-pill bp-indigo">Sem {m.sem}</span>
                                         </td>
                                         <td>
@@ -168,13 +220,13 @@ export default function MataKuliahTab({ onOpenModal }: MataKuliahTabProps) {
                                             </span>
                                         </td>
                                         <td>
-                                            <span className="font-mono text-xs text-slate-500 dark:text-slate-400">
-                                                {m.prasyarat}
+                                            <span style={{ fontSize: '.75rem', fontFamily: 'monospace' }} className="text-slate-500 dark:text-slate-400">
+                                                {m.prasyarat || '-'}
                                             </span>
                                         </td>
                                         <td>
-                                            <span className="text-xs text-slate-800 dark:text-slate-200">
-                                                {m.dosen}
+                                            <span style={{ fontSize: '.75rem' }} className="text-slate-800 dark:text-slate-200">
+                                                {m.dosen_nama || '-'}
                                             </span>
                                         </td>
                                         <td>
@@ -183,14 +235,14 @@ export default function MataKuliahTab({ onOpenModal }: MataKuliahTabProps) {
                                             </span>
                                         </td>
                                         <td>
-                                            <div className="flex gap-1">
-                                                <button className="btn-icon bi-edit" title="Edit" onClick={onOpenModal}>
+                                            <div style={{ display: 'flex', gap: '4px' }}>
+                                                <button className="btn-icon bi-edit" title="Edit" onClick={() => onEdit(m)}>
                                                     <i className="bi bi-pencil" />
                                                 </button>
-                                                <button className="btn-icon bi-detail" title="Detail">
+                                                <button className="btn-icon bi-detail" title="Detail" onClick={() => onDetail(m)}>
                                                     <i className="bi bi-eye" />
                                                 </button>
-                                                <button className="btn-icon bi-del" title="Hapus">
+                                                <button className="btn-icon bi-del" title="Hapus" onClick={() => onDelete(m)}>
                                                     <i className="bi bi-trash" />
                                                 </button>
                                             </div>
@@ -203,16 +255,36 @@ export default function MataKuliahTab({ onOpenModal }: MataKuliahTabProps) {
                 </div>
 
                 {/* Pagination */}
-                <div className="pagi border-t border-slate-100 dark:border-slate-800">
-                    <div className="pagi-info">
-                        Menampilkan <strong>1–{filteredMK.length}</strong> dari <strong>{filteredMK.length}</strong> mata kuliah
+                {mataKuliahs.last_page > 1 && (
+                    <div className="pagi border-t border-slate-100 dark:border-slate-800">
+                        <div className="pagi-info">
+                            Menampilkan <strong>{mataKuliahs.from || 0}–{mataKuliahs.to || 0}</strong> dari <strong>{mataKuliahs.total}</strong> mata kuliah
+                        </div>
+                        <div className="pagi-btns">
+                            {getFilteredLinks().map((link, idx) => {
+                                if (!link.url) {
+                                    return (
+                                        <span 
+                                            key={idx} 
+                                            className="pagi-btn opacity-50 cursor-not-allowed pointer-events-none"
+                                            dangerouslySetInnerHTML={{ __html: link.label }}
+                                        />
+                                    );
+                                }
+                                return (
+                                    <Link
+                                        key={idx}
+                                        href={link.url}
+                                        className={`pagi-btn ${link.active ? 'active' : ''}`}
+                                        preserveState
+                                        preserveScroll
+                                        dangerouslySetInnerHTML={{ __html: link.label }}
+                                    />
+                                );
+                            })}
+                        </div>
                     </div>
-                    <div className="pagi-btns">
-                        <button className="pagi-btn">‹</button>
-                        <button className="pagi-btn active">1</button>
-                        <button className="pagi-btn">›</button>
-                    </div>
-                </div>
+                )}
             </div>
         </div>
     );

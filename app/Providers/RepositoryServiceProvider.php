@@ -11,6 +11,8 @@ use App\Repositories\Interfaces\RoleRepositoryInterface;
 use App\Repositories\RoleRepository;
 use App\Repositories\Interfaces\ProdiRepositoryInterface;
 use App\Repositories\ProdiRepository;
+use App\Repositories\Interfaces\MataKuliahRepositoryInterface;
+use App\Repositories\MataKuliahRepository;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -23,6 +25,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(DosenRepositoryInterface::class, DosenRepository::class);
         $this->app->bind(RoleRepositoryInterface::class, RoleRepository::class);
         $this->app->bind(ProdiRepositoryInterface::class, ProdiRepository::class);
+        $this->app->bind(MataKuliahRepositoryInterface::class, MataKuliahRepository::class);
     }
 
     /**
