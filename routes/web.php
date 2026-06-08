@@ -71,6 +71,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/akademik/kalender', [\App\Http\Controllers\MainMenu\AkademikController::class, 'storeKalender'])->name('akademik.kalender.store');
     Route::put('/akademik/kalender/{kalender}', [\App\Http\Controllers\MainMenu\AkademikController::class, 'updateKalender'])->name('akademik.kalender.update');
     Route::delete('/akademik/kalender/{kalender}', [\App\Http\Controllers\MainMenu\AkademikController::class, 'destroyKalender'])->name('akademik.kalender.destroy');
+
+    // Mahasiswa Module
+    Route::get('/mahasiswa', [\App\Http\Controllers\MainMenu\MahasiswaController::class, 'index'])->name('mahasiswa.index');
+    Route::post('/mahasiswa', [\App\Http\Controllers\MainMenu\MahasiswaController::class, 'store'])->name('mahasiswa.store');
+    Route::put('/mahasiswa/{id}', [\App\Http\Controllers\MainMenu\MahasiswaController::class, 'update'])->name('mahasiswa.update');
+    Route::delete('/mahasiswa/{id}', [\App\Http\Controllers\MainMenu\MahasiswaController::class, 'destroy'])->name('mahasiswa.destroy');
 });
 
 require __DIR__.'/auth.php';

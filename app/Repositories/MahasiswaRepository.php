@@ -18,13 +18,32 @@ class MahasiswaRepository implements MahasiswaRepositoryInterface
     }
 
     /**
-     * Get paginated mahasiswas.
+     * Get paginated mahasiswas with filters.
      */
-    public function paginate(int $perPage = 15): LengthAwarePaginator
+    public function paginate(int $perPage = 15, ?string $search = null, ?string $prodiId = null, ?string $angkatan = null, ?string $status = null): LengthAwarePaginator
     {
-        return Mahasiswa::with(['user', 'prodi', 'dosenWali'])
-            ->latest()
-            ->paginate($perPage);
+        $query = Mahasiswa::with(['user', 'prodi', 'dosenWali']);
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%")
+                  ->orWhere('nim', 'like', "%{$search}%");
+            });
+        }
+
+        if ($prodiId) {
+            $query->where('prodi_id', $prodiId);
+        }
+
+        if ($angkatan) {
+            $query->where('angkatan', $angkatan);
+        }
+
+        if ($status) {
+            $query->where('status_akademik', $status);
+        }
+
+        return $query->latest()->paginate($perPage);
     }
 
     /**

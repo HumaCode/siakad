@@ -14,9 +14,9 @@ interface MahasiswaRepositoryInterface
     public function all(): Collection;
 
     /**
-     * Get paginated mahasiswas.
+     * Get paginated mahasiswas with filters.
      */
-    public function paginate(int $perPage = 15): LengthAwarePaginator;
+    public function paginate(int $perPage = 15, ?string $search = null, ?string $prodiId = null, ?string $angkatan = null, ?string $status = null): LengthAwarePaginator;
 
     /**
      * Find a mahasiswa by ID.
