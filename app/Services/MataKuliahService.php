@@ -30,9 +30,9 @@ class MataKuliahService
     /**
      * Get paginated courses with filters.
      */
-    public function getPaginatedMataKuliahs(?string $search, ?string $prodi, ?string $semester, ?string $jenis, int $perPage = 10): LengthAwarePaginator
+    public function getPaginatedMataKuliahs(?string $search, ?string $prodi, ?string $semester, ?string $jenis, ?string $tahun = null, int $perPage = 10): LengthAwarePaginator
     {
-        return $this->mataKuliahRepository->getPaginatedMataKuliahs($search, $prodi, $semester, $jenis, $perPage);
+        return $this->mataKuliahRepository->getPaginatedMataKuliahs($search, $prodi, $semester, $jenis, $tahun, $perPage);
     }
 
     /**

@@ -51,7 +51,7 @@ class AkademikController extends Controller
         $jenisMk = $request->query('jenis_mk');
 
         $paginatedProdis = $this->prodiService->getPaginatedProdis($search, $fakultasFilter, $tahunFilter, 6);
-        $paginatedMataKuliahs = $this->mataKuliahService->getPaginatedMataKuliahs($searchMk, $prodiMk, $semMk, $jenisMk, 10);
+        $paginatedMataKuliahs = $this->mataKuliahService->getPaginatedMataKuliahs($searchMk, $prodiMk, $semMk, $jenisMk, $tahunFilter, 10);
 
         $stats = [
             'prodi_count' => Prodi::count(),
@@ -79,7 +79,11 @@ class AkademikController extends Controller
             ];
         });
 
-        $jadwals = \App\Models\JadwalKuliah::with(['mataKuliah', 'ruangan', 'dosen', 'prodi'])->get();
+        $jadwals = \App\Models\JadwalKuliah::with(['mataKuliah', 'ruangan', 'dosen', 'prodi'])
+            ->whereHas('prodi', function($q) use ($tahunFilter) {
+                $q->where('tahun', $tahunFilter);
+            })->get();
+            
         $ruangans = \App\Models\Ruangan::orderBy('nama_ruangan')->get()->map(function ($r) {
             return [
                 'id' => $r->id,
@@ -88,7 +92,10 @@ class AkademikController extends Controller
                 'kapasitas' => $r->kapasitas,
             ];
         });
-        $allMataKuliahs = \App\Models\MataKuliah::orderBy('nama')->get()->map(function ($mk) {
+        
+        $allMataKuliahs = \App\Models\MataKuliah::whereHas('prodi', function($q) use ($tahunFilter) {
+            $q->where('tahun', $tahunFilter);
+        })->orderBy('nama')->get()->map(function ($mk) {
             return [
                 'id' => $mk->id,
                 'kode' => $mk->kode,
@@ -99,7 +106,10 @@ class AkademikController extends Controller
                 'sks_praktik' => $mk->sks_praktik,
             ];
         });
-        $allKelas = \App\Models\Kelas::orderBy('nama')->get()->map(function ($k) {
+        
+        $allKelas = \App\Models\Kelas::whereHas('prodi', function($q) use ($tahunFilter) {
+            $q->where('tahun', $tahunFilter);
+        })->orderBy('nama')->get()->map(function ($k) {
             return [
                 'id' => $k->id,
                 'nama' => $k->nama,
@@ -113,7 +123,7 @@ class AkademikController extends Controller
             'fakultas' => $fakultas,
             'prodis' => $prodisResource,
             'mata_kuliahs' => $mataKuliahsResource,
-            'all_prodis' => Prodi::orderBy('nama')->get(['id', 'nama']),
+            'all_prodis' => Prodi::where('tahun', $tahunFilter)->orderBy('nama')->get(['id', 'nama']),
             'all_prodis_with_years' => Prodi::with('fakultas')->orderBy('nama')->get()->map(function ($p) {
                 return [
                     'id' => $p->id,

@@ -16,7 +16,7 @@ interface MataKuliahRepositoryInterface
     /**
      * Get paginated courses with filters.
      */
-    public function getPaginatedMataKuliahs(?string $search, ?string $prodi, ?string $semester, ?string $jenis, int $perPage = 10): LengthAwarePaginator;
+    public function getPaginatedMataKuliahs(?string $search, ?string $prodi, ?string $semester, ?string $jenis, ?string $tahun = null, int $perPage = 10): LengthAwarePaginator;
 
     /**
      * Store a new course.

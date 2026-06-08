@@ -20,7 +20,7 @@ class MataKuliahRepository implements MataKuliahRepositoryInterface
     /**
      * Get paginated courses with filters.
      */
-    public function getPaginatedMataKuliahs(?string $search, ?string $prodi, ?string $semester, ?string $jenis, int $perPage = 10): LengthAwarePaginator
+    public function getPaginatedMataKuliahs(?string $search, ?string $prodi, ?string $semester, ?string $jenis, ?string $tahun = null, int $perPage = 10): LengthAwarePaginator
     {
         $query = MataKuliah::with(['prodi', 'dosen'])->orderBy('kode');
 
@@ -35,9 +35,14 @@ class MataKuliahRepository implements MataKuliahRepositoryInterface
             });
         }
 
-        if (!empty($prodi) && $prodi !== 'Semua Prodi') {
-            $query->whereHas('prodi', function ($q) use ($prodi) {
-                $q->where('nama', $prodi);
+        if (!empty($prodi) && $prodi !== 'Semua Prodi' || !empty($tahun)) {
+            $query->whereHas('prodi', function ($q) use ($prodi, $tahun) {
+                if (!empty($prodi) && $prodi !== 'Semua Prodi') {
+                    $q->where('nama', $prodi);
+                }
+                if (!empty($tahun)) {
+                    $q->where('tahun', $tahun);
+                }
             });
         }
 
