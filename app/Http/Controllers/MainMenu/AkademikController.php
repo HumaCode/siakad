@@ -25,13 +25,16 @@ class AkademikController extends Controller
     protected ProdiService $prodiService;
     protected MataKuliahService $mataKuliahService;
 
+    protected \App\Services\KalenderAkademikService $kalenderService;
+
     /**
      * AkademikController constructor.
      */
-    public function __construct(ProdiService $prodiService, MataKuliahService $mataKuliahService)
+    public function __construct(ProdiService $prodiService, MataKuliahService $mataKuliahService, \App\Services\KalenderAkademikService $kalenderService)
     {
         $this->prodiService = $prodiService;
         $this->mataKuliahService = $mataKuliahService;
+        $this->kalenderService = $kalenderService;
     }
 
     public function index(\Illuminate\Http\Request $request): Response
@@ -118,6 +121,21 @@ class AkademikController extends Controller
             ];
         });
 
+        $kalender = $this->kalenderService->getByTahun($tahunFilter)->map(function ($k) {
+            return [
+                'id' => $k->id,
+                'tahun' => $k->tahun,
+                'kategori' => $k->kategori,
+                'jenis' => $k->jenis,
+                'judul' => $k->judul,
+                'deskripsi' => $k->deskripsi,
+                'tanggal_mulai' => $k->tanggal_mulai ? $k->tanggal_mulai->format('Y-m-d') : null,
+                'tanggal_selesai' => $k->tanggal_selesai ? $k->tanggal_selesai->format('Y-m-d') : null,
+                'warna' => $k->warna,
+                'ikon' => $k->ikon,
+            ];
+        });
+
         return Inertia::render('MainMenu/Akademik/Akademik', [
             'stats' => $stats,
             'fakultas' => $fakultas,
@@ -141,6 +159,7 @@ class AkademikController extends Controller
             'all_mata_kuliahs_raw' => $allMataKuliahs,
             'all_kelas' => $allKelas,
             'jadwals' => \App\Http\Resources\JadwalResource::collection($jadwals)->resolve(),
+            'kalender' => $kalender,
             'filters' => [
                 'search' => $search,
                 'fakultas' => $fakultasFilter,

@@ -21,50 +21,100 @@ interface PeriodItem {
     color: string;
 }
 
+interface KalenderItem {
+    id: string;
+    tahun: string;
+    kategori: string;
+    jenis: string;
+    judul: string;
+    deskripsi: string;
+    tanggal_mulai: string;
+    tanggal_selesai: string | null;
+    warna: string;
+    ikon: string;
+}
+
 interface KalenderTabProps {
+    kalender: KalenderItem[];
+    tahun?: string | null;
     onOpenModal: () => void;
     onToast: (msg: string) => void;
 }
-
-const calEvents: Record<string, EventItem[]> = {
-    '2026-06-05': [{ title: 'KRS Deadline', color: '#e11d48' }],
-    '2026-06-09': [{ title: 'Batas KRS', color: '#e11d48' }],
-    '2026-06-10': [{ title: 'Libur Nasional', color: '#f59e0b' }],
-    '2026-06-15': [{ title: 'Perkuliahan', color: '#1a56db' }, { title: 'Seminar IT', color: '#16a34a' }],
-    '2026-06-20': [{ title: 'Kuliah Umum', color: '#7c3aed' }],
-    '2026-06-23': [{ title: 'UTS Mulai', color: '#e11d48' }],
-    '2026-06-24': [{ title: 'UTS', color: '#e11d48' }],
-    '2026-06-25': [{ title: 'UTS', color: '#e11d48' }],
-    '2026-06-26': [{ title: 'UTS', color: '#e11d48' }],
-    '2026-06-27': [{ title: 'UTS', color: '#e11d48' }],
-    '2026-06-30': [{ title: 'UTS Selesai', color: '#e11d48' }],
-};
 
 const monthNames = [
     'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
     'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
 ];
 
-const timelineEvents: TimelineItem[] = [
-    { date: '05 Jun 2026', title: 'Batas Pengisian KRS', desc: 'Perpanjangan batas KRS hingga pukul 23:59', color: 'var(--rose)', icon: 'bi-journal-check' },
-    { date: '10 Jun 2026', title: 'Libur Nasional', desc: 'Hari Raya Idul Adha 1447 H', color: 'var(--accent)', icon: 'bi-star-fill' },
-    { date: '20 Jun 2026', title: 'Kuliah Umum Nasional', desc: 'Guest lecture bersama praktisi industri tech', color: 'var(--teal)', icon: 'bi-megaphone-fill' },
-    { date: '23–30 Jun', title: 'Ujian Tengah Semester', desc: 'UTS Semester Gasal 2025/2026 semua prodi', color: 'var(--rose)', icon: 'bi-clipboard2-check-fill' },
-    { date: '7 Jul 2026', title: 'Input Nilai UTS', desc: 'Batas akhir input nilai UTS oleh dosen', color: 'var(--purple)', icon: 'bi-pencil-fill' },
-];
+export default function KalenderTab({ kalender, tahun, onOpenModal, onToast }: KalenderTabProps) {
+    const defaultYear = tahun ? parseInt(tahun) : new Date().getFullYear();
+    const [year, setYear] = useState(defaultYear);
+    const [month, setMonth] = useState(new Date().getMonth()); // Default to current month
 
-const periods: PeriodItem[] = [
-    { label: 'Penerimaan Mahasiswa Baru', start: '1 Agt', end: '31 Agt 2025', pct: 100, color: 'var(--green)' },
-    { label: 'Registrasi & Pengisian KRS', start: '1 Sep', end: '14 Sep 2025', pct: 100, color: 'var(--primary)' },
-    { label: 'Perkuliahan Semester Gasal', start: '15 Sep 2025', end: '15 Jan 2026', pct: 52, color: 'var(--primary)' },
-    { label: 'Ujian Tengah Semester', start: '23 Jun', end: '30 Jun 2026', pct: 0, color: 'var(--rose)' },
-    { label: 'Ujian Akhir Semester', start: '13 Jan', end: '20 Jan 2026', pct: 0, color: 'var(--rose)' },
-    { label: 'Input Nilai & Pengolahan', start: '21 Jan', end: '31 Jan 2026', pct: 0, color: 'var(--purple)' },
-];
+    useEffect(() => {
+        if (tahun) {
+            setYear(parseInt(tahun));
+        }
+    }, [tahun]);
 
-export default function KalenderTab({ onOpenModal, onToast }: KalenderTabProps) {
-    const [year, setYear] = useState(2026);
-    const [month, setMonth] = useState(5); // June is 5 (0-indexed)
+    // Process kalender data
+    const calEvents: Record<string, EventItem[]> = {};
+    const timelineEvents: TimelineItem[] = [];
+    const periods: PeriodItem[] = [];
+
+    const todayDate = new Date();
+
+    kalender.forEach((k) => {
+        if (k.kategori === 'agenda') {
+            if (!calEvents[k.tanggal_mulai]) {
+                calEvents[k.tanggal_mulai] = [];
+            }
+            // For agenda that spans multiple days, we might want to populate calEvents for each day
+            // But for simplicity, we map start to start date.
+            let startD = new Date(k.tanggal_mulai);
+            let endD = k.tanggal_selesai ? new Date(k.tanggal_selesai) : startD;
+            
+            // Loop through dates
+            let currD = new Date(startD);
+            while (currD <= endD) {
+                const dStr = `${currD.getFullYear()}-${String(currD.getMonth() + 1).padStart(2, '0')}-${String(currD.getDate()).padStart(2, '0')}`;
+                if (!calEvents[dStr]) calEvents[dStr] = [];
+                calEvents[dStr].push({ title: k.judul, color: k.warna || '#e11d48' });
+                currD.setDate(currD.getDate() + 1);
+            }
+            
+            const formattedDate = `${startD.getDate()} ${monthNames[startD.getMonth()].substring(0, 3)} ${startD.getFullYear()}`;
+            
+            timelineEvents.push({
+                date: k.tanggal_selesai && startD.getTime() !== endD.getTime() 
+                    ? `${startD.getDate()} ${monthNames[startD.getMonth()].substring(0, 3)} - ${endD.getDate()} ${monthNames[endD.getMonth()].substring(0, 3)}`
+                    : formattedDate,
+                title: k.judul,
+                desc: k.deskripsi || '',
+                color: k.warna || 'var(--rose)',
+                icon: k.ikon || 'bi-calendar-event'
+            });
+        } else if (k.kategori === 'periode') {
+            const startObj = new Date(k.tanggal_mulai);
+            let endObj = k.tanggal_selesai ? new Date(k.tanggal_selesai) : startObj;
+            
+            let pct = 0;
+            if (todayDate > endObj) pct = 100;
+            else if (todayDate >= startObj && todayDate <= endObj) {
+                const totalDur = endObj.getTime() - startObj.getTime();
+                const passed = todayDate.getTime() - startObj.getTime();
+                pct = Math.round((passed / totalDur) * 100);
+            }
+
+            periods.push({
+                label: k.judul,
+                start: `${startObj.getDate()} ${monthNames[startObj.getMonth()].substring(0, 3)}`,
+                end: `${endObj.getDate()} ${monthNames[endObj.getMonth()].substring(0, 3)} ${endObj.getFullYear()}`,
+                pct: pct,
+                color: k.warna || 'var(--primary)'
+            });
+        }
+    });
 
     const changeMonth = (dir: number) => {
         let newMonth = month + dir;
@@ -202,8 +252,8 @@ export default function KalenderTab({ onOpenModal, onToast }: KalenderTabProps) 
                         <div className="p-5">
                             {/* Day Headers */}
                             <div className="cal-grid mb-1">
-                                {['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'].map((h) => (
-                                    <div key={h} className="cal-day-header">{h}</div>
+                                {['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'].map((h, i) => (
+                                    <div key={h} className={`cal-day-header ${i === 0 ? 'text-rose-500 font-extrabold' : ''}`}>{h}</div>
                                 ))}
                             </div>
                             {/* Calendar Days */}
@@ -211,6 +261,7 @@ export default function KalenderTab({ onOpenModal, onToast }: KalenderTabProps) 
                                 {calendarDays.map((day, idx) => {
                                     const dayEvents = calEvents[day.dateKey] || [];
                                     const hasEvents = dayEvents.length > 0;
+                                    const isSunday = new Date(day.dateKey).getDay() === 0;
 
                                     return (
                                         <div
@@ -218,7 +269,7 @@ export default function KalenderTab({ onOpenModal, onToast }: KalenderTabProps) 
                                             className={`cal-day ${day.isOther ? 'other-month' : ''} ${day.isToday ? 'today' : ''} ${hasEvents ? 'has-event' : ''}`}
                                             onClick={() => handleDayClick(day)}
                                         >
-                                            <div className="cal-num">{day.displayDay}</div>
+                                            <div className={`cal-num ${isSunday && !day.isOther ? 'text-rose-600 font-bold' : ''}`}>{day.displayDay}</div>
                                             {dayEvents.slice(0, 2).map((ev, eIdx) => (
                                                 <div
                                                     key={eIdx}

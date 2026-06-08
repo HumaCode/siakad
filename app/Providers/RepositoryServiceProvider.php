@@ -26,6 +26,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(RoleRepositoryInterface::class, RoleRepository::class);
         $this->app->bind(ProdiRepositoryInterface::class, ProdiRepository::class);
         $this->app->bind(MataKuliahRepositoryInterface::class, MataKuliahRepository::class);
+        $this->app->bind(\App\Repositories\Interfaces\KalenderAkademikRepositoryInterface::class, \App\Repositories\KalenderAkademikRepository::class);
     }
 
     /**

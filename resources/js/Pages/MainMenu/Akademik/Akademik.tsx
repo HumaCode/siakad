@@ -70,6 +70,7 @@ interface PageProps {
     all_mata_kuliahs_raw?: any[];
     jadwals?: any[];
     all_kelas?: any[];
+    kalender?: any[];
     filters: {
         search: string | null;
         fakultas: string | null;
@@ -81,7 +82,7 @@ interface PageProps {
     };
 }
 
-export default function Akademik({ stats, fakultas, prodis, mata_kuliahs, all_prodis, all_prodis_with_years = [], all_dosens, all_ruangans = [], all_mata_kuliahs_raw = [], all_kelas = [], jadwals = [], filters }: PageProps) {
+export default function Akademik({ stats, fakultas, prodis, mata_kuliahs, all_prodis, all_prodis_with_years = [], all_dosens, all_ruangans = [], all_mata_kuliahs_raw = [], all_kelas = [], jadwals = [], kalender = [], filters }: PageProps) {
     const [activeTab, setActiveTab] = useState<'kurikulum' | 'matakuliah' | 'kelas' | 'jadwal' | 'kalender'>('kurikulum');
     
     // Modal Open states
@@ -419,6 +420,8 @@ export default function Akademik({ stats, fakultas, prodis, mata_kuliahs, all_pr
                 )}
                 {activeTab === 'kalender' && (
                     <KalenderTab 
+                        kalender={kalender}
+                        tahun={filters.tahun}
                         onOpenModal={() => setIsKalenderModalOpen(true)} 
                         onToast={(msg) => triggerToast(msg, 'success')} 
                     />
