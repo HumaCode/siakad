@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface EventItem {
     title: string;
     color: string;
+    raw: KalenderItem;
 }
 
 interface TimelineItem {
@@ -39,6 +40,7 @@ interface KalenderTabProps {
     tahun?: string | null;
     onOpenModal: () => void;
     onToast: (msg: string) => void;
+    onEventClick?: (ev: KalenderItem) => void;
 }
 
 const monthNames = [
@@ -46,7 +48,7 @@ const monthNames = [
     'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
 ];
 
-export default function KalenderTab({ kalender, tahun, onOpenModal, onToast }: KalenderTabProps) {
+export default function KalenderTab({ kalender, tahun, onOpenModal, onToast, onEventClick }: KalenderTabProps) {
     const defaultYear = tahun ? parseInt(tahun) : new Date().getFullYear();
     const [year, setYear] = useState(defaultYear);
     const [month, setMonth] = useState(new Date().getMonth()); // Default to current month
@@ -79,7 +81,7 @@ export default function KalenderTab({ kalender, tahun, onOpenModal, onToast }: K
             while (currD <= endD) {
                 const dStr = `${currD.getFullYear()}-${String(currD.getMonth() + 1).padStart(2, '0')}-${String(currD.getDate()).padStart(2, '0')}`;
                 if (!calEvents[dStr]) calEvents[dStr] = [];
-                calEvents[dStr].push({ title: k.judul, color: k.warna || '#e11d48' });
+                calEvents[dStr].push({ title: k.judul, color: k.warna || '#e11d48', raw: k });
                 currD.setDate(currD.getDate() + 1);
             }
             
@@ -277,6 +279,10 @@ export default function KalenderTab({ kalender, tahun, onOpenModal, onToast }: K
                                                     style={{
                                                         backgroundColor: ev.color + '22',
                                                         color: ev.color
+                                                    }}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        if (onEventClick) onEventClick(ev.raw);
                                                     }}
                                                 >
                                                     {ev.title}

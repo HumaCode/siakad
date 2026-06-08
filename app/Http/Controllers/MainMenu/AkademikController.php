@@ -359,4 +359,89 @@ class AkademikController extends Controller
 
         return redirect()->back()->with('success', 'Kurikulum berhasil disalin ke tahun ' . $targetTahun . '.');
     }
+
+    public function storeKalender(\Illuminate\Http\Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'judul' => 'required|string|max:255',
+            'tanggal_mulai' => 'required|date',
+            'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_mulai',
+            'jenis' => 'required|string',
+            'deskripsi' => 'nullable|string',
+            'tahun' => 'required|string'
+        ]);
+
+        $validated['kategori'] = 'agenda';
+
+        switch ($validated['jenis']) {
+            case 'Perkuliahan':
+                $validated['warna'] = '#1a56db';
+                $validated['ikon'] = 'bi-book-fill';
+                break;
+            case 'Ujian':
+                $validated['warna'] = '#e11d48';
+                $validated['ikon'] = 'bi-clipboard-check';
+                break;
+            case 'Libur Nasional':
+            case 'Libur Kampus':
+                $validated['warna'] = '#f59e0b';
+                $validated['ikon'] = 'bi-star-fill';
+                break;
+            case 'Kegiatan Mahasiswa':
+            case 'Wisuda':
+            default:
+                $validated['warna'] = '#16a34a';
+                $validated['ikon'] = 'bi-people-fill';
+                break;
+        }
+
+        $this->kalenderService->createKalender($validated);
+
+        return redirect()->back();
+    }
+
+    public function updateKalender(\Illuminate\Http\Request $request, \App\Models\KalenderAkademik $kalender): RedirectResponse
+    {
+        $validated = $request->validate([
+            'judul' => 'required|string|max:255',
+            'tanggal_mulai' => 'required|date',
+            'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_mulai',
+            'jenis' => 'required|string',
+            'deskripsi' => 'nullable|string',
+            'tahun' => 'required|string'
+        ]);
+
+        switch ($validated['jenis']) {
+            case 'Perkuliahan':
+                $validated['warna'] = '#1a56db';
+                $validated['ikon'] = 'bi-book-fill';
+                break;
+            case 'Ujian':
+                $validated['warna'] = '#e11d48';
+                $validated['ikon'] = 'bi-clipboard-check';
+                break;
+            case 'Libur Nasional':
+            case 'Libur Kampus':
+                $validated['warna'] = '#f59e0b';
+                $validated['ikon'] = 'bi-star-fill';
+                break;
+            case 'Kegiatan Mahasiswa':
+            case 'Wisuda':
+            default:
+                $validated['warna'] = '#16a34a';
+                $validated['ikon'] = 'bi-people-fill';
+                break;
+        }
+
+        $this->kalenderService->updateKalender($kalender, $validated);
+
+        return redirect()->back();
+    }
+
+    public function destroyKalender(\App\Models\KalenderAkademik $kalender): RedirectResponse
+    {
+        $this->kalenderService->deleteKalender($kalender);
+
+        return redirect()->back();
+    }
 }

@@ -17,6 +17,7 @@ import MataKuliahModal from './Partials/MataKuliahModal';
 import KelasModal from './Partials/KelasModal';
 import JadwalModal from './Partials/JadwalModal';
 import KalenderModal from './Partials/KalenderModal';
+import KalenderDetailModal from './Partials/KalenderDetailModal';
 import KurikulumDetailModal from './Partials/KurikulumDetailModal';
 import MataKuliahDetailModal from './Partials/MataKuliahDetailModal';
 
@@ -90,6 +91,8 @@ export default function Akademik({ stats, fakultas, prodis, mata_kuliahs, all_pr
     const [isMKModalOpen, setIsMKModalOpen] = useState(false);
     const [isJadwalModalOpen, setIsJadwalModalOpen] = useState(false);
     const [isKalenderModalOpen, setIsKalenderModalOpen] = useState(false);
+    const [detailKalender, setDetailKalender] = useState<any | null>(null);
+    const [editingKalender, setEditingKalender] = useState<any | null>(null);
     const [editingProdi, setEditingProdi] = useState<any | null>(null);
     const [detailProdi, setDetailProdi] = useState<any | null>(null);
 
@@ -237,6 +240,23 @@ export default function Akademik({ stats, fakultas, prodis, mata_kuliahs, all_pr
         setEditingMataKuliah(null);
         setEditingKelas(null);
         setEditingJadwal(null);
+        setEditingKalender(null);
+        setDetailKalender(null);
+        triggerToast(msg, 'success');
+    };
+
+    const handleKalenderEventClick = (ev: any) => {
+        setDetailKalender(ev);
+    };
+
+    const handleEditKalender = () => {
+        setEditingKalender(detailKalender);
+        setDetailKalender(null);
+        setIsKalenderModalOpen(true);
+    };
+
+    const handleDeletedKalender = (msg: string) => {
+        setDetailKalender(null);
         triggerToast(msg, 'success');
     };
 
@@ -424,6 +444,7 @@ export default function Akademik({ stats, fakultas, prodis, mata_kuliahs, all_pr
                         tahun={filters.tahun}
                         onOpenModal={() => setIsKalenderModalOpen(true)} 
                         onToast={(msg) => triggerToast(msg, 'success')} 
+                        onEventClick={handleKalenderEventClick}
                     />
                 )}
 
@@ -483,8 +504,20 @@ export default function Akademik({ stats, fakultas, prodis, mata_kuliahs, all_pr
             />
             <KalenderModal 
                 isOpen={isKalenderModalOpen} 
-                onClose={() => setIsKalenderModalOpen(false)} 
+                onClose={() => {
+                    setIsKalenderModalOpen(false);
+                    setEditingKalender(null);
+                }} 
                 onSave={handleSaveModal} 
+                tahun={filters.tahun || (new Date().getFullYear().toString())}
+                eventToEdit={editingKalender}
+            />
+            <KalenderDetailModal
+                isOpen={detailKalender !== null}
+                onClose={() => setDetailKalender(null)}
+                eventDetail={detailKalender}
+                onEdit={handleEditKalender}
+                onDeleted={handleDeletedKalender}
             />
             <KurikulumDetailModal 
                 isOpen={detailProdi !== null} 

@@ -68,6 +68,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/akademik/kelas', [\App\Http\Controllers\MainMenu\AkademikController::class, 'storeKelas'])->name('akademik.kelas.store');
     Route::put('/akademik/kelas/{kelas}', [\App\Http\Controllers\MainMenu\AkademikController::class, 'updateKelas'])->name('akademik.kelas.update');
     Route::delete('/akademik/kelas/{kelas}', [\App\Http\Controllers\MainMenu\AkademikController::class, 'destroyKelas'])->name('akademik.kelas.destroy');
+    Route::post('/akademik/kalender', [\App\Http\Controllers\MainMenu\AkademikController::class, 'storeKalender'])->name('akademik.kalender.store');
+    Route::put('/akademik/kalender/{kalender}', [\App\Http\Controllers\MainMenu\AkademikController::class, 'updateKalender'])->name('akademik.kalender.update');
+    Route::delete('/akademik/kalender/{kalender}', [\App\Http\Controllers\MainMenu\AkademikController::class, 'destroyKalender'])->name('akademik.kalender.destroy');
 });
 
 require __DIR__.'/auth.php';
