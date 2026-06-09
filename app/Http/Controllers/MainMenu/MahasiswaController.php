@@ -51,9 +51,10 @@ class MahasiswaController extends Controller
             'all_prodis' => Prodi::orderBy('nama')->get(['id', 'nama', 'jenjang']),
             'all_dosens' => Dosen::with('user')->get()->map(function($d) {
                 return [
-                    'id' => $d->id,
-                    'nama' => $d->user->name ?? 'Unknown',
-                    'nidn' => $d->nidn
+                    'id'       => $d->id,
+                    'nama'     => $d->user->name ?? 'Unknown',
+                    'nidn'     => $d->nidn,
+                    'prodi_id' => $d->prodi_id,
                 ];
             }),
             'angkatan_list' => $this->mahasiswaService->getAngkatanList(),
