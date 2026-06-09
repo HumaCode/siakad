@@ -83,6 +83,21 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                 setPreviewUrl(mahasiswa.foto_url || null);
                 setPreviewKtpUrl(mahasiswa.ktp_url || null);
                 setPreviewKkUrl(mahasiswa.kk_url || null);
+
+                const dbStatus = mahasiswa.status_akademik?.toLowerCase();
+                const statusMap: Record<string, string> = {
+                    'aktif': 'Aktif',
+                    'cuti': 'Cuti',
+                    'lulus': 'Lulus',
+                    'do': 'Drop Out',
+                    'non-aktif': 'Non-Aktif',
+                };
+                const mappedStatus = statusMap[dbStatus] || mahasiswa.status_akademik || 'Aktif';
+
+                const studentProdiId = mahasiswa.prodi_id;
+                const studentClasses = allKelas.filter((k: any) => String(k.prodi_id) === String(studentProdiId));
+                const defaultClass = studentClasses.length > 0 ? studentClasses[0].nama : '';
+
                 setData({
                     _method: 'PUT',
                     foto: null,
@@ -92,7 +107,7 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                     nama: mahasiswa.nama || '',
                     prodi_id: mahasiswa.prodi_id || '',
                     angkatan: mahasiswa.angkatan ? String(mahasiswa.angkatan) : '',
-                    status_akademik: mahasiswa.status_akademik || 'Aktif',
+                    status_akademik: mappedStatus,
                     dosen_wali_id: mahasiswa.dosen_wali_id || '',
 
                     // Fallbacks for Mock UI fields when editing
@@ -108,7 +123,7 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                     semester_saat_ini: '1',
                     fakultas: 'Teknik & Teknologi',
                     jalur_masuk: 'SNBT (SBMPTN)',
-                    kelas: mahasiswa.kelas || '',
+                    kelas: mahasiswa.kelas || defaultClass,
                     asal_sekolah: 'SMAN 1 Bandung',
                     tahun_lulus_sma: '2020',
                     status_awal: 'Aktif',
