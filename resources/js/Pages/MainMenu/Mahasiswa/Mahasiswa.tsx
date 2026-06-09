@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, router } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 import '@/../css/mahasiswa.css';
+import Toast, { useToast } from '@/Components/Toast';
 
 // Partials
 import StatCards from './Partials/StatCards';
@@ -11,6 +12,7 @@ import MahasiswaCardView from './Partials/MahasiswaCardView';
 import MahasiswaFormModal from './Partials/MahasiswaFormModal';
 
 export default function Mahasiswa({ mahasiswas, stats, filters, all_prodis, all_dosens, angkatan_list }: any) {
+
     const [viewMode, setViewMode] = useState<'table' | 'card'>(() => {
         if (typeof window !== 'undefined') {
             const saved = localStorage.getItem('mahasiswa_view_mode');
@@ -30,6 +32,15 @@ export default function Mahasiswa({ mahasiswas, stats, filters, all_prodis, all_
 
     const [isFormModalOpen, setIsFormModalOpen] = useState(false);
     const [editingMahasiswa, setEditingMahasiswa] = useState<any | null>(null);
+
+    // Toast notification
+    const { toast, triggerToast, clearToast } = useToast();
+    const { props } = usePage<{ flash?: { success?: string; error?: string } }>();
+
+    useEffect(() => {
+        if (props.flash?.success) triggerToast(props.flash.success, 'success');
+        if (props.flash?.error)   triggerToast(props.flash.error, 'danger');
+    }, [props.flash]);
 
     // Debounce search
     useEffect(() => {
@@ -126,6 +137,9 @@ export default function Mahasiswa({ mahasiswas, stats, filters, all_prodis, all_
                 allProdis={all_prodis}
                 allDosens={all_dosens}
             />
+
+            {/* Toast Notification */}
+            <Toast toast={toast} onClose={clearToast} />
         </AuthenticatedLayout>
     );
 }
