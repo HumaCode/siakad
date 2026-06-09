@@ -27,7 +27,7 @@ export default function FormModal({
     cancelText = 'Batal',
 }: FormModalProps) {
     return (
-        <Modal show={show} onClose={onClose} maxWidth={maxWidth}>
+        <Modal show={show} onClose={onClose} maxWidth={maxWidth} unstyled={true}>
             <div className="border border-slate-100 dark:border-slate-800 shadow-2xl rounded-2xl bg-white dark:bg-slate-900 overflow-hidden">
                 {/* Header */}
                 <div className="modal-header p-5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">

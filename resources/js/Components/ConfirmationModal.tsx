@@ -119,7 +119,7 @@ export default function ConfirmationModal({
     const cfg = getVariantConfig();
 
     return (
-        <Modal show={show} onClose={onClose} maxWidth={maxWidth}>
+        <Modal show={show} onClose={onClose} maxWidth={maxWidth} unstyled={true}>
             <div className={`relative border ${cfg.borderClass} ${cfg.shadowClass} rounded-3xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl overflow-hidden p-8 transition-all duration-300`}>
                 {/* Custom animations style */}
                 <style dangerouslySetInnerHTML={{__html: `
