@@ -46,6 +46,7 @@
 .page-header::after{content:'';position:absolute;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.04);bottom:-60px;right:28%;}
 .page-header-inner{position:relative;z-index:1;}
 .page-header h4{font-family:'Poppins',sans-serif;font-size:1.35rem;font-weight:800;margin-bottom:4px;}
+.page-header h4 i{margin-right:8px;}
 .page-header p{font-size:.83rem;color:rgba(255,255,255,.72);margin:0;}
 .ph-right{position:absolute;right:28px;top:50%;transform:translateY(-50%);display:flex;gap:10px;z-index:1;}
 .btn-ph{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:10px;font-size:.82rem;font-weight:700;cursor:pointer;transition:var(--transition);font-family:'Poppins',sans-serif;border:none;}

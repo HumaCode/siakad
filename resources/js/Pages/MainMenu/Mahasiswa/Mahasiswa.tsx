@@ -7,6 +7,7 @@ import '@/../css/mahasiswa.css';
 import StatCards from './Partials/StatCards';
 import FilterToolbar from './Partials/FilterToolbar';
 import MahasiswaTable from './Partials/MahasiswaTable';
+import MahasiswaCardView from './Partials/MahasiswaCardView';
 import MahasiswaFormModal from './Partials/MahasiswaFormModal';
 
 export default function Mahasiswa({ mahasiswas, stats, filters, all_prodis, all_dosens, angkatan_list }: any) {
@@ -94,6 +95,12 @@ export default function Mahasiswa({ mahasiswas, stats, filters, all_prodis, all_
                 {/* MAIN CONTENT AREA */}
                 {viewMode === 'table' && (
                     <MahasiswaTable
+                        mahasiswas={mahasiswas}
+                        onEdit={openEditModal}
+                    />
+                )}
+                {viewMode === 'card' && (
+                    <MahasiswaCardView
                         mahasiswas={mahasiswas}
                         onEdit={openEditModal}
                     />
