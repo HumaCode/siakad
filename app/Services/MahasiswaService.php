@@ -24,14 +24,30 @@ class MahasiswaService
         return $this->mahasiswaRepository->paginate($perPage, $search, $prodiId, $angkatan, $status);
     }
 
+    private function normalizeData(array $data): array
+    {
+        if (isset($data['status_akademik'])) {
+            $statusMap = [
+                'Aktif' => 'aktif',
+                'Cuti' => 'cuti',
+                'Lulus' => 'lulus',
+                'Drop Out' => 'do',
+                'Non-Aktif' => 'do',
+            ];
+            $data['status_akademik'] = $statusMap[$data['status_akademik']] ?? strtolower($data['status_akademik']);
+        }
+        return $data;
+    }
+
     public function createMahasiswa(array $data): Mahasiswa
     {
+        $data = $this->normalizeData($data);
         return DB::transaction(function () use ($data) {
             // Create user account for mahasiswa
             $user = User::create([
                 'name' => $data['nama'],
-                'email' => strtolower(str_replace(' ', '.', $data['nama'])) . '@student.siakad.ac.id', // Generate email
-                'password' => Hash::make($data['nim']), // Password defaults to NIM
+                'email' => $data['email_akademik'] ?? (strtolower(str_replace(' ', '.', $data['nama'])) . '@student.siakad.ac.id'), // Generate email if empty
+                'password' => Hash::make($data['password_awal'] ?? $data['nim']), // Password defaults to NIM or custom password
             ]);
 
             $user->assignRole('mahasiswa');
@@ -44,13 +60,24 @@ class MahasiswaService
 
     public function updateMahasiswa(string $id, array $data): Mahasiswa
     {
+        $data = $this->normalizeData($data);
         return DB::transaction(function () use ($id, $data) {
             $mahasiswa = $this->mahasiswaRepository->find($id);
             
             if ($mahasiswa && $mahasiswa->user) {
-                // Also update user name if nama changes
+                $userUpdates = [];
                 if (isset($data['nama'])) {
-                    $mahasiswa->user->update(['name' => $data['nama']]);
+                    $userUpdates['name'] = $data['nama'];
+                }
+                if (isset($data['email_akademik'])) {
+                    $userUpdates['email'] = $data['email_akademik'];
+                }
+                if (!empty($data['password_awal'])) {
+                    $userUpdates['password'] = Hash::make($data['password_awal']);
+                }
+
+                if (!empty($userUpdates)) {
+                    $mahasiswa->user->update($userUpdates);
                 }
             }
 

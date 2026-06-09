@@ -27,6 +27,9 @@ class UpdateMahasiswaRequest extends FormRequest
             $mahasiswaId = $mahasiswaId->id;
         }
 
+        $mahasiswa = \App\Models\Mahasiswa::find($mahasiswaId);
+        $userId = $mahasiswa ? $mahasiswa->user_id : null;
+
         return [
             'nim' => ['required', 'string', Rule::unique('mahasiswas', 'nim')->ignore($mahasiswaId)],
             'nama' => ['required', 'string', 'max:255'],
@@ -34,6 +37,8 @@ class UpdateMahasiswaRequest extends FormRequest
             'angkatan' => ['required', 'string', 'max:4'],
             'status_akademik' => ['required', 'string', 'in:Aktif,Cuti,Lulus,Drop Out,Non-Aktif'],
             'dosen_wali_id' => ['nullable', 'exists:dosens,id'],
+            'email_akademik' => ['required', 'email', Rule::unique('users', 'email')->ignore($userId)],
+            'password_awal' => ['nullable', 'string', 'min:8'],
         ];
     }
 }

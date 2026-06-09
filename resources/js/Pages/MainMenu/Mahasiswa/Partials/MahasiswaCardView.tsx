@@ -14,13 +14,24 @@ export default function MahasiswaCardView({ mahasiswas, onEdit }: any) {
     ];
 
     const getBadgeClass = (status: string) => {
-        switch (status) {
-            case 'Aktif': return 'bp-green';
-            case 'Cuti': return 'bp-amber';
-            case 'Lulus': return 'bp-purple';
-            case 'Non-Aktif':
-            case 'Drop Out': return 'bp-rose';
+        switch (status?.toLowerCase()) {
+            case 'aktif': return 'bp-green';
+            case 'cuti': return 'bp-amber';
+            case 'lulus': return 'bp-purple';
+            case 'do':
+            case 'drop out':
+            case 'non-aktif': return 'bp-rose';
             default: return 'bp-gray';
+        }
+    };
+
+    const getStatusLabel = (status: string) => {
+        switch (status?.toLowerCase()) {
+            case 'aktif': return 'Aktif';
+            case 'cuti': return 'Cuti';
+            case 'lulus': return 'Lulus';
+            case 'do': return 'Drop Out';
+            default: return status || '';
         }
     };
 
@@ -91,7 +102,7 @@ export default function MahasiswaCardView({ mahasiswas, onEdit }: any) {
                                 <div className="sc-footer">
                                     <div className="sc-status">
                                         <span className={`badge-pill ${getBadgeClass(mhs.status_akademik)}`}>
-                                            {mhs.status_akademik}
+                                            {getStatusLabel(mhs.status_akademik)}
                                         </span>
                                     </div>
                                     <div className="sc-actions">
