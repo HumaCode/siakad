@@ -42,15 +42,13 @@ class Mahasiswa extends Model implements HasMedia
         return '/storage/' . $media->id . '/' . $media->file_name;
     }
 
-    /**
-     * Get the KTP URL from Spatie media library.
-     */
     public function getKtpUrlAttribute(): ?string
     {
-        if (!$this->hasMedia('ktp')) {
+        $media = $this->getFirstMedia('ktp');
+        if (!$media) {
             return null;
         }
-        return route('mahasiswa.document', [$this->id, 'ktp']);
+        return route('mahasiswa.document', [$this->id, 'ktp']) . '?ext=' . strtolower(pathinfo($media->file_name, PATHINFO_EXTENSION));
     }
 
     /**
@@ -58,10 +56,11 @@ class Mahasiswa extends Model implements HasMedia
      */
     public function getKkUrlAttribute(): ?string
     {
-        if (!$this->hasMedia('kk')) {
+        $media = $this->getFirstMedia('kk');
+        if (!$media) {
             return null;
         }
-        return route('mahasiswa.document', [$this->id, 'kk']);
+        return route('mahasiswa.document', [$this->id, 'kk']) . '?ext=' . strtolower(pathinfo($media->file_name, PATHINFO_EXTENSION));
     }
 
     /**

@@ -106,6 +106,10 @@ class MahasiswaController extends Controller
             abort(404, 'Document not found.');
         }
 
+        if (request()->has('download')) {
+            return response()->download($media->getPath(), $media->file_name);
+        }
+
         return response()->file($media->getPath());
     }
 }

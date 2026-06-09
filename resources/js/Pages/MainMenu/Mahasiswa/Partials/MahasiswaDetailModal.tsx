@@ -220,7 +220,7 @@ export default function MahasiswaDetailModal({ isOpen, onClose, mahasiswa }: Mah
 
                     {/* TAB: DOKUMEN LAMPIRAN */}
                     {activeTab === 'dokumen' && (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             {[
                                 { 
                                     label: 'Foto Profil', 
@@ -243,31 +243,79 @@ export default function MahasiswaDetailModal({ isOpen, onClose, mahasiswa }: Mah
                                     isImage: false, 
                                     icon: 'bi-file-earmark-spreadsheet' 
                                 },
-                            ].map((doc, idx) => (
-                                <div key={idx} className="bg-slate-50 p-5 rounded-2xl border border-slate-100 flex flex-col justify-between items-center text-center">
-                                    <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-3">
-                                        <i className={`bi ${doc.icon} text-xl`} />
+                            ].map((doc, idx) => {
+                                const isPdf = doc.url ? (doc.url.toLowerCase().includes('ext=pdf') || doc.url.toLowerCase().endsWith('.pdf')) : false;
+                                return (
+                                    <div key={idx} className="bg-slate-50 p-5 rounded-2xl border border-slate-100 flex flex-col justify-between shadow-sm">
+                                        <div className="flex items-center gap-3 mb-4">
+                                            <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+                                                <i className={`bi ${doc.icon} text-lg`} />
+                                            </div>
+                                            <div>
+                                                <h5 className="font-semibold text-slate-800 text-sm leading-snug">{doc.label}</h5>
+                                                <p className="text-[10px] text-slate-400">{doc.description}</p>
+                                            </div>
+                                        </div>
+
+                                        {/* Preview Box */}
+                                        <div className="mb-4">
+                                            {doc.url ? (
+                                                isPdf ? (
+                                                    <div className="w-full h-64 rounded-xl border border-slate-200 bg-white overflow-hidden shadow-inner">
+                                                        <iframe 
+                                                            src={doc.url} 
+                                                            className="w-full h-full border-none" 
+                                                            title={doc.label}
+                                                        />
+                                                    </div>
+                                                ) : (
+                                                    <div className="w-full h-64 rounded-xl border border-slate-200 bg-white flex items-center justify-center overflow-hidden shadow-inner">
+                                                        <img 
+                                                            src={doc.url} 
+                                                            alt={doc.label} 
+                                                            className="w-full h-full object-contain hover:scale-105 transition-transform duration-300" 
+                                                        />
+                                                    </div>
+                                                )
+                                            ) : (
+                                                <div className="w-full h-64 rounded-xl border border-dashed border-slate-200 bg-slate-100/30 flex flex-col items-center justify-center">
+                                                    <div className="w-10 h-10 rounded-lg bg-slate-100 text-slate-400 flex items-center justify-center mb-2">
+                                                        <i className={`bi ${doc.icon} text-lg`} />
+                                                    </div>
+                                                    <span className="text-xs text-slate-400 font-medium">Belum Diunggah</span>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Actions */}
+                                        {doc.url ? (
+                                            <div className="flex gap-2">
+                                                <a 
+                                                    href={doc.url} 
+                                                    target="_blank" 
+                                                    rel="noreferrer" 
+                                                    className="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-colors border border-slate-200/50"
+                                                >
+                                                    <i className="bi bi-box-arrow-up-right" /> Lihat Full
+                                                </a>
+                                                <a 
+                                                    href={doc.url.includes('?') ? `${doc.url}&download=1` : `${doc.url}?download=1`}
+                                                    className="flex-1 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-sm"
+                                                >
+                                                    <i className="bi bi-download" /> Download File
+                                                </a>
+                                            </div>
+                                        ) : (
+                                            <button 
+                                                disabled 
+                                                className="w-full py-2 bg-slate-100 text-slate-400 rounded-xl text-[11px] font-medium cursor-not-allowed border border-slate-200/30"
+                                            >
+                                                Berkas Tidak Tersedia
+                                            </button>
+                                        )}
                                     </div>
-                                    <div>
-                                        <h5 className="font-semibold text-slate-800 text-sm mb-1">{doc.label}</h5>
-                                        <p className="text-[11px] text-slate-400 max-w-[220px] mb-4">{doc.description}</p>
-                                    </div>
-                                    {doc.url ? (
-                                        <a 
-                                            href={doc.url} 
-                                            target="_blank" 
-                                            rel="noreferrer" 
-                                            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm"
-                                        >
-                                            <i className="bi bi-eye" /> Lihat Berkas
-                                        </a>
-                                    ) : (
-                                        <span className="px-4 py-2 bg-slate-100 text-slate-400 rounded-xl text-xs font-medium cursor-not-allowed">
-                                            Belum Diunggah
-                                        </span>
-                                    )}
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     )}
                 </div>
