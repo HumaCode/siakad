@@ -36,10 +36,9 @@
 }
 
 /* ============================================================
-   GLOBAL RESET & BASE
+   BASE OVERRIDES (Tailwind Preflight sudah handle reset)
    ============================================================ */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Poppins', sans-serif; background: var(--soft-bg); color: var(--text-dark); overflow-x: hidden; }
+body { font-family: 'Poppins', sans-serif !important; background: var(--soft-bg); color: var(--text-dark); overflow-x: hidden; }
 
 /* ============================================================
    ANIMATED BACKGROUND — used on all pages
@@ -340,6 +339,24 @@ body { font-family: 'Poppins', sans-serif; background: var(--soft-bg); color: va
 .dark .topbar-toggle:hover {
     background: rgba(59, 130, 246, 0.1);
     color: #60a5fa;
+}
+
+.topbar-breadcrumb { flex: 1; min-width: 0; }
+
+.topbar-breadcrumb .page-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0;
+    line-height: 1.2;
+}
+
+.dark .topbar-breadcrumb .page-title { color: #f1f5f9; }
+
+.topbar-breadcrumb .breadcrumb-trail {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin: 0;
 }
 
 .topbar-btn {
