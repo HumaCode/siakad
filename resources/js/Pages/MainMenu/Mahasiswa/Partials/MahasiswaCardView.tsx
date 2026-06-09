@@ -14,11 +14,11 @@ export default function MahasiswaCardView({ mahasiswas, onEdit }: any) {
     ];
 
     const getBadgeClass = (status: string) => {
-        switch(status) {
+        switch (status) {
             case 'Aktif': return 'bp-green';
             case 'Cuti': return 'bp-amber';
             case 'Lulus': return 'bp-purple';
-            case 'Non-Aktif': 
+            case 'Non-Aktif':
             case 'Drop Out': return 'bp-rose';
             default: return 'bp-gray';
         }
@@ -73,18 +73,6 @@ export default function MahasiswaCardView({ mahasiswas, onEdit }: any) {
                                     <div className="sc-name">{mhs.nama}</div>
                                     <div><span className="sc-nim">{mhs.nim}</span></div>
                                     <div className="sc-prodi"><i className="bi bi-building me-1"></i>{mhs.prodi?.nama}</div>
-                                    <div className="sc-prodi" style={{ marginTop: '-4px' }}>
-                                        <i className="bi bi-person-badge me-1"></i>
-                                        {mhs.dosen_wali ? (
-                                            <span>
-                                                {mhs.dosen_wali.gelar_depan ? mhs.dosen_wali.gelar_depan + ' ' : ''}
-                                                {mhs.dosen_wali.nama}
-                                                {mhs.dosen_wali.gelar_belakang ? ', ' + mhs.dosen_wali.gelar_belakang : ''}
-                                            </span>
-                                        ) : (
-                                            <span style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>Belum ditentukan</span>
-                                        )}
-                                    </div>
                                     <div className="sc-stats">
                                         <div className="sc-stat">
                                             <span className="sc-stat-num" style={{ color: getIpkColor(parseFloat(ipk)) }}>{ipk}</span>
@@ -110,7 +98,7 @@ export default function MahasiswaCardView({ mahasiswas, onEdit }: any) {
                                         <button className="btn-icon bi-edit" onClick={(e) => { e.stopPropagation(); onEdit(mhs); }} title="Edit"><i className="bi bi-pencil-fill"></i></button>
                                         <button className="btn-icon bi-del" onClick={(e) => {
                                             e.stopPropagation();
-                                            if(confirm('Hapus mahasiswa ini?')) {
+                                            if (confirm('Hapus mahasiswa ini?')) {
                                                 router.delete(route('mahasiswa.destroy', mhs.id), {
                                                     preserveScroll: true
                                                 });
@@ -127,13 +115,13 @@ export default function MahasiswaCardView({ mahasiswas, onEdit }: any) {
                     </div>
                 )}
             </div>
-            
+
             {/* Pagination */}
             {mahasiswas.links && mahasiswas.last_page > 1 && (
                 <div className="d-flex justify-content-center mt-4">
                     <div className="btn-group">
                         {mahasiswas.links.map((link: any, index: number) => (
-                            <Link 
+                            <Link
                                 key={index}
                                 href={link.url || '#'}
                                 className={`btn btn-sm ${link.active ? 'btn-primary' : 'btn-outline-secondary'}`}

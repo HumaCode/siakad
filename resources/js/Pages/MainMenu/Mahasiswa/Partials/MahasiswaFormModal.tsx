@@ -1,30 +1,106 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useForm } from '@inertiajs/react';
-import FormModal from '@/Components/FormModal';
-import FormInput from '@/Components/FormInput';
-import FormSelect from '@/Components/FormSelect';
+import Modal from '@/Components/Modal';
 import SearchableSelect from '@/Components/SearchableSelect';
 
 export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProdis, allDosens, onSuccess, onError }: any) {
+    const [currentStep, setCurrentStep] = useState(1);
+    const [stepErrors, setStepErrors] = useState<Record<string, string>>({});
+
     const { data, setData, post, put, processing, errors, reset, clearErrors } = useForm({
+        // Database Fields
         nim: '',
         nama: '',
         prodi_id: '',
         angkatan: new Date().getFullYear().toString(),
         status_akademik: 'Aktif',
         dosen_wali_id: '',
+
+        // UI/Mock Fields from Mockup
+        nik: '',
+        no_kk: '',
+        tempat_lahir: '',
+        tanggal_lahir: '',
+        jenis_kelamin: 'Laki-laki',
+        agama: 'Islam',
+        kewarganegaraan: 'WNI',
+        no_hp: '',
+        alamat: '',
+        semester_saat_ini: '1',
+        fakultas: 'Teknik & Teknologi',
+        jalur_masuk: 'SNBT (SBMPTN)',
+        kelas: 'A',
+        asal_sekolah: '',
+        tahun_lulus_sma: '',
+        status_awal: 'Aktif',
+        ayah_nama: '',
+        ayah_pekerjaan: '',
+        ayah_penghasilan: '< Rp 2 Jt',
+        ibu_nama: '',
+        ibu_pekerjaan: '',
+        ibu_no_hp: '',
+        ortu_alamat: '',
+        email_akademik: '',
+        email_pribadi: '',
+        password_awal: '',
+        konfirmasi_password: '',
+        kirim_notif: true,
     });
+
+    // Auto-generate Academic Email when Name changes (for new students)
+    useEffect(() => {
+        if (!mahasiswa) {
+            const emailPrefix = data.nama ? data.nama.toLowerCase().replace(/\s+/g, '.') : '';
+            setData(prev => ({
+                ...prev,
+                email_akademik: emailPrefix ? `${emailPrefix}@student.siakad.ac.id` : '',
+                password_awal: prev.password_awal || prev.nim || '',
+            }));
+        }
+    }, [data.nama, data.nim, mahasiswa]);
 
     useEffect(() => {
         if (isOpen) {
+            setCurrentStep(1);
+            setStepErrors({});
             if (mahasiswa) {
                 setData({
                     nim: mahasiswa.nim || '',
                     nama: mahasiswa.nama || '',
                     prodi_id: mahasiswa.prodi_id || '',
-                    angkatan: mahasiswa.angkatan || '',
+                    angkatan: mahasiswa.angkatan ? String(mahasiswa.angkatan) : '',
                     status_akademik: mahasiswa.status_akademik || 'Aktif',
                     dosen_wali_id: mahasiswa.dosen_wali_id || '',
+
+                    // Fallbacks for Mock UI fields when editing
+                    nik: '3273240212980003',
+                    no_kk: '3273241010150002',
+                    tempat_lahir: 'Bandung',
+                    tanggal_lahir: '2002-12-12',
+                    jenis_kelamin: 'Laki-laki',
+                    agama: 'Islam',
+                    kewarganegaraan: 'WNI',
+                    no_hp: '0812-3456-7890',
+                    alamat: 'Jl. Merdeka No. 45, Bandung',
+                    semester_saat_ini: '1',
+                    fakultas: 'Teknik & Teknologi',
+                    jalur_masuk: 'SNBT (SBMPTN)',
+                    kelas: 'A',
+                    asal_sekolah: 'SMAN 1 Bandung',
+                    tahun_lulus_sma: '2020',
+                    status_awal: 'Aktif',
+                    ayah_nama: 'Asep Sunandar',
+                    ayah_pekerjaan: 'Wiraswasta',
+                    ayah_penghasilan: 'Rp 2–5 Jt',
+                    ibu_nama: 'Siti Aminah',
+                    ibu_pekerjaan: 'Ibu Rumah Tangga',
+                    ibu_no_hp: '0812-9876-5432',
+                    ortu_alamat: '',
+                    email_akademik: mahasiswa.user?.email || '',
+                    email_pribadi: 'mhs.pribadi@gmail.com',
+                    password_awal: '',
+                    konfirmasi_password: '',
+                    kirim_notif: true,
                 });
             } else {
                 reset();
@@ -36,7 +112,6 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
     // Auto-fill dosen wali when prodi changes
     const handleProdiChange = (prodiId: string) => {
         setData(prev => {
-            // Find a dosen from that prodi
             const dosenForProdi = allDosens.find((d: any) => String(d.prodi_id) === String(prodiId));
             return {
                 ...prev,
@@ -46,7 +121,7 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
         });
     };
 
-    // Dosen filtered by selected prodi (for display / fallback select)
+    // Dosen filtered by selected prodi
     const dosenForSelectedProdi = useMemo(() => {
         if (!data.prodi_id) return [];
         return allDosens.filter((d: any) => String(d.prodi_id) === String(data.prodi_id));
@@ -57,6 +132,33 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
         if (!data.dosen_wali_id) return null;
         return allDosens.find((d: any) => String(d.id) === String(data.dosen_wali_id)) ?? null;
     }, [data.dosen_wali_id, allDosens]);
+
+    const handleNext = () => {
+        const newErrors: Record<string, string> = {};
+        if (currentStep === 1) {
+            if (!data.nama.trim()) {
+                newErrors.nama = 'Nama lengkap wajib diisi';
+            }
+        } else if (currentStep === 2) {
+            if (!data.nim.trim()) {
+                newErrors.nim = 'NIM wajib diisi';
+            }
+            if (!data.angkatan.trim()) {
+                newErrors.angkatan = 'Angkatan wajib diisi';
+            }
+            if (!data.prodi_id) {
+                newErrors.prodi_id = 'Program Studi wajib diisi';
+            }
+        }
+        
+        if (Object.keys(newErrors).length > 0) {
+            setStepErrors(newErrors);
+            return;
+        }
+        
+        setStepErrors({});
+        setCurrentStep(prev => prev + 1);
+    };
 
     const handleSubmit = () => {
         const options = {
@@ -69,9 +171,18 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                     : 'Mahasiswa baru berhasil ditambahkan';
                 onSuccess?.(msg);
             },
-            onError: (errors: Record<string, string>) => {
-                const firstError = Object.values(errors)[0];
+            onError: (errs: Record<string, string>) => {
+                const firstError = Object.values(errs)[0];
                 onError?.(firstError || 'Terjadi kesalahan, periksa kembali form');
+
+                // Auto-jump to the step containing the first error
+                if (errs.nama) {
+                    setCurrentStep(1);
+                } else if (errs.nim || errs.angkatan || errs.prodi_id || errs.dosen_wali_id) {
+                    setCurrentStep(2);
+                } else if (errs.email_akademik) {
+                    setCurrentStep(4);
+                }
             },
         };
 
@@ -82,7 +193,6 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
         }
     };
 
-    // --- Options ---
     const prodiOptions = allProdis.map((p: any) => ({
         value: p.id,
         label: `${p.nama} (${p.jenjang})`
@@ -96,112 +206,547 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
         { value: 'Lulus',     label: 'Lulus' },
     ];
 
-    // Dosen options when prodi has multiple dosen (allow manual pick)
-    const dosenOptions = [
-        { value: '', label: 'Pilih Dosen Wali' },
-        ...dosenForSelectedProdi.map((d: any) => ({
-            value: d.id,
-            label: d.nama,
-        })),
-    ];
-
     return (
-        <FormModal
-            show={isOpen}
-            onClose={onClose}
-            onSave={handleSubmit}
-            processing={processing}
-            maxWidth="3xl"
-            title={mahasiswa ? 'Edit Mahasiswa' : 'Tambah Mahasiswa'}
-            subtitle={mahasiswa ? 'Ubah informasi data akademik mahasiswa' : 'Tambahkan data mahasiswa baru ke dalam sistem'}
-            saveText={mahasiswa ? 'Simpan Perubahan' : 'Simpan'}
-        >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormInput
-                    label="NIM"
-                    placeholder="Masukkan NIM"
-                    value={data.nim}
-                    onChange={e => setData('nim', e.target.value)}
-                    error={errors.nim}
-                    required
-                />
-
-                <FormInput
-                    label="Nama Lengkap"
-                    placeholder="Masukkan Nama Lengkap"
-                    value={data.nama}
-                    onChange={e => setData('nama', e.target.value)}
-                    error={errors.nama}
-                    required
-                />
-
-                {/* Program Studi — Select2 style */}
-                <SearchableSelect
-                    label="Program Studi"
-                    placeholder="Pilih Program Studi"
-                    value={data.prodi_id}
-                    onChange={handleProdiChange}
-                    options={prodiOptions}
-                    error={errors.prodi_id}
-                    required
-                />
-
-                <FormInput
-                    label="Angkatan"
-                    placeholder="Masukkan Tahun Angkatan"
-                    value={data.angkatan}
-                    onChange={e => setData('angkatan', e.target.value)}
-                    error={errors.angkatan}
-                    required
-                />
-
-                <FormSelect
-                    label="Status Akademik"
-                    value={data.status_akademik}
-                    onChange={e => setData('status_akademik', e.target.value)}
-                    options={statusOptions}
-                    error={errors.status_akademik}
-                    required
-                />
-
-                {/* Dosen Wali — auto-filled, editable jika prodi punya banyak dosen */}
-                <div>
-                    <label className="form-label-c">Dosen Wali</label>
-
-                    {!data.prodi_id ? (
-                        // Belum pilih prodi
-                        <div className="dosen-auto-field">
-                            <i className="bi bi-person-badge text-slate-300" style={{ fontSize: '16px' }} />
-                            <span className="dosen-empty">Pilih Program Studi terlebih dahulu</span>
+        <Modal show={isOpen} onClose={onClose} maxWidth="5xl" unstyled={true}>
+            <div className="modal-custom w-full">
+                <div className="modal-content border border-slate-100 dark:border-slate-800 shadow-2xl rounded-2xl bg-white dark:bg-slate-900 overflow-hidden">
+                    
+                    {/* Header */}
+                    <div className="modal-header p-5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+                        <div>
+                            <h5 className="modal-title font-bold text-slate-800 dark:text-slate-100">
+                                {mahasiswa ? 'Edit Mahasiswa' : 'Tambah Mahasiswa Baru'}
+                            </h5>
+                            <div className="text-xs text-slate-400 mt-1">
+                                {mahasiswa ? 'Ubah data lengkap akademik mahasiswa' : 'Isi data lengkap mahasiswa baru'}
+                            </div>
                         </div>
-                    ) : dosenForSelectedProdi.length === 0 ? (
-                        // Prodi tidak punya dosen
-                        <div className="dosen-auto-field">
-                            <i className="bi bi-exclamation-circle text-amber-400" style={{ fontSize: '16px' }} />
-                            <span className="dosen-empty">Belum ada dosen di prodi ini</span>
-                        </div>
-                    ) : dosenForSelectedProdi.length === 1 ? (
-                        // Hanya 1 dosen — tampilkan auto-filled read-only
-                        <div className="dosen-auto-field">
-                            <i className="bi bi-person-check-fill" style={{ fontSize: '16px', color: 'var(--primary)' }} />
-                            <span className="dosen-name">{selectedDosen?.nama ?? dosenForSelectedProdi[0].nama}</span>
-                            <i className="bi bi-magic" style={{ fontSize: '11px', color: 'var(--text-muted)' }} title="Otomatis terisi" />
-                        </div>
-                    ) : (
-                        // Banyak dosen — bisa dipilih manual
-                        <FormSelect
-                            value={data.dosen_wali_id}
-                            onChange={e => setData('dosen_wali_id', e.target.value)}
-                            options={dosenOptions}
-                            error={errors.dosen_wali_id}
-                        />
-                    )}
+                        <button 
+                            type="button" 
+                            className="btn-close text-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 bg-none border-none cursor-pointer" 
+                            onClick={onClose}
+                        >
+                            <i className="bi bi-x-lg" />
+                        </button>
+                    </div>
 
-                    {errors.dosen_wali_id && (
-                        <p className="ss-error-msg">{errors.dosen_wali_id}</p>
-                    )}
+                    {/* Body */}
+                    <div className="modal-body p-5">
+                        
+                        {/* Step Indicators */}
+                        <div className="form-steps mb-4">
+                            <div className="form-step">
+                                <div className={`step-dot ${currentStep > 1 ? 'done' : currentStep === 1 ? 'active' : ''}`}>
+                                    {currentStep > 1 ? <i className="bi bi-check-lg" style={{ fontSize: '.7rem' }} /> : 1}
+                                </div>
+                                <div className={`step-lbl ${currentStep >= 1 ? 'active' : ''}`}>Data Pribadi</div>
+                            </div>
+                            <div className="form-step">
+                                <div className={`step-dot ${currentStep > 2 ? 'done' : currentStep === 2 ? 'active' : ''}`}>
+                                    {currentStep > 2 ? <i className="bi bi-check-lg" style={{ fontSize: '.7rem' }} /> : 2}
+                                </div>
+                                <div className={`step-lbl ${currentStep >= 2 ? 'active' : ''}`}>Data Akademik</div>
+                            </div>
+                            <div className="form-step">
+                                <div className={`step-dot ${currentStep > 3 ? 'done' : currentStep === 3 ? 'active' : ''}`}>
+                                    {currentStep > 3 ? <i className="bi bi-check-lg" style={{ fontSize: '.7rem' }} /> : 3}
+                                </div>
+                                <div className={`step-lbl ${currentStep >= 3 ? 'active' : ''}`}>Data Orang Tua</div>
+                            </div>
+                            <div className="form-step">
+                                <div className={`step-dot ${currentStep > 4 ? 'done' : currentStep === 4 ? 'active' : ''}`}>
+                                    {currentStep > 4 ? <i className="bi bi-check-lg" style={{ fontSize: '.7rem' }} /> : 4}
+                                </div>
+                                <div className={`step-lbl ${currentStep >= 4 ? 'active' : ''}`}>Akun & Akses</div>
+                            </div>
+                        </div>
+
+                        {/* Step 1: Data Pribadi */}
+                        <div className={`step-panel ${currentStep === 1 ? 'active' : ''}`}>
+                            <div className="row g-3">
+                                <div className="col-md-3 text-center d-flex flex-column align-items-center justify-content-center">
+                                    <div style={{ width: '90px', height: '90px', borderRadius: '18px', background: 'var(--primary-light)', border: '2px dashed var(--primary)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--primary)' }}>
+                                        <i className="bi bi-camera" style={{ fontSize: '22px' }} />
+                                        <span style={{ fontSize: '.65rem', fontWeight: 600, marginTop: '4px' }}>Upload Foto</span>
+                                    </div>
+                                </div>
+                                <div className="col-md-9">
+                                    <div className="row g-2">
+                                        <div className="col-12">
+                                            <label className="form-label-c">Nama Lengkap <span style={{ color: 'var(--rose)' }}>*</span></label>
+                                            <input 
+                                                className="form-ctrl" 
+                                                type="text" 
+                                                placeholder="Nama lengkap sesuai KTP" 
+                                                value={data.nama}
+                                                onChange={e => setData('nama', e.target.value)}
+                                            />
+                                            {(errors.nama || stepErrors.nama) && <p className="text-rose-500 text-xs mt-1">{errors.nama || stepErrors.nama}</p>}
+                                        </div>
+                                        <div className="col-md-6">
+                                            <label className="form-label-c">NIK (KTP)</label>
+                                            <input 
+                                                className="form-ctrl" 
+                                                type="text" 
+                                                placeholder="16 digit NIK" 
+                                                value={data.nik}
+                                                onChange={e => setData('nik', e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="col-md-6">
+                                            <label className="form-label-c">No. KK</label>
+                                            <input 
+                                                className="form-ctrl" 
+                                                type="text" 
+                                                placeholder="16 digit nomor KK" 
+                                                value={data.no_kk}
+                                                onChange={e => setData('no_kk', e.target.value)}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-md-4">
+                                    <label className="form-label-c">Tempat Lahir</label>
+                                    <input 
+                                        className="form-ctrl" 
+                                        type="text" 
+                                        placeholder="Kota tempat lahir" 
+                                        value={data.tempat_lahir}
+                                        onChange={e => setData('tempat_lahir', e.target.value)}
+                                    />
+                                </div>
+                                <div className="col-md-4">
+                                    <label className="form-label-c">Tanggal Lahir</label>
+                                    <input 
+                                        className="form-ctrl" 
+                                        type="date" 
+                                        value={data.tanggal_lahir}
+                                        onChange={e => setData('tanggal_lahir', e.target.value)}
+                                    />
+                                </div>
+                                <div className="col-md-4">
+                                    <label className="form-label-c">Jenis Kelamin</label>
+                                    <select 
+                                        className="form-ctrl"
+                                        value={data.jenis_kelamin}
+                                        onChange={e => setData('jenis_kelamin', e.target.value)}
+                                    >
+                                        <option>Laki-laki</option>
+                                        <option>Perempuan</option>
+                                    </select>
+                                </div>
+                                <div className="col-md-4">
+                                    <label className="form-label-c">Agama</label>
+                                    <select 
+                                        className="form-ctrl"
+                                        value={data.agama}
+                                        onChange={e => setData('agama', e.target.value)}
+                                    >
+                                        <option>Islam</option>
+                                        <option>Kristen</option>
+                                        <option>Katolik</option>
+                                        <option>Hindu</option>
+                                        <option>Buddha</option>
+                                        <option>Konghucu</option>
+                                    </select>
+                                </div>
+                                <div className="col-md-4">
+                                    <label className="form-label-c">Kewarganegaraan</label>
+                                    <select 
+                                        className="form-ctrl"
+                                        value={data.kewarganegaraan}
+                                        onChange={e => setData('kewarganegaraan', e.target.value)}
+                                    >
+                                        <option>WNI</option>
+                                        <option>WNA</option>
+                                    </select>
+                                </div>
+                                <div className="col-md-4">
+                                    <label className="form-label-c">No. HP / WhatsApp</label>
+                                    <input 
+                                        className="form-ctrl" 
+                                        type="text" 
+                                        placeholder="08xx-xxxx-xxxx" 
+                                        value={data.no_hp}
+                                        onChange={e => setData('no_hp', e.target.value)}
+                                    />
+                                </div>
+                                <div className="col-12">
+                                    <label className="form-label-c">Alamat Lengkap</label>
+                                    <textarea 
+                                        className="form-ctrl" 
+                                        rows={2} 
+                                        placeholder="Jalan, RT/RW, Desa/Kelurahan, Kecamatan, Kabupaten/Kota, Provinsi"
+                                        value={data.alamat}
+                                        onChange={e => setData('alamat', e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Step 2: Data Akademik */}
+                        <div className={`step-panel ${currentStep === 2 ? 'active' : ''}`}>
+                            <div className="row g-3">
+                                <div className="col-md-4">
+                                    <label className="form-label-c">NIM <span style={{ color: 'var(--rose)' }}>*</span></label>
+                                    <input 
+                                        className="form-ctrl" 
+                                        type="text" 
+                                        placeholder="cth: 24101001" 
+                                        style={{ fontFamily: 'monospace', fontWeight: 700 }}
+                                        value={data.nim}
+                                        onChange={e => setData('nim', e.target.value)}
+                                    />
+                                    {(errors.nim || stepErrors.nim) && <p className="text-rose-500 text-xs mt-1">{errors.nim || stepErrors.nim}</p>}
+                                </div>
+                                <div className="col-md-4">
+                                    <label className="form-label-c">Angkatan <span style={{ color: 'var(--rose)' }}>*</span></label>
+                                    <input 
+                                        className="form-ctrl" 
+                                        type="text" 
+                                        placeholder="cth: 2026" 
+                                        value={data.angkatan}
+                                        onChange={e => setData('angkatan', e.target.value)}
+                                    />
+                                    {(errors.angkatan || stepErrors.angkatan) && <p className="text-rose-500 text-xs mt-1">{errors.angkatan || stepErrors.angkatan}</p>}
+                                </div>
+                                <div className="col-md-4">
+                                    <label className="form-label-c">Semester Saat Ini</label>
+                                    <select 
+                                        className="form-ctrl"
+                                        value={data.semester_saat_ini}
+                                        onChange={e => setData('semester_saat_ini', e.target.value)}
+                                    >
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option>4</option>
+                                        <option>5</option>
+                                    </select>
+                                </div>
+                                <div className="col-md-6">
+                                    <label className="form-label-c">Fakultas <span style={{ color: 'var(--rose)' }}>*</span></label>
+                                    <select 
+                                        className="form-ctrl"
+                                        value={data.fakultas}
+                                        onChange={e => setData('fakultas', e.target.value)}
+                                    >
+                                        <option>Teknik & Teknologi</option>
+                                        <option>Ekonomi & Bisnis</option>
+                                        <option>Hukum</option>
+                                        <option>Kedokteran</option>
+                                    </select>
+                                </div>
+                                <div className="col-md-6">
+                                    <SearchableSelect
+                                        label="Program Studi"
+                                        placeholder="Pilih Program Studi"
+                                        value={data.prodi_id}
+                                        onChange={handleProdiChange}
+                                        options={prodiOptions}
+                                        error={errors.prodi_id || stepErrors.prodi_id}
+                                        required
+                                    />
+                                </div>
+                                <div className="col-md-4">
+                                    <label className="form-label-c">Jalur Masuk</label>
+                                    <select 
+                                        className="form-ctrl"
+                                        value={data.jalur_masuk}
+                                        onChange={e => setData('jalur_masuk', e.target.value)}
+                                    >
+                                        <option>SNBT (SBMPTN)</option>
+                                        <option>SNBP (SNMPTN)</option>
+                                        <option>Mandiri</option>
+                                        <option>Prestasi</option>
+                                    </select>
+                                </div>
+                                <div className="col-md-4">
+                                    <label className="form-label-c">Kelas</label>
+                                    <select 
+                                        className="form-ctrl"
+                                        value={data.kelas}
+                                        onChange={e => setData('kelas', e.target.value)}
+                                    >
+                                        <option>A</option>
+                                        <option>B</option>
+                                        <option>C</option>
+                                    </select>
+                                </div>
+                                <div className="col-md-4">
+                                    <label className="form-label-c">Dosen Wali</label>
+                                    {!data.prodi_id ? (
+                                        <div className="dosen-auto-field">
+                                            <i className="bi bi-person-badge text-slate-300" style={{ fontSize: '16px' }} />
+                                            <span className="dosen-empty">Pilih Program Studi terlebih dahulu</span>
+                                        </div>
+                                    ) : dosenForSelectedProdi.length === 0 ? (
+                                        <div className="dosen-auto-field">
+                                            <i className="bi bi-exclamation-circle text-amber-400" style={{ fontSize: '16px' }} />
+                                            <span className="dosen-empty">Belum ada dosen di prodi ini</span>
+                                        </div>
+                                    ) : dosenForSelectedProdi.length === 1 ? (
+                                        <div className="dosen-auto-field">
+                                            <i className="bi bi-person-check-fill" style={{ fontSize: '16px', color: 'var(--primary)' }} />
+                                            <span className="dosen-name">{selectedDosen?.nama ?? dosenForSelectedProdi[0].nama}</span>
+                                            <i className="bi bi-magic" style={{ fontSize: '11px', color: 'var(--text-muted)' }} title="Otomatis terisi" />
+                                        </div>
+                                    ) : (
+                                        <select 
+                                            className="form-ctrl"
+                                            value={data.dosen_wali_id}
+                                            onChange={e => setData('dosen_wali_id', e.target.value)}
+                                        >
+                                            <option value="">Pilih Dosen Wali</option>
+                                            {dosenForSelectedProdi.map((d: any) => (
+                                                <option key={d.id} value={d.id}>{d.nama}</option>
+                                            ))}
+                                        </select>
+                                    )}
+                                    {(errors.dosen_wali_id) && <p className="text-rose-500 text-xs mt-1">{errors.dosen_wali_id}</p>}
+                                </div>
+                                <div className="col-md-6">
+                                    <label className="form-label-c">Asal Sekolah</label>
+                                    <input 
+                                        className="form-ctrl" 
+                                        type="text" 
+                                        placeholder="Nama SMA/SMK/MA" 
+                                        value={data.asal_sekolah}
+                                        onChange={e => setData('asal_sekolah', e.target.value)}
+                                    />
+                                </div>
+                                <div className="col-md-3">
+                                    <label className="form-label-c">Tahun Lulus SMA</label>
+                                    <input 
+                                        className="form-ctrl" 
+                                        type="number" 
+                                        placeholder="2024" 
+                                        value={data.tahun_lulus_sma}
+                                        onChange={e => setData('tahun_lulus_sma', e.target.value)}
+                                    />
+                                </div>
+                                <div className="col-md-3">
+                                    <label className="form-label-c">Status Akademik</label>
+                                    <select 
+                                        className="form-ctrl"
+                                        value={data.status_akademik}
+                                        onChange={e => setData('status_akademik', e.target.value)}
+                                    >
+                                        {statusOptions.map(opt => (
+                                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Step 3: Data Orang Tua */}
+                        <div className={`step-panel ${currentStep === 3 ? 'active' : ''}`}>
+                            <div className="row g-3">
+                                <div className="col-12">
+                                    <div style={{ fontSize: '.8rem', fontWeight: 700, color: 'var(--primary)', paddingBottom: '4px', borderBottom: '1px solid var(--border)', marginBottom: '4px' }}>Data Ayah</div>
+                                </div>
+                                <div className="col-md-6">
+                                    <label className="form-label-c">Nama Ayah</label>
+                                    <input 
+                                        className="form-ctrl" 
+                                        type="text" 
+                                        placeholder="Nama lengkap ayah" 
+                                        value={data.ayah_nama}
+                                        onChange={e => setData('ayah_nama', e.target.value)}
+                                    />
+                                </div>
+                                <div className="col-md-3">
+                                    <label className="form-label-c">Pekerjaan</label>
+                                    <input 
+                                        className="form-ctrl" 
+                                        type="text" 
+                                        placeholder="Pekerjaan" 
+                                        value={data.ayah_pekerjaan}
+                                        onChange={e => setData('ayah_pekerjaan', e.target.value)}
+                                    />
+                                </div>
+                                <div className="col-md-3">
+                                    <label className="form-label-c">Penghasilan/Bln</label>
+                                    <select 
+                                        className="form-ctrl"
+                                        value={data.ayah_penghasilan}
+                                        onChange={e => setData('ayah_penghasilan', e.target.value)}
+                                    >
+                                        <option>&lt; Rp 2 Jt</option>
+                                        <option>Rp 2–5 Jt</option>
+                                        <option>Rp 5–10 Jt</option>
+                                        <option>&gt; Rp 10 Jt</option>
+                                    </select>
+                                </div>
+                                <div className="col-12">
+                                    <div style={{ fontSize: '.8rem', fontWeight: 700, color: 'var(--primary)', paddingBottom: '4px', borderBottom: '1px solid var(--border)', marginBottom: '4px' }}>Data Ibu</div>
+                                </div>
+                                <div className="col-md-6">
+                                    <label className="form-label-c">Nama Ibu</label>
+                                    <input 
+                                        className="form-ctrl" 
+                                        type="text" 
+                                        placeholder="Nama lengkap ibu" 
+                                        value={data.ibu_nama}
+                                        onChange={e => setData('ibu_nama', e.target.value)}
+                                    />
+                                </div>
+                                <div className="col-md-3">
+                                    <label className="form-label-c">Pekerjaan</label>
+                                    <input 
+                                        className="form-ctrl" 
+                                        type="text" 
+                                        placeholder="Pekerjaan" 
+                                        value={data.ibu_pekerjaan}
+                                        onChange={e => setData('ibu_pekerjaan', e.target.value)}
+                                    />
+                                </div>
+                                <div className="col-md-3">
+                                    <label className="form-label-c">No. HP Darurat</label>
+                                    <input 
+                                        className="form-ctrl" 
+                                        type="text" 
+                                        placeholder="08xx-xxxx-xxxx" 
+                                        value={data.ibu_no_hp}
+                                        onChange={e => setData('ibu_no_hp', e.target.value)}
+                                    />
+                                </div>
+                                <div className="col-12">
+                                    <label className="form-label-c">Alamat Orang Tua (jika berbeda)</label>
+                                    <textarea 
+                                        className="form-ctrl" 
+                                        rows={2} 
+                                        placeholder="Kosongkan jika sama dengan alamat mahasiswa"
+                                        value={data.ortu_alamat}
+                                        onChange={e => setData('ortu_alamat', e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Step 4: Akun & Akses */}
+                        <div className={`step-panel ${currentStep === 4 ? 'active' : ''}`}>
+                            <div className="row g-3">
+                                <div className="col-md-6">
+                                    <label className="form-label-c">Email Akademik <span style={{ color: 'var(--rose)' }}>*</span></label>
+                                    <input 
+                                        className="form-ctrl" 
+                                        type="email" 
+                                        placeholder="nim@student.siakad.ac.id" 
+                                        value={data.email_akademik}
+                                        onChange={e => setData('email_akademik', e.target.value)}
+                                    />
+                                    {(errors.email_akademik) && <p className="text-rose-500 text-xs mt-1">{errors.email_akademik}</p>}
+                                </div>
+                                <div className="col-md-6">
+                                    <label className="form-label-c">Email Pribadi</label>
+                                    <input 
+                                        className="form-ctrl" 
+                                        type="email" 
+                                        placeholder="email@gmail.com" 
+                                        value={data.email_pribadi}
+                                        onChange={e => setData('email_pribadi', e.target.value)}
+                                    />
+                                </div>
+                                <div className="col-md-6">
+                                    <label className="form-label-c">Password Awal</label>
+                                    <input 
+                                        className="form-ctrl" 
+                                        type="password" 
+                                        placeholder="Min 8 karakter (Default NIM)" 
+                                        value={data.password_awal}
+                                        onChange={e => setData('password_awal', e.target.value)}
+                                    />
+                                </div>
+                                <div className="col-md-6">
+                                    <label className="form-label-c">Konfirmasi Password</label>
+                                    <input 
+                                        className="form-ctrl" 
+                                        type="password" 
+                                        placeholder="Ulangi password" 
+                                        value={data.konfirmasi_password}
+                                        onChange={e => setData('konfirmasi_password', e.target.value)}
+                                    />
+                                </div>
+                                <div className="col-12">
+                                    <div style={{ background: 'var(--green-light)', borderRadius: '10px', padding: '12px 14px', display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+                                        <i className="bi bi-info-circle-fill" style={{ color: 'var(--green)', flexShrink: 0, marginTop: '1px' }} />
+                                        <div style={{ fontSize: '.75rem', color: 'var(--green)', lineHeight: 1.5 }}>
+                                            Akun akan langsung aktif setelah disimpan. Mahasiswa dapat login menggunakan email akademik dan password yang ditentukan. Kirim notifikasi ke email mahasiswa?
+                                        </div>
+                                    </div>
+                                    <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <input 
+                                            type="checkbox" 
+                                            id="sendNotif" 
+                                            checked={data.kirim_notif} 
+                                            onChange={e => setData('kirim_notif', e.target.checked)}
+                                            style={{ width: '16px', height: '16px', accentColor: 'var(--primary)' }}
+                                        />
+                                        <label htmlFor="sendNotif" style={{ fontSize: '.8rem', fontWeight: 600, color: 'var(--text-dark)', cursor: 'pointer', margin: 0 }}>
+                                            Kirim email selamat datang & info login ke mahasiswa
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    {/* Footer */}
+                    <div className="modal-footer p-4 border-t border-slate-100 dark:border-slate-800 flex justify-between">
+                        <button 
+                            type="button" 
+                            className="btn-outline-sm btn-outline font-poppins" 
+                            onClick={onClose}
+                        >
+                            <i className="bi bi-x-lg" /> Batal
+                        </button>
+                        
+                        <div className="d-flex gap-2">
+                            {currentStep > 1 && (
+                                <button 
+                                    type="button" 
+                                    className="btn-outline-sm btn-outline font-poppins flex items-center gap-1"
+                                    onClick={() => setCurrentStep(prev => prev - 1)}
+                                >
+                                    <i className="bi bi-arrow-left" /> Sebelumnya
+                                </button>
+                            )}
+                            
+                            {currentStep < 4 ? (
+                                <button 
+                                    type="button" 
+                                    className="btn-primary-sm btn-add font-poppins flex items-center gap-1"
+                                    onClick={handleNext}
+                                >
+                                    Selanjutnya <i className="bi bi-arrow-right" />
+                                </button>
+                            ) : (
+                                <button 
+                                    type="button" 
+                                    className="btn-primary-sm btn-add font-poppins flex items-center gap-1"
+                                    onClick={handleSubmit}
+                                    disabled={processing}
+                                >
+                                    {processing ? (
+                                        <>
+                                            <span className="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" />
+                                            Sedang proses...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <i className="bi bi-check-lg" /> {mahasiswa ? 'Simpan Perubahan' : 'Simpan Mahasiswa'}
+                                        </>
+                                    )}
+                                </button>
+                            )}
+                        </div>
+                    </div>
+
                 </div>
             </div>
-        </FormModal>
+        </Modal>
     );
 }

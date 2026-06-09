@@ -3,11 +3,11 @@ import { Link, router } from '@inertiajs/react';
 
 export default function MahasiswaTable({ mahasiswas, onEdit }: any) {
     const getBadgeClass = (status: string) => {
-        switch(status) {
+        switch (status) {
             case 'Aktif': return 'bp-green';
             case 'Cuti': return 'bp-amber';
             case 'Lulus': return 'bp-purple';
-            case 'Non-Aktif': 
+            case 'Non-Aktif':
             case 'Drop Out': return 'bp-rose';
             default: return 'bp-gray';
         }
@@ -29,7 +29,6 @@ export default function MahasiswaTable({ mahasiswas, onEdit }: any) {
                                 <th>NIM</th>
                                 <th>Mahasiswa</th>
                                 <th>Program Studi</th>
-                                <th>Dosen Wali</th>
                                 <th>Angkatan</th>
                                 <th>Status</th>
                                 <th>Aksi</th>
@@ -56,20 +55,6 @@ export default function MahasiswaTable({ mahasiswas, onEdit }: any) {
                                         <div style={{ fontSize: '.7rem', color: 'var(--text-muted)' }}>{mhs.prodi?.jenjang}</div>
                                     </td>
                                     <td>
-                                        {mhs.dosen_wali ? (
-                                            <div>
-                                                <div style={{ fontSize: '.8rem', fontWeight: 600, color: 'var(--text-dark)' }}>
-                                                    {mhs.dosen_wali.gelar_depan ? mhs.dosen_wali.gelar_depan + ' ' : ''}
-                                                    {mhs.dosen_wali.nama}
-                                                    {mhs.dosen_wali.gelar_belakang ? ', ' + mhs.dosen_wali.gelar_belakang : ''}
-                                                </div>
-                                                <div style={{ fontSize: '.7rem', color: 'var(--text-muted)' }}>NIDN: {mhs.dosen_wali.nidn || '-'}</div>
-                                            </div>
-                                        ) : (
-                                            <span style={{ fontSize: '.75rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>Belum ditentukan</span>
-                                        )}
-                                    </td>
-                                    <td>
                                         <div style={{ fontWeight: 600 }}>{mhs.angkatan}</div>
                                     </td>
                                     <td>
@@ -81,7 +66,7 @@ export default function MahasiswaTable({ mahasiswas, onEdit }: any) {
                                         <div style={{ display: 'flex', gap: '6px' }}>
                                             <button className="btn-icon bi-edit" onClick={() => onEdit(mhs)} title="Edit"><i className="bi bi-pencil-fill"></i></button>
                                             <button className="btn-icon bi-del" onClick={() => {
-                                                if(confirm('Hapus mahasiswa ini?')) {
+                                                if (confirm('Hapus mahasiswa ini?')) {
                                                     router.delete(route('mahasiswa.destroy', mhs.id), {
                                                         preserveScroll: true
                                                     });
@@ -92,7 +77,7 @@ export default function MahasiswaTable({ mahasiswas, onEdit }: any) {
                                 </tr>
                             )) : (
                                 <tr>
-                                    <td colSpan={8} className="text-center py-4 text-muted">
+                                    <td colSpan={7} className="text-center py-4 text-muted">
                                         Tidak ada data mahasiswa.
                                     </td>
                                 </tr>
@@ -106,7 +91,7 @@ export default function MahasiswaTable({ mahasiswas, onEdit }: any) {
                     <div className="d-flex justify-content-center p-3">
                         <div className="btn-group">
                             {mahasiswas.links.map((link: any, index: number) => (
-                                <Link 
+                                <Link
                                     key={index}
                                     href={link.url || '#'}
                                     className={`btn btn-sm ${link.active ? 'btn-primary' : 'btn-outline-secondary'}`}
