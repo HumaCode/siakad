@@ -96,8 +96,8 @@ class MahasiswaController extends Controller
             abort(401);
         }
 
-        // Allow only admins or the student themselves to access
-        if (!$user->hasRole('admin') && $mahasiswa->user_id !== $user->id) {
+        // Allow admins, super admins, developers, or the student themselves to access
+        if (!$user->hasAnyRole(['admin', 'super_admin', 'dev']) && $mahasiswa->user_id !== $user->id) {
             abort(403, 'Unauthorized access to student documents.');
         }
 
