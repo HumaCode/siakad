@@ -22,7 +22,7 @@ class UpdateMahasiswaRequest extends FormRequest
      */
     public function rules(): array
     {
-        $mahasiswaId = $this->route('mahasiswa');
+        $mahasiswaId = $this->route('id') ?? $this->route('mahasiswa');
         if ($mahasiswaId instanceof \App\Models\Mahasiswa) {
             $mahasiswaId = $mahasiswaId->id;
         }
