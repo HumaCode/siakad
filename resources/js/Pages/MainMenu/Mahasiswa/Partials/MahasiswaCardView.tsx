@@ -80,7 +80,13 @@ export default function MahasiswaCardView({ mahasiswas, onEdit }: any) {
                             <div className="student-card">
                                 <div className="sc-top">
                                     <div className="sc-cover" style={{ background: color, opacity: 0.85 }}></div>
-                                    <div className="sc-avatar" style={{ background: color }}>{initials}</div>
+                                    <div className="sc-avatar overflow-hidden flex items-center justify-center" style={{ background: color }}>
+                                        {mhs.foto_url ? (
+                                            <img src={mhs.foto_url} alt={mhs.nama} className="w-full h-full object-cover" />
+                                        ) : (
+                                            initials
+                                        )}
+                                    </div>
                                     <div className="sc-name">{mhs.nama}</div>
                                     <div><span className="sc-nim">{mhs.nim}</span></div>
                                     <div className="sc-prodi"><i className="bi bi-building me-1"></i>{mhs.prodi?.nama}</div>

@@ -28,6 +28,16 @@ class Mahasiswa extends Model implements HasMedia
 
     protected $table = 'mahasiswas';
 
+    protected $appends = ['foto_url'];
+
+    /**
+     * Get the photo URL from Spatie media library.
+     */
+    public function getFotoUrlAttribute(): ?string
+    {
+        return $this->getFirstMediaUrl('foto') ?: null;
+    }
+
     /**
      * Configure activity logging.
      */

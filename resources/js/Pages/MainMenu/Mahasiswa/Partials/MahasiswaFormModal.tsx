@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 import { useForm } from '@inertiajs/react';
 import Modal from '@/Components/Modal';
 import SearchableSelect from '@/Components/SearchableSelect';
@@ -6,8 +6,13 @@ import SearchableSelect from '@/Components/SearchableSelect';
 export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProdis, allDosens, onSuccess, onError }: any) {
     const [currentStep, setCurrentStep] = useState(1);
     const [stepErrors, setStepErrors] = useState<Record<string, string>>({});
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const { data, setData, post, put, processing, errors, reset, clearErrors } = useForm({
+        _method: mahasiswa ? 'PUT' : 'POST',
+        foto: null as File | null,
+
         // Database Fields
         nim: '',
         nama: '',
@@ -64,7 +69,10 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
             setCurrentStep(1);
             setStepErrors({});
             if (mahasiswa) {
+                setPreviewUrl(mahasiswa.foto_url || null);
                 setData({
+                    _method: 'PUT',
+                    foto: null,
                     nim: mahasiswa.nim || '',
                     nama: mahasiswa.nama || '',
                     prodi_id: mahasiswa.prodi_id || '',
@@ -103,6 +111,7 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                     kirim_notif: true,
                 });
             } else {
+                setPreviewUrl(null);
                 reset();
             }
             clearErrors();
@@ -119,6 +128,17 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                 dosen_wali_id: dosenForProdi ? String(dosenForProdi.id) : '',
             };
         });
+    };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setData('foto', file);
+            if (previewUrl && !previewUrl.startsWith('http')) {
+                URL.revokeObjectURL(previewUrl);
+            }
+            setPreviewUrl(URL.createObjectURL(file));
+        }
     };
 
     // Dosen filtered by selected prodi
@@ -187,7 +207,7 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
         };
 
         if (mahasiswa) {
-            put(route('mahasiswa.update', mahasiswa.id), options);
+            post(route('mahasiswa.update', mahasiswa.id), options);
         } else {
             post(route('mahasiswa.store'), options);
         }
@@ -265,10 +285,37 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                         <div className={`step-panel ${currentStep === 1 ? 'active' : ''}`}>
                             <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
                                 <div className="col-span-1 md:col-span-3 flex flex-col items-center justify-center border border-slate-100 rounded-2xl p-4 bg-slate-50/50">
-                                    <div style={{ width: '90px', height: '90px', borderRadius: '18px', background: 'var(--primary-light)', border: '2px dashed var(--primary)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--primary)' }}>
-                                        <i className="bi bi-camera" style={{ fontSize: '22px' }} />
-                                        <span style={{ fontSize: '.65rem', fontWeight: 600, marginTop: '4px' }}>Upload Foto</span>
+                                    <div 
+                                        onClick={() => fileInputRef.current?.click()}
+                                        className="relative w-24 h-24 rounded-2xl border-2 border-dashed border-sky-500 flex flex-col items-center justify-center cursor-pointer overflow-hidden group"
+                                    >
+                                        {previewUrl ? (
+                                            <>
+                                                <img 
+                                                    src={previewUrl} 
+                                                    alt="Preview Foto" 
+                                                    className="w-full h-full object-cover" 
+                                                />
+                                                <div className="absolute inset-0 bg-black/40 text-white flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-[10px] font-semibold">
+                                                    <i className="bi bi-camera text-sm mb-0.5" />
+                                                    Ubah Foto
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <div className="flex flex-col items-center justify-center text-sky-600">
+                                                <i className="bi bi-camera text-2xl" />
+                                                <span className="text-[10px] font-bold mt-1">Upload Foto</span>
+                                            </div>
+                                        )}
                                     </div>
+                                    <input 
+                                        type="file" 
+                                        ref={fileInputRef} 
+                                        onChange={handleFileChange} 
+                                        accept="image/*" 
+                                        className="hidden" 
+                                    />
+                                    {(errors.foto) && <p className="text-rose-500 text-xs mt-1 text-center">{errors.foto}</p>}
                                 </div>
                                 <div className="col-span-1 md:col-span-9 grid grid-cols-1 md:grid-cols-2 gap-3">
                                     <div className="md:col-span-2">

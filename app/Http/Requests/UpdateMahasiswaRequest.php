@@ -39,6 +39,7 @@ class UpdateMahasiswaRequest extends FormRequest
             'dosen_wali_id' => ['nullable', 'exists:dosens,id'],
             'email_akademik' => ['required', 'email', Rule::unique('users', 'email')->ignore($userId)],
             'password_awal' => ['nullable', 'string', 'min:8'],
+            'foto' => ['nullable', 'image', 'max:2048'],
         ];
     }
 }

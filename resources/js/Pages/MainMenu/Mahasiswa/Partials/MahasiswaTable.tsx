@@ -52,8 +52,12 @@ export default function MahasiswaTable({ mahasiswas, onEdit }: any) {
                                     <td><span className="nim-code">{mhs.nim}</span></td>
                                     <td>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                            <div className="mhs-avatar bg-primary">
-                                                {mhs.nama.substring(0, 2).toUpperCase()}
+                                            <div className="mhs-avatar bg-primary overflow-hidden flex items-center justify-center">
+                                                {mhs.foto_url ? (
+                                                    <img src={mhs.foto_url} alt={mhs.nama} className="w-full h-full object-cover" />
+                                                ) : (
+                                                    mhs.nama.substring(0, 2).toUpperCase()
+                                                )}
                                             </div>
                                             <div>
                                                 <div className="mhs-name">{mhs.nama}</div>

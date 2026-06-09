@@ -54,7 +54,13 @@ class MahasiswaService
 
             $data['user_id'] = $user->id;
 
-            return $this->mahasiswaRepository->create($data);
+            $mahasiswa = $this->mahasiswaRepository->create($data);
+
+            if (isset($data['foto']) && $data['foto'] instanceof \Illuminate\Http\UploadedFile) {
+                $mahasiswa->addMedia($data['foto'])->toMediaCollection('foto');
+            }
+
+            return $mahasiswa;
         });
     }
 
@@ -81,7 +87,14 @@ class MahasiswaService
                 }
             }
 
-            return $this->mahasiswaRepository->update($id, $data);
+            $updatedMahasiswa = $this->mahasiswaRepository->update($id, $data);
+
+            if (isset($data['foto']) && $data['foto'] instanceof \Illuminate\Http\UploadedFile) {
+                $updatedMahasiswa->clearMediaCollection('foto');
+                $updatedMahasiswa->addMedia($data['foto'])->toMediaCollection('foto');
+            }
+
+            return $updatedMahasiswa;
         });
     }
 
