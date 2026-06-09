@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { useForm } from '@inertiajs/react';
-import Modal from '@/Components/Modal';
+import FormModal from '@/Components/FormModal';
+import FormInput from '@/Components/FormInput';
+import FormSelect from '@/Components/FormSelect';
 
 export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProdis, allDosens }: any) {
     const { data, setData, post, put, processing, errors, reset, clearErrors } = useForm({
@@ -30,9 +32,7 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
         }
     }, [isOpen, mahasiswa]);
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        
+    const handleSubmit = () => {
         const options = {
             preserveScroll: true,
             onSuccess: () => {
@@ -48,110 +48,95 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
         }
     };
 
+    const prodiOptions = [
+        { value: '', label: 'Pilih Prodi' },
+        ...allProdis.map((p: any) => ({
+            value: p.id,
+            label: `${p.nama} (${p.jenjang})`
+        }))
+    ];
+
+    const statusOptions = [
+        { value: 'Aktif', label: 'Aktif' },
+        { value: 'Cuti', label: 'Cuti' },
+        { value: 'Non-Aktif', label: 'Non-Aktif' },
+        { value: 'Drop Out', label: 'Drop Out' },
+        { value: 'Lulus', label: 'Lulus' }
+    ];
+
+    const dosenOptions = [
+        { value: '', label: 'Pilih Dosen Wali' },
+        ...allDosens.map((d: any) => ({
+            value: d.id,
+            label: d.nama
+        }))
+    ];
+
     return (
-        <Modal show={isOpen} onClose={onClose} maxWidth="xl">
-            <div className="bg-white dark:bg-slate-900 rounded-lg shadow-xl p-6">
-                <div className="flex justify-between items-center border-b pb-4 mb-4 dark:border-slate-800">
-                    <h5 className="text-lg font-bold text-slate-800 dark:text-white">
-                        {mahasiswa ? 'Edit Mahasiswa' : 'Tambah Mahasiswa'}
-                    </h5>
-                    <button onClick={onClose} className="text-slate-400 hover:text-slate-600">
-                        <i className="bi bi-x-lg"></i>
-                    </button>
-                </div>
-                
-                <form onSubmit={handleSubmit}>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label className="form-label text-sm font-medium dark:text-slate-300">NIM</label>
-                            <input 
-                                type="text" 
-                                className={`form-control ${errors.nim ? 'is-invalid' : ''} dark:bg-slate-800 dark:border-slate-700 dark:text-white`} 
-                                value={data.nim}
-                                onChange={e => setData('nim', e.target.value)}
-                            />
-                            {errors.nim && <div className="invalid-feedback">{errors.nim}</div>}
-                        </div>
-                        
-                        <div>
-                            <label className="form-label text-sm font-medium dark:text-slate-300">Nama Lengkap</label>
-                            <input 
-                                type="text" 
-                                className={`form-control ${errors.nama ? 'is-invalid' : ''} dark:bg-slate-800 dark:border-slate-700 dark:text-white`}
-                                value={data.nama}
-                                onChange={e => setData('nama', e.target.value)}
-                            />
-                            {errors.nama && <div className="invalid-feedback">{errors.nama}</div>}
-                        </div>
-                        
-                        <div>
-                            <label className="form-label text-sm font-medium dark:text-slate-300">Program Studi</label>
-                            <select 
-                                className={`form-select ${errors.prodi_id ? 'is-invalid' : ''} dark:bg-slate-800 dark:border-slate-700 dark:text-white`}
-                                value={data.prodi_id}
-                                onChange={e => setData('prodi_id', e.target.value)}
-                            >
-                                <option value="">Pilih Prodi</option>
-                                {allProdis.map((p: any) => (
-                                    <option key={p.id} value={p.id}>{p.nama} ({p.jenjang})</option>
-                                ))}
-                            </select>
-                            {errors.prodi_id && <div className="invalid-feedback">{errors.prodi_id}</div>}
-                        </div>
-                        
-                        <div>
-                            <label className="form-label text-sm font-medium dark:text-slate-300">Angkatan</label>
-                            <input 
-                                type="text" 
-                                className={`form-control ${errors.angkatan ? 'is-invalid' : ''} dark:bg-slate-800 dark:border-slate-700 dark:text-white`}
-                                value={data.angkatan}
-                                onChange={e => setData('angkatan', e.target.value)}
-                            />
-                            {errors.angkatan && <div className="invalid-feedback">{errors.angkatan}</div>}
-                        </div>
-                        
-                        <div>
-                            <label className="form-label text-sm font-medium dark:text-slate-300">Status Akademik</label>
-                            <select 
-                                className={`form-select ${errors.status_akademik ? 'is-invalid' : ''} dark:bg-slate-800 dark:border-slate-700 dark:text-white`}
-                                value={data.status_akademik}
-                                onChange={e => setData('status_akademik', e.target.value)}
-                            >
-                                <option value="Aktif">Aktif</option>
-                                <option value="Cuti">Cuti</option>
-                                <option value="Non-Aktif">Non-Aktif</option>
-                                <option value="Drop Out">Drop Out</option>
-                                <option value="Lulus">Lulus</option>
-                            </select>
-                            {errors.status_akademik && <div className="invalid-feedback">{errors.status_akademik}</div>}
-                        </div>
+        <FormModal
+            show={isOpen}
+            onClose={onClose}
+            onSave={handleSubmit}
+            processing={processing}
+            maxWidth="3xl"
+            title={mahasiswa ? 'Edit Mahasiswa' : 'Tambah Mahasiswa'}
+            subtitle={mahasiswa ? 'Ubah informasi data akademik mahasiswa' : 'Tambahkan data mahasiswa baru ke dalam sistem'}
+            saveText={mahasiswa ? 'Simpan Perubahan' : 'Simpan'}
+        >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormInput
+                    label="NIM"
+                    placeholder="Masukkan NIM"
+                    value={data.nim}
+                    onChange={e => setData('nim', e.target.value)}
+                    error={errors.nim}
+                    required
+                />
 
-                        <div>
-                            <label className="form-label text-sm font-medium dark:text-slate-300">Dosen Wali</label>
-                            <select 
-                                className={`form-select ${errors.dosen_wali_id ? 'is-invalid' : ''} dark:bg-slate-800 dark:border-slate-700 dark:text-white`}
-                                value={data.dosen_wali_id}
-                                onChange={e => setData('dosen_wali_id', e.target.value)}
-                            >
-                                <option value="">Pilih Dosen Wali</option>
-                                {allDosens.map((d: any) => (
-                                    <option key={d.id} value={d.id}>{d.nama}</option>
-                                ))}
-                            </select>
-                            {errors.dosen_wali_id && <div className="invalid-feedback">{errors.dosen_wali_id}</div>}
-                        </div>
-                    </div>
+                <FormInput
+                    label="Nama Lengkap"
+                    placeholder="Masukkan Nama Lengkap"
+                    value={data.nama}
+                    onChange={e => setData('nama', e.target.value)}
+                    error={errors.nama}
+                    required
+                />
 
-                    <div className="flex justify-end gap-2 mt-6 pt-4 border-t dark:border-slate-800">
-                        <button type="button" className="btn btn-light" onClick={onClose} disabled={processing}>
-                            Batal
-                        </button>
-                        <button type="submit" className="btn btn-primary" disabled={processing}>
-                            {processing ? 'Menyimpan...' : 'Simpan'}
-                        </button>
-                    </div>
-                </form>
+                <FormSelect
+                    label="Program Studi"
+                    value={data.prodi_id}
+                    onChange={e => setData('prodi_id', e.target.value)}
+                    options={prodiOptions}
+                    error={errors.prodi_id}
+                    required
+                />
+
+                <FormInput
+                    label="Angkatan"
+                    placeholder="Masukkan Tahun Angkatan"
+                    value={data.angkatan}
+                    onChange={e => setData('angkatan', e.target.value)}
+                    error={errors.angkatan}
+                    required
+                />
+
+                <FormSelect
+                    label="Status Akademik"
+                    value={data.status_akademik}
+                    onChange={e => setData('status_akademik', e.target.value)}
+                    options={statusOptions}
+                    error={errors.status_akademik}
+                    required
+                />
+
+                <FormSelect
+                    label="Dosen Wali"
+                    value={data.dosen_wali_id}
+                    onChange={e => setData('dosen_wali_id', e.target.value)}
+                    options={dosenOptions}
+                    error={errors.dosen_wali_id}
+                />
             </div>
-        </Modal>
+        </FormModal>
     );
 }
