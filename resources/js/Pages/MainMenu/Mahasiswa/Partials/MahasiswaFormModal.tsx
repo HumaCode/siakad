@@ -263,49 +263,47 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
 
                         {/* Step 1: Data Pribadi */}
                         <div className={`step-panel ${currentStep === 1 ? 'active' : ''}`}>
-                            <div className="row g-3">
-                                <div className="col-md-3 text-center d-flex flex-column align-items-center justify-content-center">
+                            <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+                                <div className="col-span-1 md:col-span-3 flex flex-col items-center justify-center border border-slate-100 rounded-2xl p-4 bg-slate-50/50">
                                     <div style={{ width: '90px', height: '90px', borderRadius: '18px', background: 'var(--primary-light)', border: '2px dashed var(--primary)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--primary)' }}>
                                         <i className="bi bi-camera" style={{ fontSize: '22px' }} />
                                         <span style={{ fontSize: '.65rem', fontWeight: 600, marginTop: '4px' }}>Upload Foto</span>
                                     </div>
                                 </div>
-                                <div className="col-md-9">
-                                    <div className="row g-2">
-                                        <div className="col-12">
-                                            <label className="form-label-c">Nama Lengkap <span style={{ color: 'var(--rose)' }}>*</span></label>
-                                            <input 
-                                                className="form-ctrl" 
-                                                type="text" 
-                                                placeholder="Nama lengkap sesuai KTP" 
-                                                value={data.nama}
-                                                onChange={e => setData('nama', e.target.value)}
-                                            />
-                                            {(errors.nama || stepErrors.nama) && <p className="text-rose-500 text-xs mt-1">{errors.nama || stepErrors.nama}</p>}
-                                        </div>
-                                        <div className="col-md-6">
-                                            <label className="form-label-c">NIK (KTP)</label>
-                                            <input 
-                                                className="form-ctrl" 
-                                                type="text" 
-                                                placeholder="16 digit NIK" 
-                                                value={data.nik}
-                                                onChange={e => setData('nik', e.target.value)}
-                                            />
-                                        </div>
-                                        <div className="col-md-6">
-                                            <label className="form-label-c">No. KK</label>
-                                            <input 
-                                                className="form-ctrl" 
-                                                type="text" 
-                                                placeholder="16 digit nomor KK" 
-                                                value={data.no_kk}
-                                                onChange={e => setData('no_kk', e.target.value)}
-                                            />
-                                        </div>
+                                <div className="col-span-1 md:col-span-9 grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <div className="md:col-span-2">
+                                        <label className="form-label-c">Nama Lengkap <span style={{ color: 'var(--rose)' }}>*</span></label>
+                                        <input 
+                                            className="form-ctrl" 
+                                            type="text" 
+                                            placeholder="Nama lengkap sesuai KTP" 
+                                            value={data.nama}
+                                            onChange={e => setData('nama', e.target.value)}
+                                        />
+                                        {(errors.nama || stepErrors.nama) && <p className="text-rose-500 text-xs mt-1">{errors.nama || stepErrors.nama}</p>}
+                                    </div>
+                                    <div>
+                                        <label className="form-label-c">NIK (KTP)</label>
+                                        <input 
+                                            className="form-ctrl" 
+                                            type="text" 
+                                            placeholder="16 digit NIK" 
+                                            value={data.nik}
+                                            onChange={e => setData('nik', e.target.value)}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="form-label-c">No. KK</label>
+                                        <input 
+                                            className="form-ctrl" 
+                                            type="text" 
+                                            placeholder="16 digit nomor KK" 
+                                            value={data.no_kk}
+                                            onChange={e => setData('no_kk', e.target.value)}
+                                        />
                                     </div>
                                 </div>
-                                <div className="col-md-4">
+                                <div className="col-span-1 md:col-span-4">
                                     <label className="form-label-c">Tempat Lahir</label>
                                     <input 
                                         className="form-ctrl" 
@@ -315,7 +313,7 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                                         onChange={e => setData('tempat_lahir', e.target.value)}
                                     />
                                 </div>
-                                <div className="col-md-4">
+                                <div className="col-span-1 md:col-span-4">
                                     <label className="form-label-c">Tanggal Lahir</label>
                                     <input 
                                         className="form-ctrl" 
@@ -324,7 +322,7 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                                         onChange={e => setData('tanggal_lahir', e.target.value)}
                                     />
                                 </div>
-                                <div className="col-md-4">
+                                <div className="col-span-1 md:col-span-4">
                                     <label className="form-label-c">Jenis Kelamin</label>
                                     <select 
                                         className="form-ctrl"
@@ -335,7 +333,7 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                                         <option>Perempuan</option>
                                     </select>
                                 </div>
-                                <div className="col-md-4">
+                                <div className="col-span-1 md:col-span-4">
                                     <label className="form-label-c">Agama</label>
                                     <select 
                                         className="form-ctrl"
@@ -350,7 +348,7 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                                         <option>Konghucu</option>
                                     </select>
                                 </div>
-                                <div className="col-md-4">
+                                <div className="col-span-1 md:col-span-4">
                                     <label className="form-label-c">Kewarganegaraan</label>
                                     <select 
                                         className="form-ctrl"
@@ -361,7 +359,7 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                                         <option>WNA</option>
                                     </select>
                                 </div>
-                                <div className="col-md-4">
+                                <div className="col-span-1 md:col-span-4">
                                     <label className="form-label-c">No. HP / WhatsApp</label>
                                     <input 
                                         className="form-ctrl" 
@@ -371,7 +369,7 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                                         onChange={e => setData('no_hp', e.target.value)}
                                     />
                                 </div>
-                                <div className="col-12">
+                                <div className="col-span-1 md:col-span-12">
                                     <label className="form-label-c">Alamat Lengkap</label>
                                     <textarea 
                                         className="form-ctrl" 
@@ -386,8 +384,8 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
 
                         {/* Step 2: Data Akademik */}
                         <div className={`step-panel ${currentStep === 2 ? 'active' : ''}`}>
-                            <div className="row g-3">
-                                <div className="col-md-4">
+                            <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+                                <div className="col-span-1 md:col-span-4">
                                     <label className="form-label-c">NIM <span style={{ color: 'var(--rose)' }}>*</span></label>
                                     <input 
                                         className="form-ctrl" 
@@ -399,7 +397,7 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                                     />
                                     {(errors.nim || stepErrors.nim) && <p className="text-rose-500 text-xs mt-1">{errors.nim || stepErrors.nim}</p>}
                                 </div>
-                                <div className="col-md-4">
+                                <div className="col-span-1 md:col-span-4">
                                     <label className="form-label-c">Angkatan <span style={{ color: 'var(--rose)' }}>*</span></label>
                                     <input 
                                         className="form-ctrl" 
@@ -410,7 +408,7 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                                     />
                                     {(errors.angkatan || stepErrors.angkatan) && <p className="text-rose-500 text-xs mt-1">{errors.angkatan || stepErrors.angkatan}</p>}
                                 </div>
-                                <div className="col-md-4">
+                                <div className="col-span-1 md:col-span-4">
                                     <label className="form-label-c">Semester Saat Ini</label>
                                     <select 
                                         className="form-ctrl"
@@ -424,7 +422,7 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                                         <option>5</option>
                                     </select>
                                 </div>
-                                <div className="col-md-6">
+                                <div className="col-span-1 md:col-span-6">
                                     <label className="form-label-c">Fakultas <span style={{ color: 'var(--rose)' }}>*</span></label>
                                     <select 
                                         className="form-ctrl"
@@ -437,7 +435,7 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                                         <option>Kedokteran</option>
                                     </select>
                                 </div>
-                                <div className="col-md-6">
+                                <div className="col-span-1 md:col-span-6">
                                     <SearchableSelect
                                         label="Program Studi"
                                         placeholder="Pilih Program Studi"
@@ -448,7 +446,7 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                                         required
                                     />
                                 </div>
-                                <div className="col-md-4">
+                                <div className="col-span-1 md:col-span-4">
                                     <label className="form-label-c">Jalur Masuk</label>
                                     <select 
                                         className="form-ctrl"
@@ -461,7 +459,7 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                                         <option>Prestasi</option>
                                     </select>
                                 </div>
-                                <div className="col-md-4">
+                                <div className="col-span-1 md:col-span-4">
                                     <label className="form-label-c">Kelas</label>
                                     <select 
                                         className="form-ctrl"
@@ -473,7 +471,7 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                                         <option>C</option>
                                     </select>
                                 </div>
-                                <div className="col-md-4">
+                                <div className="col-span-1 md:col-span-4">
                                     <label className="form-label-c">Dosen Wali</label>
                                     {!data.prodi_id ? (
                                         <div className="dosen-auto-field">
@@ -505,7 +503,7 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                                     )}
                                     {(errors.dosen_wali_id) && <p className="text-rose-500 text-xs mt-1">{errors.dosen_wali_id}</p>}
                                 </div>
-                                <div className="col-md-6">
+                                <div className="col-span-1 md:col-span-6">
                                     <label className="form-label-c">Asal Sekolah</label>
                                     <input 
                                         className="form-ctrl" 
@@ -515,7 +513,7 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                                         onChange={e => setData('asal_sekolah', e.target.value)}
                                     />
                                 </div>
-                                <div className="col-md-3">
+                                <div className="col-span-1 md:col-span-3">
                                     <label className="form-label-c">Tahun Lulus SMA</label>
                                     <input 
                                         className="form-ctrl" 
@@ -525,7 +523,7 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                                         onChange={e => setData('tahun_lulus_sma', e.target.value)}
                                     />
                                 </div>
-                                <div className="col-md-3">
+                                <div className="col-span-1 md:col-span-3">
                                     <label className="form-label-c">Status Akademik</label>
                                     <select 
                                         className="form-ctrl"
@@ -542,11 +540,11 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
 
                         {/* Step 3: Data Orang Tua */}
                         <div className={`step-panel ${currentStep === 3 ? 'active' : ''}`}>
-                            <div className="row g-3">
-                                <div className="col-12">
+                            <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+                                <div className="col-span-1 md:col-span-12">
                                     <div style={{ fontSize: '.8rem', fontWeight: 700, color: 'var(--primary)', paddingBottom: '4px', borderBottom: '1px solid var(--border)', marginBottom: '4px' }}>Data Ayah</div>
                                 </div>
-                                <div className="col-md-6">
+                                <div className="col-span-1 md:col-span-6">
                                     <label className="form-label-c">Nama Ayah</label>
                                     <input 
                                         className="form-ctrl" 
@@ -556,7 +554,7 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                                         onChange={e => setData('ayah_nama', e.target.value)}
                                     />
                                 </div>
-                                <div className="col-md-3">
+                                <div className="col-span-1 md:col-span-3">
                                     <label className="form-label-c">Pekerjaan</label>
                                     <input 
                                         className="form-ctrl" 
@@ -566,7 +564,7 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                                         onChange={e => setData('ayah_pekerjaan', e.target.value)}
                                     />
                                 </div>
-                                <div className="col-md-3">
+                                <div className="col-span-1 md:col-span-3">
                                     <label className="form-label-c">Penghasilan/Bln</label>
                                     <select 
                                         className="form-ctrl"
@@ -579,10 +577,10 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                                         <option>&gt; Rp 10 Jt</option>
                                     </select>
                                 </div>
-                                <div className="col-12">
+                                <div className="col-span-1 md:col-span-12">
                                     <div style={{ fontSize: '.8rem', fontWeight: 700, color: 'var(--primary)', paddingBottom: '4px', borderBottom: '1px solid var(--border)', marginBottom: '4px' }}>Data Ibu</div>
                                 </div>
-                                <div className="col-md-6">
+                                <div className="col-span-1 md:col-span-6">
                                     <label className="form-label-c">Nama Ibu</label>
                                     <input 
                                         className="form-ctrl" 
@@ -592,7 +590,7 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                                         onChange={e => setData('ibu_nama', e.target.value)}
                                     />
                                 </div>
-                                <div className="col-md-3">
+                                <div className="col-span-1 md:col-span-3">
                                     <label className="form-label-c">Pekerjaan</label>
                                     <input 
                                         className="form-ctrl" 
@@ -602,7 +600,7 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                                         onChange={e => setData('ibu_pekerjaan', e.target.value)}
                                     />
                                 </div>
-                                <div className="col-md-3">
+                                <div className="col-span-1 md:col-span-3">
                                     <label className="form-label-c">No. HP Darurat</label>
                                     <input 
                                         className="form-ctrl" 
@@ -612,7 +610,7 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                                         onChange={e => setData('ibu_no_hp', e.target.value)}
                                     />
                                 </div>
-                                <div className="col-12">
+                                <div className="col-span-1 md:col-span-12">
                                     <label className="form-label-c">Alamat Orang Tua (jika berbeda)</label>
                                     <textarea 
                                         className="form-ctrl" 
@@ -627,8 +625,8 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
 
                         {/* Step 4: Akun & Akses */}
                         <div className={`step-panel ${currentStep === 4 ? 'active' : ''}`}>
-                            <div className="row g-3">
-                                <div className="col-md-6">
+                            <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+                                <div className="col-span-1 md:col-span-6">
                                     <label className="form-label-c">Email Akademik <span style={{ color: 'var(--rose)' }}>*</span></label>
                                     <input 
                                         className="form-ctrl" 
@@ -639,7 +637,7 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                                     />
                                     {(errors.email_akademik) && <p className="text-rose-500 text-xs mt-1">{errors.email_akademik}</p>}
                                 </div>
-                                <div className="col-md-6">
+                                <div className="col-span-1 md:col-span-6">
                                     <label className="form-label-c">Email Pribadi</label>
                                     <input 
                                         className="form-ctrl" 
@@ -649,7 +647,7 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                                         onChange={e => setData('email_pribadi', e.target.value)}
                                     />
                                 </div>
-                                <div className="col-md-6">
+                                <div className="col-span-1 md:col-span-6">
                                     <label className="form-label-c">Password Awal</label>
                                     <input 
                                         className="form-ctrl" 
@@ -659,7 +657,7 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                                         onChange={e => setData('password_awal', e.target.value)}
                                     />
                                 </div>
-                                <div className="col-md-6">
+                                <div className="col-span-1 md:col-span-6">
                                     <label className="form-label-c">Konfirmasi Password</label>
                                     <input 
                                         className="form-ctrl" 
@@ -669,7 +667,7 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                                         onChange={e => setData('konfirmasi_password', e.target.value)}
                                     />
                                 </div>
-                                <div className="col-12">
+                                <div className="col-span-1 md:col-span-12">
                                     <div style={{ background: 'var(--green-light)', borderRadius: '10px', padding: '12px 14px', display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
                                         <i className="bi bi-info-circle-fill" style={{ color: 'var(--green)', flexShrink: 0, marginTop: '1px' }} />
                                         <div style={{ fontSize: '.75rem', color: 'var(--green)', lineHeight: 1.5 }}>
