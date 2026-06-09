@@ -48,7 +48,7 @@ class Mahasiswa extends Model implements HasMedia
         if (!$media) {
             return null;
         }
-        return route('mahasiswa.document', [$this->id, 'ktp']) . '?ext=' . strtolower(pathinfo($media->file_name, PATHINFO_EXTENSION));
+        return route('mahasiswa.document', [$this->id, 'ktp'], false) . '?ext=' . strtolower(pathinfo($media->file_name, PATHINFO_EXTENSION));
     }
 
     /**
@@ -60,7 +60,7 @@ class Mahasiswa extends Model implements HasMedia
         if (!$media) {
             return null;
         }
-        return route('mahasiswa.document', [$this->id, 'kk']) . '?ext=' . strtolower(pathinfo($media->file_name, PATHINFO_EXTENSION));
+        return route('mahasiswa.document', [$this->id, 'kk'], false) . '?ext=' . strtolower(pathinfo($media->file_name, PATHINFO_EXTENSION));
     }
 
     /**
