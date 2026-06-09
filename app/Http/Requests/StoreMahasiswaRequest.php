@@ -31,6 +31,8 @@ class StoreMahasiswaRequest extends FormRequest
             'email_akademik' => ['required', 'email', 'unique:users,email'],
             'password_awal' => ['nullable', 'string', 'min:8'],
             'foto' => ['nullable', 'image', 'max:2048'],
+            'ktp' => ['nullable', 'file', 'mimes:pdf,jpeg,png,jpg', 'max:2048'],
+            'kk' => ['nullable', 'file', 'mimes:pdf,jpeg,png,jpg', 'max:2048'],
         ];
     }
 }

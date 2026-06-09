@@ -77,6 +77,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/mahasiswa', [\App\Http\Controllers\MainMenu\MahasiswaController::class, 'store'])->name('mahasiswa.store');
     Route::put('/mahasiswa/{id}', [\App\Http\Controllers\MainMenu\MahasiswaController::class, 'update'])->name('mahasiswa.update');
     Route::delete('/mahasiswa/{id}', [\App\Http\Controllers\MainMenu\MahasiswaController::class, 'destroy'])->name('mahasiswa.destroy');
+    Route::get('/mahasiswa/{mahasiswa}/document/{collection}', [\App\Http\Controllers\MainMenu\MahasiswaController::class, 'showDocument'])->name('mahasiswa.document');
 });
 
 require __DIR__.'/auth.php';

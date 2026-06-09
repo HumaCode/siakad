@@ -7,11 +7,15 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
     const [currentStep, setCurrentStep] = useState(1);
     const [stepErrors, setStepErrors] = useState<Record<string, string>>({});
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [previewKtpUrl, setPreviewKtpUrl] = useState<string | null>(null);
+    const [previewKkUrl, setPreviewKkUrl] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const { data, setData, post, put, processing, errors, reset, clearErrors } = useForm({
         _method: mahasiswa ? 'PUT' : 'POST',
         foto: null as File | null,
+        ktp: null as File | null,
+        kk: null as File | null,
 
         // Database Fields
         nim: '',
@@ -70,9 +74,13 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
             setStepErrors({});
             if (mahasiswa) {
                 setPreviewUrl(mahasiswa.foto_url || null);
+                setPreviewKtpUrl(mahasiswa.ktp_url || null);
+                setPreviewKkUrl(mahasiswa.kk_url || null);
                 setData({
                     _method: 'PUT',
                     foto: null,
+                    ktp: null,
+                    kk: null,
                     nim: mahasiswa.nim || '',
                     nama: mahasiswa.nama || '',
                     prodi_id: mahasiswa.prodi_id || '',
@@ -112,6 +120,8 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                 });
             } else {
                 setPreviewUrl(null);
+                setPreviewKtpUrl(null);
+                setPreviewKkUrl(null);
                 reset();
             }
             clearErrors();
@@ -338,6 +348,31 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                                             value={data.nik}
                                             onChange={e => setData('nik', e.target.value)}
                                         />
+                                        <div className="mt-2">
+                                            <input 
+                                                type="file" 
+                                                id="uploadKtp"
+                                                onChange={e => setData('ktp', e.target.files?.[0] || null)}
+                                                accept=".pdf,image/*"
+                                                className="hidden"
+                                            />
+                                            <button 
+                                                type="button"
+                                                onClick={() => document.getElementById('uploadKtp')?.click()}
+                                                className="w-full flex items-center justify-between px-3 py-2 border border-dashed border-slate-300 hover:border-sky-500 rounded-xl bg-slate-50 hover:bg-sky-50/20 text-slate-600 hover:text-sky-600 text-[11px] transition-colors"
+                                            >
+                                                <span className="truncate max-w-[150px]">
+                                                    {data.ktp ? (data.ktp as any).name : previewKtpUrl ? '📄 Lihat KTP Terunggah' : '📁 Upload Scan KTP'}
+                                                </span>
+                                                <i className="bi bi-cloud-upload text-sm" />
+                                            </button>
+                                            {previewKtpUrl && (
+                                                <a href={previewKtpUrl} target="_blank" rel="noreferrer" className="text-[10px] text-sky-500 hover:underline mt-1 block">
+                                                    Lihat KTP saat ini
+                                                </a>
+                                            )}
+                                            {errors.ktp && <p className="text-rose-500 text-[10px] mt-1">{errors.ktp}</p>}
+                                        </div>
                                     </div>
                                     <div>
                                         <label className="form-label-c">No. KK</label>
@@ -348,6 +383,31 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                                             value={data.no_kk}
                                             onChange={e => setData('no_kk', e.target.value)}
                                         />
+                                        <div className="mt-2">
+                                            <input 
+                                                type="file" 
+                                                id="uploadKk"
+                                                onChange={e => setData('kk', e.target.files?.[0] || null)}
+                                                accept=".pdf,image/*"
+                                                className="hidden"
+                                            />
+                                            <button 
+                                                type="button"
+                                                onClick={() => document.getElementById('uploadKk')?.click()}
+                                                className="w-full flex items-center justify-between px-3 py-2 border border-dashed border-slate-300 hover:border-sky-500 rounded-xl bg-slate-50 hover:bg-sky-50/20 text-slate-600 hover:text-sky-600 text-[11px] transition-colors"
+                                            >
+                                                <span className="truncate max-w-[150px]">
+                                                    {data.kk ? (data.kk as any).name : previewKkUrl ? '📄 Lihat KK Terunggah' : '📁 Upload Scan KK'}
+                                                </span>
+                                                <i className="bi bi-cloud-upload text-sm" />
+                                            </button>
+                                            {previewKkUrl && (
+                                                <a href={previewKkUrl} target="_blank" rel="noreferrer" className="text-[10px] text-sky-500 hover:underline mt-1 block">
+                                                    Lihat KK saat ini
+                                                </a>
+                                            )}
+                                            {errors.kk && <p className="text-rose-500 text-[10px] mt-1">{errors.kk}</p>}
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="col-span-1 md:col-span-4">

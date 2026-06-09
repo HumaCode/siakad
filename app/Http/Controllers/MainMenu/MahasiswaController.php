@@ -81,4 +81,31 @@ class MahasiswaController extends Controller
 
         return redirect()->back()->with('success', 'Mahasiswa berhasil dihapus.');
     }
+
+    /**
+     * Securely show student document (KTP / KK).
+     */
+    public function showDocument(\App\Models\Mahasiswa $mahasiswa, string $collection)
+    {
+        if (!in_array($collection, ['ktp', 'kk'])) {
+            abort(404);
+        }
+
+        $user = auth()->user();
+        if (!$user) {
+            abort(401);
+        }
+
+        // Allow only admins or the student themselves to access
+        if (!$user->hasRole('admin') && $mahasiswa->user_id !== $user->id) {
+            abort(403, 'Unauthorized access to student documents.');
+        }
+
+        $media = $mahasiswa->getFirstMedia($collection);
+        if (!$media) {
+            abort(404, 'Document not found.');
+        }
+
+        return response()->file($media->getPath());
+    }
 }

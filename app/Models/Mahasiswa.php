@@ -28,7 +28,7 @@ class Mahasiswa extends Model implements HasMedia
 
     protected $table = 'mahasiswas';
 
-    protected $appends = ['foto_url'];
+    protected $appends = ['foto_url', 'ktp_url', 'kk_url'];
 
     /**
      * Get the photo URL from Spatie media library.
@@ -36,6 +36,28 @@ class Mahasiswa extends Model implements HasMedia
     public function getFotoUrlAttribute(): ?string
     {
         return $this->getFirstMediaUrl('foto') ?: null;
+    }
+
+    /**
+     * Get the KTP URL from Spatie media library.
+     */
+    public function getKtpUrlAttribute(): ?string
+    {
+        if (!$this->hasMedia('ktp')) {
+            return null;
+        }
+        return route('mahasiswa.document', [$this->id, 'ktp']);
+    }
+
+    /**
+     * Get the Kartu Keluarga (KK) URL from Spatie media library.
+     */
+    public function getKkUrlAttribute(): ?string
+    {
+        if (!$this->hasMedia('kk')) {
+            return null;
+        }
+        return route('mahasiswa.document', [$this->id, 'kk']);
     }
 
     /**

@@ -60,6 +60,14 @@ class MahasiswaService
                 $mahasiswa->addMedia($data['foto'])->toMediaCollection('foto');
             }
 
+            if (isset($data['ktp']) && $data['ktp'] instanceof \Illuminate\Http\UploadedFile) {
+                $mahasiswa->addMedia($data['ktp'])->toMediaCollection('ktp', 'local');
+            }
+
+            if (isset($data['kk']) && $data['kk'] instanceof \Illuminate\Http\UploadedFile) {
+                $mahasiswa->addMedia($data['kk'])->toMediaCollection('kk', 'local');
+            }
+
             return $mahasiswa;
         });
     }
@@ -92,6 +100,16 @@ class MahasiswaService
             if (isset($data['foto']) && $data['foto'] instanceof \Illuminate\Http\UploadedFile) {
                 $updatedMahasiswa->clearMediaCollection('foto');
                 $updatedMahasiswa->addMedia($data['foto'])->toMediaCollection('foto');
+            }
+
+            if (isset($data['ktp']) && $data['ktp'] instanceof \Illuminate\Http\UploadedFile) {
+                $updatedMahasiswa->clearMediaCollection('ktp');
+                $updatedMahasiswa->addMedia($data['ktp'])->toMediaCollection('ktp', 'local');
+            }
+
+            if (isset($data['kk']) && $data['kk'] instanceof \Illuminate\Http\UploadedFile) {
+                $updatedMahasiswa->clearMediaCollection('kk');
+                $updatedMahasiswa->addMedia($data['kk'])->toMediaCollection('kk', 'local');
             }
 
             return $updatedMahasiswa;
