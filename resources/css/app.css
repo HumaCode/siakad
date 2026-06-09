@@ -756,3 +756,66 @@
     }
 }
 
+/* ===== GLOBAL FORM & MODAL BUTTONS ===== */
+.form-label-custom {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 5px;
+  display: block;
+}
+
+.dark .form-label-custom {
+  color: #cbd5e1;
+}
+
+.btn-primary-sm {
+  padding: 9px 16px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: var(--transition);
+}
+
+.btn-primary-sm:hover {
+  background: var(--primary-dark);
+  box-shadow: 0 4px 14px rgba(26, 86, 219, 0.3);
+}
+
+.btn-outline-sm {
+  padding: 9px 16px;
+  background: transparent;
+  color: var(--text-muted);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: var(--transition);
+}
+
+.btn-outline-sm:hover {
+  background: var(--primary-light);
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.dark .btn-outline-sm:hover {
+  background: rgba(59, 130, 246, 0.1);
+  color: #60a5fa;
+  border-color: #3b82f6;
+}
+
+
