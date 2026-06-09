@@ -256,7 +256,7 @@ export default function Authenticated({
                         <input
                             type="text"
                             placeholder="Cari mahasiswa, mata kuliah..."
-                            className="w-56 pl-9 pr-4 py-1.5 text-xs bg-white/80 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-full focus:w-72 focus:border-blue-500 outline-none transition-all duration-300 font-medium"
+                            className="w-56 !pl-9 !pr-4 !py-1.5 text-xs bg-white/80 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-full focus:w-72 focus:border-blue-500 outline-none transition-all duration-300 font-medium"
                         />
                         <i className="bi bi-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs" />
                     </div>
