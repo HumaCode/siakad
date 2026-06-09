@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, router, usePage } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import '@/../css/mahasiswa.css';
 import Toast, { useToast } from '@/Components/Toast';
 
@@ -35,12 +35,6 @@ export default function Mahasiswa({ mahasiswas, stats, filters, all_prodis, all_
 
     // Toast notification
     const { toast, triggerToast, clearToast } = useToast();
-    const { props } = usePage<{ flash?: { success?: string; error?: string } }>();
-
-    useEffect(() => {
-        if (props.flash?.success) triggerToast(props.flash.success, 'success');
-        if (props.flash?.error)   triggerToast(props.flash.error, 'danger');
-    }, [props.flash]);
 
     // Debounce search
     useEffect(() => {
@@ -136,6 +130,8 @@ export default function Mahasiswa({ mahasiswas, stats, filters, all_prodis, all_
                 mahasiswa={editingMahasiswa}
                 allProdis={all_prodis}
                 allDosens={all_dosens}
+                onSuccess={(msg: string) => triggerToast(msg, 'success')}
+                onError={(msg: string) => triggerToast(msg, 'danger')}
             />
 
             {/* Toast Notification */}

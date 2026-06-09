@@ -5,7 +5,7 @@ import FormInput from '@/Components/FormInput';
 import FormSelect from '@/Components/FormSelect';
 import SearchableSelect from '@/Components/SearchableSelect';
 
-export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProdis, allDosens }: any) {
+export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProdis, allDosens, onSuccess, onError }: any) {
     const { data, setData, post, put, processing, errors, reset, clearErrors } = useForm({
         nim: '',
         nama: '',
@@ -64,7 +64,15 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
             onSuccess: () => {
                 onClose();
                 reset();
-            }
+                const msg = mahasiswa
+                    ? 'Data mahasiswa berhasil diperbarui'
+                    : 'Mahasiswa baru berhasil ditambahkan';
+                onSuccess?.(msg);
+            },
+            onError: (errors: Record<string, string>) => {
+                const firstError = Object.values(errors)[0];
+                onError?.(firstError || 'Terjadi kesalahan, periksa kembali form');
+            },
         };
 
         if (mahasiswa) {
