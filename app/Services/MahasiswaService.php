@@ -32,7 +32,7 @@ class MahasiswaService
                 'Cuti' => 'cuti',
                 'Lulus' => 'lulus',
                 'Drop Out' => 'do',
-                'Non-Aktif' => 'do',
+                'Non-Aktif' => 'non-aktif',
             ];
             $data['status_akademik'] = $statusMap[$data['status_akademik']] ?? strtolower($data['status_akademik']);
         }

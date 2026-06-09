@@ -31,6 +31,7 @@ export default function MahasiswaCardView({ mahasiswas, onEdit, onDetail }: any)
             case 'cuti': return 'Cuti';
             case 'lulus': return 'Lulus';
             case 'do': return 'Drop Out';
+            case 'non-aktif': return 'Non-Aktif';
             default: return status || '';
         }
     };

@@ -33,10 +33,10 @@ class MahasiswaController extends Controller
         
         $stats = [
             'total' => \App\Models\Mahasiswa::count(),
-            'aktif' => \App\Models\Mahasiswa::where('status_akademik', 'Aktif')->count(),
-            'cuti' => \App\Models\Mahasiswa::where('status_akademik', 'Cuti')->count(),
-            'lulus' => \App\Models\Mahasiswa::where('status_akademik', 'Lulus')->count(),
-            'nonaktif' => \App\Models\Mahasiswa::whereIn('status_akademik', ['Non-Aktif', 'Drop Out'])->count(),
+            'aktif' => \App\Models\Mahasiswa::whereIn('status_akademik', ['aktif', 'Aktif'])->count(),
+            'cuti' => \App\Models\Mahasiswa::whereIn('status_akademik', ['cuti', 'Cuti'])->count(),
+            'lulus' => \App\Models\Mahasiswa::whereIn('status_akademik', ['lulus', 'Lulus'])->count(),
+            'nonaktif' => \App\Models\Mahasiswa::whereIn('status_akademik', ['non-aktif', 'Non-Aktif', 'do', 'Drop Out'])->count(),
         ];
 
         return Inertia::render('MainMenu/Mahasiswa/Mahasiswa', [
