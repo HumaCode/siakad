@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Services\MahasiswaService;
 use App\Models\Prodi;
 use App\Models\Dosen;
+use App\Http\Requests\StoreMahasiswaRequest;
+use App\Http\Requests\UpdateMahasiswaRequest;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -58,34 +60,16 @@ class MahasiswaController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreMahasiswaRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'nim' => 'required|string|unique:mahasiswas,nim',
-            'nama' => 'required|string|max:255',
-            'prodi_id' => 'required|exists:prodis,id',
-            'angkatan' => 'required|string|max:4',
-            'status_akademik' => 'required|string|in:Aktif,Cuti,Lulus,Drop Out,Non-Aktif',
-            'dosen_wali_id' => 'nullable|exists:dosens,id',
-        ]);
-
-        $this->mahasiswaService->createMahasiswa($validated);
+        $this->mahasiswaService->createMahasiswa($request->validated());
 
         return redirect()->back()->with('success', 'Mahasiswa berhasil ditambahkan.');
     }
 
-    public function update(Request $request, string $id): RedirectResponse
+    public function update(UpdateMahasiswaRequest $request, string $id): RedirectResponse
     {
-        $validated = $request->validate([
-            'nim' => 'required|string|unique:mahasiswas,nim,' . $id,
-            'nama' => 'required|string|max:255',
-            'prodi_id' => 'required|exists:prodis,id',
-            'angkatan' => 'required|string|max:4',
-            'status_akademik' => 'required|string|in:Aktif,Cuti,Lulus,Drop Out,Non-Aktif',
-            'dosen_wali_id' => 'nullable|exists:dosens,id',
-        ]);
-
-        $this->mahasiswaService->updateMahasiswa($id, $validated);
+        $this->mahasiswaService->updateMahasiswa($id, $request->validated());
 
         return redirect()->back()->with('success', 'Data mahasiswa berhasil diperbarui.');
     }
