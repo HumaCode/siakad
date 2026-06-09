@@ -29,6 +29,7 @@ export default function MahasiswaTable({ mahasiswas, onEdit }: any) {
                                 <th>NIM</th>
                                 <th>Mahasiswa</th>
                                 <th>Program Studi</th>
+                                <th>Dosen Wali</th>
                                 <th>Angkatan</th>
                                 <th>Status</th>
                                 <th>Aksi</th>
@@ -55,6 +56,20 @@ export default function MahasiswaTable({ mahasiswas, onEdit }: any) {
                                         <div style={{ fontSize: '.7rem', color: 'var(--text-muted)' }}>{mhs.prodi?.jenjang}</div>
                                     </td>
                                     <td>
+                                        {mhs.dosen_wali ? (
+                                            <div>
+                                                <div style={{ fontSize: '.8rem', fontWeight: 600, color: 'var(--text-dark)' }}>
+                                                    {mhs.dosen_wali.gelar_depan ? mhs.dosen_wali.gelar_depan + ' ' : ''}
+                                                    {mhs.dosen_wali.nama}
+                                                    {mhs.dosen_wali.gelar_belakang ? ', ' + mhs.dosen_wali.gelar_belakang : ''}
+                                                </div>
+                                                <div style={{ fontSize: '.7rem', color: 'var(--text-muted)' }}>NIDN: {mhs.dosen_wali.nidn || '-'}</div>
+                                            </div>
+                                        ) : (
+                                            <span style={{ fontSize: '.75rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>Belum ditentukan</span>
+                                        )}
+                                    </td>
+                                    <td>
                                         <div style={{ fontWeight: 600 }}>{mhs.angkatan}</div>
                                     </td>
                                     <td>
@@ -77,7 +92,7 @@ export default function MahasiswaTable({ mahasiswas, onEdit }: any) {
                                 </tr>
                             )) : (
                                 <tr>
-                                    <td colSpan={7} className="text-center py-4 text-muted">
+                                    <td colSpan={8} className="text-center py-4 text-muted">
                                         Tidak ada data mahasiswa.
                                     </td>
                                 </tr>

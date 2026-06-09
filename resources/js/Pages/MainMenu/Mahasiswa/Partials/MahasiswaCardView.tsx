@@ -73,6 +73,18 @@ export default function MahasiswaCardView({ mahasiswas, onEdit }: any) {
                                     <div className="sc-name">{mhs.nama}</div>
                                     <div><span className="sc-nim">{mhs.nim}</span></div>
                                     <div className="sc-prodi"><i className="bi bi-building me-1"></i>{mhs.prodi?.nama}</div>
+                                    <div className="sc-prodi" style={{ marginTop: '-4px' }}>
+                                        <i className="bi bi-person-badge me-1"></i>
+                                        {mhs.dosen_wali ? (
+                                            <span>
+                                                {mhs.dosen_wali.gelar_depan ? mhs.dosen_wali.gelar_depan + ' ' : ''}
+                                                {mhs.dosen_wali.nama}
+                                                {mhs.dosen_wali.gelar_belakang ? ', ' + mhs.dosen_wali.gelar_belakang : ''}
+                                            </span>
+                                        ) : (
+                                            <span style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>Belum ditentukan</span>
+                                        )}
+                                    </div>
                                     <div className="sc-stats">
                                         <div className="sc-stat">
                                             <span className="sc-stat-num" style={{ color: getIpkColor(parseFloat(ipk)) }}>{ipk}</span>
