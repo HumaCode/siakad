@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "./sistem/akademik.css";
+@import "./mahasiswa.css";
 
 @theme {
   --font-sans: "Poppins", sans-serif;
@@ -11,11 +12,59 @@
    SIAKAD LAYOUT SYSTEM STYLES
    ============================================================ */
 :root {
+    /* Layout dimensions */
     --sidebar-w: 260px;
     --sidebar-w-col: 76px;
     --topbar-h: 64px;
     --sidebar-bg: #0f1e45;
+    /* Design tokens — shared across all pages */
+    --primary: #1a56db; --primary-dark: #1344b8; --primary-light: #e8f0fe; --primary-mid: #4f83f0;
+    --accent: #f59e0b;  --accent-light: #fef3c7;
+    --teal: #0d9488;    --teal-light: #ccfbf1;
+    --rose: #e11d48;    --rose-light: #ffe4e6;
+    --purple: #7c3aed;  --purple-light: #ede9fe;
+    --green: #16a34a;   --green-light: #dcfce7;
+    --indigo: #4338ca;  --indigo-light: #e0e7ff;
+    --orange: #ea580c;  --orange-light: #fff7ed;
+    --soft-bg: #f0f4ff;
+    --white: #fff; --text-dark: #1e2a4a; --text-muted: #64748b;
+    --border: rgba(26, 86, 219, 0.10);
+    --radius-lg: 18px; --radius-md: 12px; --radius-sm: 8px;
+    --shadow-card: 0 2px 20px rgba(26,86,219,.07), 0 1px 4px rgba(0,0,0,.04);
+    --shadow-hover: 0 8px 32px rgba(26,86,219,.14), 0 2px 8px rgba(0,0,0,.06);
+    --transition: all .25s cubic-bezier(.4,0,.2,1);
 }
+
+/* ============================================================
+   GLOBAL RESET & BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Poppins', sans-serif; background: var(--soft-bg); color: var(--text-dark); overflow-x: hidden; }
+
+/* ============================================================
+   ANIMATED BACKGROUND — used on all pages
+   ============================================================ */
+.bg-anim { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; background: linear-gradient(135deg, #e8f0fe 0%, #f0f4ff 50%, #eef2ff 100%); }
+.dark .bg-anim { background: linear-gradient(135deg, #090d16 0%, #0d1527 50%, #0a0e1a 100%); }
+.dot-grid { position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(26,86,219,.055) 1.5px, transparent 1.5px); background-size: 30px 30px; }
+.dark .dot-grid { background-image: radial-gradient(circle, rgba(59,130,246,.035) 1.5px, transparent 1.5px); }
+.bg-orb { position: absolute; border-radius: 50%; filter: blur(60px); animation: orbF linear infinite; opacity: .28; }
+.bg-orb-1 { width: 480px; height: 480px; background: #bfdbfe; top: -160px; right: -120px; animation-duration: 24s; }
+.bg-orb-2 { width: 320px; height: 320px; background: #a7f3d0; bottom: -80px; left: 60px; animation-duration: 30s; animation-delay: -11s; }
+.bg-orb-3 { width: 200px; height: 200px; background: #fde68a; top: 48%; left: 50%; animation-duration: 20s; animation-delay: -6s; opacity: .16; }
+@keyframes orbF { 0% { transform: translate(0,0) scale(1); } 33% { transform: translate(34px,-26px) scale(1.04); } 66% { transform: translate(-24px,20px) scale(.96); } 100% { transform: translate(0,0) scale(1); } }
+
+/* ============================================================
+   MAIN CONTENT WRAPPER — global layout
+   ============================================================ */
+.main-content { padding: 28px 24px 48px; }
+
+/* ============================================================
+   SCROLL TO TOP BUTTON — global utility
+   ============================================================ */
+.scroll-top { position: fixed; bottom: 28px; right: 28px; width: 40px; height: 40px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(26,86,219,.3); transition: var(--transition); z-index: 999; opacity: 0; transform: translateY(10px); }
+.scroll-top.visible { opacity: 1; transform: translateY(0); }
+.scroll-top:hover { background: var(--primary-dark); }
 
 .font-playfair {
     font-family: 'Poppins', sans-serif !important;
@@ -395,57 +444,8 @@
     transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Backdrop Grid Animation - Matched to mockup but slightly darker blue tint */
-.bg-anim {
-    position: fixed;
-    inset: 0; z-index: -1;
-    overflow: hidden; pointer-events: none;
-    background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 50%, #bfdbfe 100%);
-}
 
 
-
-/* Make card borders and Quick Access borders clearly visible */
-.border-white, .border-gray-100 {
-    border-color: rgba(203, 213, 225, 0.95) !important;
-}
-
-.dark .border-white, .dark .border-gray-100 {
-    border-color: rgba(75, 85, 99, 0.6) !important;
-}
-
-.dark .bg-anim {
-    background: linear-gradient(135deg, #090d16 0%, #0d1527 50%, #0a0e1a 100%);
-}
-
-.bg-anim .dot-grid {
-    position: absolute; inset: 0;
-    background-image: radial-gradient(circle, rgba(26, 86, 219, 0.06) 1.5px, transparent 1.5px);
-    background-size: 30px 30px;
-}
-
-.dark .bg-anim .dot-grid {
-    background-image: radial-gradient(circle, rgba(59, 130, 246, 0.035) 1.5px, transparent 1.5px);
-}
-
-.bg-orb {
-    position: absolute; border-radius: 50%;
-    filter: blur(80px); animation: orbFloat linear infinite;
-    opacity: 0.25;
-}
-
-.dark .bg-orb { opacity: 0.15; }
-
-.bg-orb-1 { width: 500px; height: 500px; background: #bfdbfe; top: -200px; right: -150px; animation-duration: 22s; }
-.bg-orb-2 { width: 350px; height: 350px; background: #ccfbf1; bottom: -100px; left: 100px; animation-duration: 28s; animation-delay: -10s; }
-.bg-orb-3 { width: 250px; height: 250px; background: #fef3c7; top: 40%; left: 40%; animation-duration: 18s; animation-delay: -6s; opacity: 0.15; }
-
-@keyframes orbFloat {
-    0% { transform: translate(0,0) scale(1); }
-    33% { transform: translate(40px,-30px) scale(1.05); }
-    66% { transform: translate(-30px,20px) scale(0.96); }
-    100% { transform: translate(0,0) scale(1); }
-}
 
 /* ============================================================
    MOBILE RESPONSIVENESS MEDIA QUERIES
