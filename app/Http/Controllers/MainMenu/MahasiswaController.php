@@ -57,6 +57,7 @@ class MahasiswaController extends Controller
                     'prodi_id' => $d->prodi_id,
                 ];
             }),
+            'all_kelas' => \App\Models\Kelas::where('status', 'Aktif')->orderBy('nama')->get(['id', 'nama', 'prodi_id']),
             'angkatan_list' => $this->mahasiswaService->getAngkatanList(),
         ]);
     }

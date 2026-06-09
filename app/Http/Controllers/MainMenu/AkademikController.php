@@ -57,11 +57,25 @@ class AkademikController extends Controller
         $paginatedMataKuliahs = $this->mataKuliahService->getPaginatedMataKuliahs($searchMk, $prodiMk, $semMk, $jenisMk, $tahunFilter, 10);
 
         $stats = [
-            'prodi_count' => Prodi::count(),
-            'dosen_count' => Dosen::count(),
+            'prodi_count' => Prodi::when(!empty($tahunFilter) && $tahunFilter !== 'Semua Tahun' && $tahunFilter !== 'all', function ($q) use ($tahunFilter) {
+                return $q->where('tahun', $tahunFilter);
+            })->count(),
+            'dosen_count' => Dosen::when(!empty($tahunFilter) && $tahunFilter !== 'Semua Tahun' && $tahunFilter !== 'all', function ($q) use ($tahunFilter) {
+                return $q->whereHas('prodi', function ($qp) use ($tahunFilter) {
+                    $qp->where('tahun', $tahunFilter);
+                });
+            })->count(),
             'ruangan_count' => Ruangan::count(),
-            'matakuliah_count' => MataKuliah::count(),
-            'jadwal_count' => \App\Models\JadwalKuliah::count(),
+            'matakuliah_count' => MataKuliah::when(!empty($tahunFilter) && $tahunFilter !== 'Semua Tahun' && $tahunFilter !== 'all', function ($q) use ($tahunFilter) {
+                return $q->whereHas('prodi', function ($qp) use ($tahunFilter) {
+                    $qp->where('tahun', $tahunFilter);
+                });
+            })->count(),
+            'jadwal_count' => \App\Models\JadwalKuliah::when(!empty($tahunFilter) && $tahunFilter !== 'Semua Tahun' && $tahunFilter !== 'all', function ($q) use ($tahunFilter) {
+                return $q->whereHas('prodi', function ($qp) use ($tahunFilter) {
+                    $qp->where('tahun', $tahunFilter);
+                });
+            })->count(),
         ];
 
         $fakultas = Fakultas::orderBy('nama')->get(['id', 'nama', 'kode']);

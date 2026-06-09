@@ -3,7 +3,7 @@ import { useForm } from '@inertiajs/react';
 import Modal from '@/Components/Modal';
 import SearchableSelect from '@/Components/SearchableSelect';
 
-export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProdis, allDosens, onSuccess, onError }: any) {
+export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProdis, allDosens, allKelas = [], onSuccess, onError }: any) {
     const [currentStep, setCurrentStep] = useState(1);
     const [stepErrors, setStepErrors] = useState<Record<string, string>>({});
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -38,7 +38,7 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
         semester_saat_ini: '1',
         fakultas: 'Teknik & Teknologi',
         jalur_masuk: 'SNBT (SBMPTN)',
-        kelas: 'A',
+        kelas: '',
         asal_sekolah: '',
         tahun_lulus_sma: '',
         status_awal: 'Aktif',
@@ -108,7 +108,7 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                     semester_saat_ini: '1',
                     fakultas: 'Teknik & Teknologi',
                     jalur_masuk: 'SNBT (SBMPTN)',
-                    kelas: 'A',
+                    kelas: mahasiswa.kelas || '',
                     asal_sekolah: 'SMAN 1 Bandung',
                     tahun_lulus_sma: '2020',
                     status_awal: 'Aktif',
@@ -139,10 +139,12 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
     const handleProdiChange = (prodiId: string) => {
         setData(prev => {
             const dosenForProdi = allDosens.find((d: any) => String(d.prodi_id) === String(prodiId));
+            const kelasForProdi = allKelas.filter((k: any) => String(k.prodi_id) === String(prodiId));
             return {
                 ...prev,
                 prodi_id: prodiId,
                 dosen_wali_id: dosenForProdi ? String(dosenForProdi.id) : '',
+                kelas: kelasForProdi.length > 0 ? kelasForProdi[0].nama : '',
             };
         });
     };
@@ -157,6 +159,12 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
             setPreviewUrl(URL.createObjectURL(file));
         }
     };
+
+    // Kelas filtered by selected prodi
+    const kelasForSelectedProdi = useMemo(() => {
+        if (!data.prodi_id) return [];
+        return allKelas.filter((k: any) => String(k.prodi_id) === String(data.prodi_id));
+    }, [data.prodi_id, allKelas]);
 
     // Dosen filtered by selected prodi
     const dosenForSelectedProdi = useMemo(() => {
@@ -575,15 +583,35 @@ export default function MahasiswaFormModal({ isOpen, onClose, mahasiswa, allProd
                                 </div>
                                 <div className="col-span-1 md:col-span-4">
                                     <label className="form-label-c">Kelas</label>
-                                    <select 
-                                        className="form-ctrl"
-                                        value={data.kelas}
-                                        onChange={e => setData('kelas', e.target.value)}
-                                    >
-                                        <option>A</option>
-                                        <option>B</option>
-                                        <option>C</option>
-                                    </select>
+                                    {!data.prodi_id ? (
+                                        <div className="dosen-auto-field">
+                                            <i className="bi bi-grid-1x2 text-slate-300" style={{ fontSize: '16px' }} />
+                                            <span className="dosen-empty">Pilih Program Studi terlebih dahulu</span>
+                                        </div>
+                                    ) : kelasForSelectedProdi.length === 0 ? (
+                                        <div className="dosen-auto-field">
+                                            <i className="bi bi-exclamation-circle text-amber-400" style={{ fontSize: '16px' }} />
+                                            <span className="dosen-empty">Belum ada kelas di prodi ini</span>
+                                        </div>
+                                    ) : kelasForSelectedProdi.length === 1 ? (
+                                        <div className="dosen-auto-field">
+                                            <i className="bi bi-grid-1x2" style={{ fontSize: '16px', color: 'var(--primary)' }} />
+                                            <span className="dosen-name">{data.kelas || kelasForSelectedProdi[0].nama}</span>
+                                            <i className="bi bi-magic" style={{ fontSize: '11px', color: 'var(--text-muted)' }} title="Otomatis terisi" />
+                                        </div>
+                                    ) : (
+                                        <select 
+                                            className="form-ctrl"
+                                            value={data.kelas}
+                                            onChange={e => setData('kelas', e.target.value)}
+                                        >
+                                            <option value="">Pilih Kelas</option>
+                                            {kelasForSelectedProdi.map((k: any) => (
+                                                <option key={k.id} value={k.nama}>{k.nama}</option>
+                                            ))}
+                                        </select>
+                                    )}
+                                    {errors.kelas && <p className="text-rose-500 text-xs mt-1">{errors.kelas}</p>}
                                 </div>
                                 <div className="col-span-1 md:col-span-4">
                                     <label className="form-label-c">Dosen Wali</label>

@@ -28,6 +28,7 @@ class StoreMahasiswaRequest extends FormRequest
             'angkatan' => ['required', 'string', 'max:4'],
             'status_akademik' => ['required', 'string', 'in:Aktif,Cuti,Lulus,Drop Out,Non-Aktif'],
             'dosen_wali_id' => ['nullable', 'exists:dosens,id'],
+            'kelas' => ['nullable', 'string', 'max:255'],
             'email_akademik' => ['required', 'email', 'unique:users,email'],
             'password_awal' => ['nullable', 'string', 'min:8'],
             'foto' => ['nullable', 'image', 'max:2048'],

@@ -12,7 +12,7 @@ import MahasiswaCardView from './Partials/MahasiswaCardView';
 import MahasiswaFormModal from './Partials/MahasiswaFormModal';
 import MahasiswaDetailModal from './Partials/MahasiswaDetailModal';
 
-export default function Mahasiswa({ mahasiswas, stats, filters, all_prodis, all_dosens, angkatan_list }: any) {
+export default function Mahasiswa({ mahasiswas, stats, filters, all_prodis, all_dosens, all_kelas, angkatan_list }: any) {
 
     const [viewMode, setViewMode] = useState<'table' | 'card'>(() => {
         if (typeof window !== 'undefined') {
@@ -141,6 +141,7 @@ export default function Mahasiswa({ mahasiswas, stats, filters, all_prodis, all_
                 mahasiswa={editingMahasiswa}
                 allProdis={all_prodis}
                 allDosens={all_dosens}
+                allKelas={all_kelas}
                 onSuccess={(msg: string) => triggerToast(msg, 'success')}
                 onError={(msg: string) => triggerToast(msg, 'danger')}
             />

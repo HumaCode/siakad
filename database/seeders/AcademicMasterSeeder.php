@@ -46,7 +46,7 @@ class AcademicMasterSeeder extends Seeder
             'sks' => 148,
             'lama_studi' => 8,
             'akreditasi' => 'Unggul',
-            'tahun' => 2025,
+            'tahun' => 2026,
             'deskripsi' => 'Kurikulum berbasis KKNI Level 6, menekankan rekayasa perangkat lunak, kecerdasan buatan, dan keamanan siber.',
         ]);
 
@@ -60,7 +60,7 @@ class AcademicMasterSeeder extends Seeder
             'sks' => 144,
             'lama_studi' => 8,
             'akreditasi' => 'Unggul',
-            'tahun' => 2025,
+            'tahun' => 2026,
             'deskripsi' => 'Fokus pada perancangan dan pengelolaan sistem informasi bisnis, analitik data, dan transformasi digital.',
         ]);
 
@@ -75,7 +75,7 @@ class AcademicMasterSeeder extends Seeder
             'sks' => 144,
             'lama_studi' => 8,
             'akreditasi' => 'A',
-            'tahun' => 2025,
+            'tahun' => 2026,
             'deskripsi' => 'Mata kuliah dasar matematika murni, aplikasi terapan komputer, sains data, serta optimisasi sistem.',
         ]);
 
@@ -90,7 +90,7 @@ class AcademicMasterSeeder extends Seeder
             'sks' => 144,
             'lama_studi' => 8,
             'akreditasi' => 'A',
-            'tahun' => 2025,
+            'tahun' => 2026,
             'deskripsi' => 'Mengembangkan kompetensi manajemen strategis, kewirausahaan, pemasaran, dan keuangan bisnis modern.',
         ]);
 

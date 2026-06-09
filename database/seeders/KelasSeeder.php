@@ -24,8 +24,8 @@ class KelasSeeder extends Seeder
 
         // Seed classes for Sistem Informasi
         if ($prodiSI) {
-            Kelas::create(['prodi_id' => $prodiSI->id, 'nama' => 'Kelas Reguler A', 'status' => 'Aktif']);
-            Kelas::create(['prodi_id' => $prodiSI->id, 'nama' => 'Kelas Reguler B', 'status' => 'Aktif']);
+            Kelas::create(['prodi_id' => $prodiSI->id, 'nama' => 'Kelas A', 'status' => 'Aktif']);
+            Kelas::create(['prodi_id' => $prodiSI->id, 'nama' => 'Kelas B', 'status' => 'Aktif']);
         }
 
         // Seed classes for Manajemen

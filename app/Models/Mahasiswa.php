@@ -21,6 +21,7 @@ use Spatie\Activitylog\LogOptions;
     'angkatan',
     'status_akademik',
     'dosen_wali_id',
+    'kelas',
 ])]
 class Mahasiswa extends Model implements HasMedia
 {
