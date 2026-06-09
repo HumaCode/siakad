@@ -10,6 +10,7 @@ import FilterToolbar from './Partials/FilterToolbar';
 import MahasiswaTable from './Partials/MahasiswaTable';
 import MahasiswaCardView from './Partials/MahasiswaCardView';
 import MahasiswaFormModal from './Partials/MahasiswaFormModal';
+import MahasiswaDetailModal from './Partials/MahasiswaDetailModal';
 
 export default function Mahasiswa({ mahasiswas, stats, filters, all_prodis, all_dosens, angkatan_list }: any) {
 
@@ -32,6 +33,9 @@ export default function Mahasiswa({ mahasiswas, stats, filters, all_prodis, all_
 
     const [isFormModalOpen, setIsFormModalOpen] = useState(false);
     const [editingMahasiswa, setEditingMahasiswa] = useState<any | null>(null);
+
+    const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+    const [detailedMahasiswa, setDetailedMahasiswa] = useState<any | null>(null);
 
     // Toast notification
     const { toast, triggerToast, clearToast } = useToast();
@@ -69,6 +73,11 @@ export default function Mahasiswa({ mahasiswas, stats, filters, all_prodis, all_
     const openEditModal = (mhs: any) => {
         setEditingMahasiswa(mhs);
         setIsFormModalOpen(true);
+    };
+
+    const openDetailModal = (mhs: any) => {
+        setDetailedMahasiswa(mhs);
+        setIsDetailModalOpen(true);
     };
 
     return (
@@ -113,12 +122,14 @@ export default function Mahasiswa({ mahasiswas, stats, filters, all_prodis, all_
                     <MahasiswaTable
                         mahasiswas={mahasiswas}
                         onEdit={openEditModal}
+                        onDetail={openDetailModal}
                     />
                 )}
                 {viewMode === 'card' && (
                     <MahasiswaCardView
                         mahasiswas={mahasiswas}
                         onEdit={openEditModal}
+                        onDetail={openDetailModal}
                     />
                 )}
             </div>
@@ -132,6 +143,12 @@ export default function Mahasiswa({ mahasiswas, stats, filters, all_prodis, all_
                 allDosens={all_dosens}
                 onSuccess={(msg: string) => triggerToast(msg, 'success')}
                 onError={(msg: string) => triggerToast(msg, 'danger')}
+            />
+
+            <MahasiswaDetailModal
+                isOpen={isDetailModalOpen}
+                onClose={() => setIsDetailModalOpen(false)}
+                mahasiswa={detailedMahasiswa}
             />
 
             {/* Toast Notification */}

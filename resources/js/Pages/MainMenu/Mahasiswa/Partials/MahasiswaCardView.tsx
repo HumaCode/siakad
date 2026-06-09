@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, router } from '@inertiajs/react';
 
-export default function MahasiswaCardView({ mahasiswas, onEdit }: any) {
+export default function MahasiswaCardView({ mahasiswas, onEdit, onDetail }: any) {
     const avatarGrads = [
         'linear-gradient(135deg,#1a56db,#4f83f0)',
         'linear-gradient(135deg,#0d9488,#2dd4bf)',
@@ -112,6 +112,7 @@ export default function MahasiswaCardView({ mahasiswas, onEdit }: any) {
                                         </span>
                                     </div>
                                     <div className="sc-actions">
+                                        <button className="btn-icon bi-view" onClick={(e) => { e.stopPropagation(); onDetail(mhs); }} title="Detail"><i className="bi bi-eye-fill"></i></button>
                                         <button className="btn-icon bi-edit" onClick={(e) => { e.stopPropagation(); onEdit(mhs); }} title="Edit"><i className="bi bi-pencil-fill"></i></button>
                                         <button className="btn-icon bi-del" onClick={(e) => {
                                             e.stopPropagation();

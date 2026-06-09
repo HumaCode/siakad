@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, router } from '@inertiajs/react';
 
-export default function MahasiswaTable({ mahasiswas, onEdit }: any) {
+export default function MahasiswaTable({ mahasiswas, onEdit, onDetail }: any) {
     const getBadgeClass = (status: string) => {
         switch (status?.toLowerCase()) {
             case 'aktif': return 'bp-green';
@@ -78,17 +78,18 @@ export default function MahasiswaTable({ mahasiswas, onEdit }: any) {
                                         </span>
                                     </td>
                                     <td>
-                                        <div style={{ display: 'flex', gap: '6px' }}>
-                                            <button className="btn-icon bi-edit" onClick={() => onEdit(mhs)} title="Edit"><i className="bi bi-pencil-fill"></i></button>
-                                            <button className="btn-icon bi-del" onClick={() => {
-                                                if (confirm('Hapus mahasiswa ini?')) {
-                                                    router.delete(route('mahasiswa.destroy', mhs.id), {
-                                                        preserveScroll: true
-                                                    });
-                                                }
-                                            }} title="Hapus"><i className="bi bi-trash-fill"></i></button>
-                                        </div>
-                                    </td>
+                                         <div style={{ display: 'flex', gap: '6px' }}>
+                                             <button className="btn-icon bi-view" onClick={() => onDetail(mhs)} title="Detail"><i className="bi bi-eye-fill"></i></button>
+                                             <button className="btn-icon bi-edit" onClick={() => onEdit(mhs)} title="Edit"><i className="bi bi-pencil-fill"></i></button>
+                                             <button className="btn-icon bi-del" onClick={() => {
+                                                 if (confirm('Hapus mahasiswa ini?')) {
+                                                     router.delete(route('mahasiswa.destroy', mhs.id), {
+                                                         preserveScroll: true
+                                                     });
+                                                 }
+                                             }} title="Hapus"><i className="bi bi-trash-fill"></i></button>
+                                         </div>
+                                     </td>
                                 </tr>
                             )) : (
                                 <tr>
