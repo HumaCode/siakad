@@ -11,7 +11,18 @@ import MahasiswaCardView from './Partials/MahasiswaCardView';
 import MahasiswaFormModal from './Partials/MahasiswaFormModal';
 
 export default function Mahasiswa({ mahasiswas, stats, filters, all_prodis, all_dosens, angkatan_list }: any) {
-    const [viewMode, setViewMode] = useState<'table' | 'card'>('table');
+    const [viewMode, setViewMode] = useState<'table' | 'card'>(() => {
+        if (typeof window !== 'undefined') {
+            const saved = localStorage.getItem('mahasiswa_view_mode');
+            return (saved === 'table' || saved === 'card') ? saved : 'table';
+        }
+        return 'table';
+    });
+
+    useEffect(() => {
+        localStorage.setItem('mahasiswa_view_mode', viewMode);
+    }, [viewMode]);
+
     const [search, setSearch] = useState(filters.search || '');
     const [prodiFilter, setProdiFilter] = useState(filters.prodi || '');
     const [angkatanFilter, setAngkatanFilter] = useState(filters.angkatan || '');

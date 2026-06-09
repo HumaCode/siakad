@@ -15,7 +15,7 @@ export default function FormInput({
 }: FormInputProps) {
     return (
         <div>
-            <label htmlFor={id} className="form-label-custom mb-1 font-bold text-xs block">
+            <label htmlFor={id} className="form-label-custom form-label-c mb-1 font-bold text-xs block">
                 {label}
             </label>
             <input
