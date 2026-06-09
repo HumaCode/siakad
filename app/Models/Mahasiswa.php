@@ -35,7 +35,11 @@ class Mahasiswa extends Model implements HasMedia
      */
     public function getFotoUrlAttribute(): ?string
     {
-        return $this->getFirstMediaUrl('foto') ?: null;
+        $media = $this->getFirstMedia('foto');
+        if (!$media) {
+            return null;
+        }
+        return '/storage/' . $media->id . '/' . $media->file_name;
     }
 
     /**
