@@ -71,7 +71,7 @@ export default function DosenDetailDrawer({
                 </div>
 
                 <div className="drawer-body">
-                    <div className="dw-name">{dosen.nama}</div>
+                    <div className="dw-name">{dosen.nama_lengkap || dosen.nama}</div>
                     <div>
                         <span className="dw-nidn">{dosen.nidn}</span>
                     </div>

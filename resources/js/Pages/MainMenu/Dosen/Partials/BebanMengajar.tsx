@@ -129,7 +129,7 @@ export default function BebanMengajar({ dosens }: { dosens: any[] }) {
                                                         {d.initials || d.nama.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase()}
                                                     </div>
                                                     <div style={{ fontWeight: 700, fontSize: '.8rem', color: 'var(--text-dark)' }}>
-                                                        {d.nama.length > 28 ? d.nama.slice(0, 28) + '…' : d.nama}
+                                                        {(d.nama_lengkap || d.nama).length > 28 ? (d.nama_lengkap || d.nama).slice(0, 28) + '…' : (d.nama_lengkap || d.nama)}
                                                     </div>
                                                 </div>
                                             </td>
@@ -197,7 +197,7 @@ export default function BebanMengajar({ dosens }: { dosens: any[] }) {
                                         </div>
                                         <div>
                                             <div style={{ fontWeight: 700, fontSize: '.83rem', color: 'var(--text-dark)' }}>
-                                                {d.nama.length > 30 ? d.nama.slice(0, 30) + '…' : d.nama}
+                                                {(d.nama_lengkap || d.nama).length > 30 ? (d.nama_lengkap || d.nama).slice(0, 30) + '…' : (d.nama_lengkap || d.nama)}
                                             </div>
                                             <div style={{ fontSize: '.68rem', color: 'var(--text-muted)' }}>
                                                 {d.prodi?.nama || d.prodi || '-'}

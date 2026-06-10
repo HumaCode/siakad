@@ -49,6 +49,7 @@ class DosenService
                 'gelar_belakang' => $data['gelar_belakang'] ?? null,
                 'prodi_id' => $data['prodi_id'],
                 'status_dosen' => $data['status_dosen'] ?? 'tetap',
+                'jabatan' => $data['jabatan'] ?? 'Tenaga Pengajar',
             ];
 
             return $this->dosenRepository->create($dosenData);
@@ -81,7 +82,7 @@ class DosenService
             }
 
             $dosenData = array_intersect_key($data, array_flip([
-                'nidn', 'nama', 'gelar_depan', 'gelar_belakang', 'prodi_id', 'status_dosen'
+                'nidn', 'nama', 'gelar_depan', 'gelar_belakang', 'prodi_id', 'status_dosen', 'jabatan'
             ]));
 
             return $this->dosenRepository->update($id, $dosenData);

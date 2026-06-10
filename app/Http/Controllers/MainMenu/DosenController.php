@@ -22,27 +22,32 @@ class DosenController extends Controller
 
     public function index(Request $request): Response
     {
-        $dbDosens = Dosen::with(['user', 'prodi', 'mahasiswaBimbingan'])->get();
+        $dbDosens = Dosen::with(['user', 'prodi', 'mahasiswaBimbingan', 'mataKuliahs'])->get();
         
         $dosens = $dbDosens->map(function ($d) {
+            $sks = $d->mataKuliahs->sum('sks');
+            $keahlian = $d->mataKuliahs->pluck('nama')->implode(', ') ?: '-';
+
             return [
                 'id' => $d->id,
                 'nidn' => $d->nidn,
-                'nama' => $d->nama_lengkap,
+                'nama' => $d->nama,
+                'nama_lengkap' => $d->nama_lengkap,
                 'gelar_depan' => $d->gelar_depan,
                 'gelar_belakang' => $d->gelar_belakang,
                 'prodi' => $d->prodi->nama ?? '-',
                 'status_dosen' => $d->status_dosen === 'tetap' ? 'Aktif' : 'Cuti',
                 'email' => $d->user->email ?? '-',
                 'hp' => '0812-3456-7890',
-                'sks' => rand(6, 12),
+                'sks' => $sks,
                 'mhsBimbing' => $d->mahasiswaBimbingan->count(),
                 'rating' => round(4.0 + (rand(0, 10) / 10), 1),
                 'pub' => rand(5, 50),
                 'initials' => collect(explode(' ', $d->nama))->map(fn($n) => mb_substr($n, 0, 1))->take(2)->implode(''),
                 'ttl' => 'Jakarta, 12 April 1980',
                 'pendidikan' => $d->gelar_depan === 'Dr.' || $d->gelar_depan === 'Prof.' ? 'S3 - Doktor' : 'S2 - Magister',
-                'keahlian' => 'Sistem Informasi, Rekayasa Perangkat Lunak',
+                'keahlian' => $keahlian,
+                'jabatan' => $d->jabatan ?? 'Tenaga Pengajar',
                 'masaKerja' => rand(3, 20) . ' tahun',
                 'scopus' => rand(10000, 99999)
             ];
@@ -95,6 +100,7 @@ class DosenController extends Controller
             'email' => $validated['email'],
             'prodi_id' => $prodi->id,
             'status_dosen' => $validated['status'] === 'Aktif' ? 'tetap' : 'luar_biasa',
+            'jabatan' => $validated['jabatan'],
         ];
 
         $this->dosenService->createDosen($dosenData);
@@ -128,6 +134,7 @@ class DosenController extends Controller
             'email' => $validated['email'],
             'prodi_id' => $prodi->id,
             'status_dosen' => $validated['status'] === 'Aktif' ? 'tetap' : 'luar_biasa',
+            'jabatan' => $validated['jabatan'],
         ];
 
         $this->dosenService->updateDosen($id, $dosenData);

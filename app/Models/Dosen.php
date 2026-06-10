@@ -22,6 +22,7 @@ use Spatie\Activitylog\LogOptions;
     'gelar_belakang',
     'prodi_id',
     'status_dosen',
+    'jabatan',
 ])]
 class Dosen extends Model implements HasMedia
 {
@@ -71,5 +72,13 @@ class Dosen extends Model implements HasMedia
     public function mahasiswaBimbingan(): HasMany
     {
         return $this->hasMany(Mahasiswa::class, 'dosen_wali_id');
+    }
+
+    /**
+     * Get the courses taught by this lecturer.
+     */
+    public function mataKuliahs(): HasMany
+    {
+        return $this->hasMany(MataKuliah::class, 'dosen_id');
     }
 }

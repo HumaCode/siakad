@@ -56,7 +56,7 @@ export default function DosenCardView({
                                         {statusBadge(d.status || d.status_dosen || 'Aktif')}
                                     </div>
                                 </div>
-                                <div className="dc-name">{d.nama}</div>
+                                <div className="dc-name">{d.nama_lengkap || d.nama}</div>
                                 <div>
                                     <span className="dc-nidn">{d.nidn}</span>
                                 </div>

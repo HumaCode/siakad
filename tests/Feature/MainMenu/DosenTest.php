@@ -64,6 +64,7 @@ test('authenticated user can create a new dosen', function () {
     $this->assertDatabaseHas('dosens', [
         'nidn' => '1234567890',
         'nama' => 'Dosen Test Baru',
+        'jabatan' => 'Lektor',
     ]);
 
     $this->assertDatabaseHas('users', [
@@ -128,6 +129,7 @@ test('authenticated user can update an existing dosen', function () {
     $this->assertDatabaseHas('dosens', [
         'id' => $dosen->id,
         'nama' => 'Updated Dosen Name',
+        'jabatan' => 'Lektor Kepala',
     ]);
 
     $this->assertDatabaseHas('users', [

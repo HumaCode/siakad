@@ -158,7 +158,7 @@ export default function DosenTable({
                                             </div>
                                             <div>
                                                 <div style={{ fontWeight: 700, fontSize: '.83rem', color: 'var(--text-dark)' }}>
-                                                    {d.nama}
+                                                    {d.nama_lengkap || d.nama}
                                                 </div>
                                                 <div style={{ fontSize: '.68rem', color: 'var(--text-muted)' }}>
                                                     {d.email}
