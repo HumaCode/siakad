@@ -15,6 +15,7 @@ import DosenDetailDrawer from './Partials/DosenDetailDrawer';
 import DosenFormModal from './Partials/DosenFormModal';
 import DosenImportModal from './Partials/DosenImportModal';
 import Toast, { useToast } from '@/Components/Toast';
+import ConfirmationModal from '@/Components/ConfirmationModal';
 
 // Mock Data from HTML template
 const defaultDosenData = [
@@ -66,6 +67,9 @@ export default function Dosen({ dosens, stats, all_prodis }: any) {
     const [isImportOpen, setIsImportOpen] = useState(false);
     const [isDetailOpen, setIsDetailOpen] = useState(false);
     const [detailedDosen, setDetailedDosen] = useState<any | null>(null);
+    const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
+    const [dosenToDelete, setDosenToDelete] = useState<any | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     // Toast
     const { toast, triggerToast, clearToast } = useToast();
@@ -117,17 +121,26 @@ export default function Dosen({ dosens, stats, all_prodis }: any) {
         setIsFormOpen(true);
     };
 
-    const handleDeleteDosen = (dosen: any) => {
-        if (confirm(`Apakah Anda yakin ingin menghapus data dosen ${dosen.nama}?`)) {
-            router.delete(`/dosen/${dosen.id}`, {
-                onSuccess: () => {
-                    triggerToast('Data dosen berhasil dihapus', 'success');
-                },
-                onError: () => {
-                    triggerToast('Gagal menghapus data dosen', 'danger');
-                }
-            });
-        }
+    const openDeleteConfirmation = (dosen: any) => {
+        setDosenToDelete(dosen);
+        setIsConfirmDeleteOpen(true);
+    };
+
+    const handleDeleteDosen = () => {
+        if (!dosenToDelete) return;
+        setIsDeleting(true);
+        router.delete(`/dosen/${dosenToDelete.id}`, {
+            onSuccess: () => {
+                setIsConfirmDeleteOpen(false);
+                setDosenToDelete(null);
+                setIsDeleting(false);
+                triggerToast('Data dosen berhasil dihapus', 'success');
+            },
+            onError: () => {
+                setIsDeleting(false);
+                triggerToast('Gagal menghapus data dosen', 'danger');
+            }
+        });
     };
 
     const handleImportStart = () => {
@@ -215,7 +228,7 @@ export default function Dosen({ dosens, stats, all_prodis }: any) {
                                 dosens={filteredDosens}
                                 onViewDetail={handleOpenDetail}
                                 onEdit={handleOpenEdit}
-                                onDelete={handleDeleteDosen}
+                                onDelete={openDeleteConfirmation}
                             />
                         ) : (
                             <DosenCardView
@@ -263,6 +276,29 @@ export default function Dosen({ dosens, stats, all_prodis }: any) {
                 isOpen={isImportOpen}
                 onClose={() => setIsImportOpen(false)}
                 onImportStart={handleImportStart}
+            />
+
+            {/* CONFIRM DELETE MODAL */}
+            <ConfirmationModal
+                show={isConfirmDeleteOpen}
+                title="Hapus Data Dosen"
+                description={
+                    <span>
+                        Apakah Anda yakin ingin menghapus data dosen{' '}
+                        <strong>{dosenToDelete?.nama_lengkap || dosenToDelete?.nama}</strong> (NIDN:{' '}
+                        <strong>{dosenToDelete?.nidn}</strong>)? Tindakan ini tidak dapat dibatalkan.
+                    </span>
+                }
+                warningText="Menghapus data dosen juga akan menonaktifkan akun user yang terhubung dengan dosen tersebut."
+                confirmText="Ya, Hapus Data"
+                cancelText="Batal"
+                onClose={() => {
+                    setIsConfirmDeleteOpen(false);
+                    setDosenToDelete(null);
+                }}
+                onConfirm={handleDeleteDosen}
+                processing={isDeleting}
+                variant="danger"
             />
 
             {/* TOAST NOTIFICATION */}
