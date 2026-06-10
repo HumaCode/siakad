@@ -29,6 +29,10 @@ class MahasiswaController extends Controller
         $angkatanFilter = $request->query('angkatan');
         $statusFilter = $request->query('status');
 
+        if (is_null($angkatanFilter)) {
+            $angkatanFilter = (string) date('Y');
+        }
+
         $mahasiswas = $this->mahasiswaService->getPaginated(15, $search, $prodiFilter, $angkatanFilter, $statusFilter);
         
         $stats = [

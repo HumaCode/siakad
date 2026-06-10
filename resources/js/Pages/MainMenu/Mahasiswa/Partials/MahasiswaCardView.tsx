@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link, router } from '@inertiajs/react';
+import Pagination from '@/Components/Pagination';
 
-export default function MahasiswaCardView({ mahasiswas, onEdit, onDetail }: any) {
+export default function MahasiswaCardView({ mahasiswas, onEdit, onDetail, onDelete }: any) {
     const avatarGrads = [
         'linear-gradient(135deg,#1a56db,#4f83f0)',
         'linear-gradient(135deg,#0d9488,#2dd4bf)',
@@ -117,11 +118,7 @@ export default function MahasiswaCardView({ mahasiswas, onEdit, onDetail }: any)
                                         <button className="btn-icon bi-edit" onClick={(e) => { e.stopPropagation(); onEdit(mhs); }} title="Edit"><i className="bi bi-pencil-fill"></i></button>
                                         <button className="btn-icon bi-del" onClick={(e) => {
                                             e.stopPropagation();
-                                            if (confirm('Hapus mahasiswa ini?')) {
-                                                router.delete(route('mahasiswa.destroy', mhs.id), {
-                                                    preserveScroll: true
-                                                });
-                                            }
+                                            onDelete(mhs);
                                         }} title="Hapus"><i className="bi bi-trash-fill"></i></button>
                                     </div>
                                 </div>
@@ -136,20 +133,7 @@ export default function MahasiswaCardView({ mahasiswas, onEdit, onDetail }: any)
             </div>
 
             {/* Pagination */}
-            {mahasiswas.links && mahasiswas.last_page > 1 && (
-                <div className="d-flex justify-content-center mt-4">
-                    <div className="btn-group">
-                        {mahasiswas.links.map((link: any, index: number) => (
-                            <Link
-                                key={index}
-                                href={link.url || '#'}
-                                className={`btn btn-sm ${link.active ? 'btn-primary' : 'btn-outline-secondary'}`}
-                                dangerouslySetInnerHTML={{ __html: link.label }}
-                            />
-                        ))}
-                    </div>
-                </div>
-            )}
+            <Pagination meta={mahasiswas} />
         </div>
     );
 }

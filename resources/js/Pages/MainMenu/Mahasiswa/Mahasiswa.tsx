@@ -3,6 +3,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, router } from '@inertiajs/react';
 import '@/../css/mahasiswa.css';
 import Toast, { useToast } from '@/Components/Toast';
+import ConfirmationModal from '@/Components/ConfirmationModal';
 
 // Partials
 import StatCards from './Partials/StatCards';
@@ -37,8 +38,35 @@ export default function Mahasiswa({ mahasiswas, stats, filters, all_prodis, all_
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
     const [detailedMahasiswa, setDetailedMahasiswa] = useState<any | null>(null);
 
+    const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
+    const [mahasiswaToDelete, setMahasiswaToDelete] = useState<any | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
+
     // Toast notification
     const { toast, triggerToast, clearToast } = useToast();
+
+    const openDeleteConfirmation = (mhs: any) => {
+        setMahasiswaToDelete(mhs);
+        setIsConfirmDeleteOpen(true);
+    };
+
+    const handleDeleteMahasiswa = () => {
+        if (!mahasiswaToDelete) return;
+        setIsDeleting(true);
+        router.delete(route('mahasiswa.destroy', mahasiswaToDelete.id), {
+            preserveScroll: true,
+            onSuccess: () => {
+                setIsConfirmDeleteOpen(false);
+                setMahasiswaToDelete(null);
+                setIsDeleting(false);
+                triggerToast('Data mahasiswa berhasil dihapus.', 'success');
+            },
+            onError: (err) => {
+                setIsDeleting(false);
+                triggerToast(Object.values(err)[0] || 'Gagal menghapus mahasiswa.', 'danger');
+            }
+        });
+    };
 
     // Debounce search
     useEffect(() => {
@@ -123,6 +151,7 @@ export default function Mahasiswa({ mahasiswas, stats, filters, all_prodis, all_
                         mahasiswas={mahasiswas}
                         onEdit={openEditModal}
                         onDetail={openDetailModal}
+                        onDelete={openDeleteConfirmation}
                     />
                 )}
                 {viewMode === 'card' && (
@@ -130,6 +159,7 @@ export default function Mahasiswa({ mahasiswas, stats, filters, all_prodis, all_
                         mahasiswas={mahasiswas}
                         onEdit={openEditModal}
                         onDetail={openDetailModal}
+                        onDelete={openDeleteConfirmation}
                     />
                 )}
             </div>
@@ -150,6 +180,28 @@ export default function Mahasiswa({ mahasiswas, stats, filters, all_prodis, all_
                 isOpen={isDetailModalOpen}
                 onClose={() => setIsDetailModalOpen(false)}
                 mahasiswa={detailedMahasiswa}
+            />
+
+            <ConfirmationModal
+                show={isConfirmDeleteOpen}
+                title="Hapus Data Mahasiswa"
+                description={
+                    <span>
+                        Apakah Anda yakin ingin menghapus data mahasiswa{' '}
+                        <strong>{mahasiswaToDelete?.nama}</strong> (NIM:{' '}
+                        <strong>{mahasiswaToDelete?.nim}</strong>)? Tindakan ini tidak dapat dibatalkan.
+                    </span>
+                }
+                warningText="Menghapus data mahasiswa juga akan menonaktifkan akun user yang terhubung dengan mahasiswa tersebut."
+                confirmText="Ya, Hapus Data"
+                cancelText="Batal"
+                onClose={() => {
+                    setIsConfirmDeleteOpen(false);
+                    setMahasiswaToDelete(null);
+                }}
+                onConfirm={handleDeleteMahasiswa}
+                processing={isDeleting}
+                variant="danger"
             />
 
             {/* Toast Notification */}

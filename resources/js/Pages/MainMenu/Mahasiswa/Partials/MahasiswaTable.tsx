@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link, router } from '@inertiajs/react';
+import Pagination from '@/Components/Pagination';
 
-export default function MahasiswaTable({ mahasiswas, onEdit, onDetail }: any) {
+export default function MahasiswaTable({ mahasiswas, onEdit, onDetail, onDelete }: any) {
     const getBadgeClass = (status: string) => {
         switch (status?.toLowerCase()) {
             case 'aktif': return 'bp-green';
@@ -82,13 +83,7 @@ export default function MahasiswaTable({ mahasiswas, onEdit, onDetail }: any) {
                                          <div style={{ display: 'flex', gap: '6px' }}>
                                              <button className="btn-icon bi-view" onClick={() => onDetail(mhs)} title="Detail"><i className="bi bi-eye-fill"></i></button>
                                              <button className="btn-icon bi-edit" onClick={() => onEdit(mhs)} title="Edit"><i className="bi bi-pencil-fill"></i></button>
-                                             <button className="btn-icon bi-del" onClick={() => {
-                                                 if (confirm('Hapus mahasiswa ini?')) {
-                                                     router.delete(route('mahasiswa.destroy', mhs.id), {
-                                                         preserveScroll: true
-                                                     });
-                                                 }
-                                             }} title="Hapus"><i className="bi bi-trash-fill"></i></button>
+                                             <button className="btn-icon bi-del" onClick={() => onDelete(mhs)} title="Hapus"><i className="bi bi-trash-fill"></i></button>
                                          </div>
                                      </td>
                                 </tr>
@@ -103,21 +98,8 @@ export default function MahasiswaTable({ mahasiswas, onEdit, onDetail }: any) {
                     </table>
                 </div>
 
-                {/* Pagination (Simplified for now) */}
-                {mahasiswas.links && mahasiswas.last_page > 1 && (
-                    <div className="d-flex justify-content-center p-3">
-                        <div className="btn-group">
-                            {mahasiswas.links.map((link: any, index: number) => (
-                                <Link
-                                    key={index}
-                                    href={link.url || '#'}
-                                    className={`btn btn-sm ${link.active ? 'btn-primary' : 'btn-outline-secondary'}`}
-                                    dangerouslySetInnerHTML={{ __html: link.label }}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                )}
+                {/* Pagination */}
+                <Pagination meta={mahasiswas} />
             </div>
         </div>
     );

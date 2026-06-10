@@ -120,19 +120,40 @@ class MahasiswaService
     {
         return DB::transaction(function () use ($id) {
             $mahasiswa = $this->mahasiswaRepository->find($id);
-            if ($mahasiswa && $mahasiswa->user) {
-                $mahasiswa->user->delete(); // Soft delete user
+            if (!$mahasiswa) {
+                return false;
             }
-            return $this->mahasiswaRepository->delete($id);
+
+            $user = $mahasiswa->user;
+
+            // Delete mahasiswa first to avoid Cascade Delete causing ModelNotFoundException in repository delete
+            $deleted = $this->mahasiswaRepository->delete($id);
+
+            // Then delete user if exists
+            if ($user) {
+                $user->delete();
+            }
+
+            return $deleted;
         });
     }
 
     public function getAngkatanList(): array
     {
-        return Mahasiswa::select('angkatan')
+        $currentYear = (int) date('Y');
+        // Generate a range of years from current year down to 6 years ago (e.g. 2026 down to 2020)
+        $years = range($currentYear, $currentYear - 6);
+        
+        // Merge with existing angkatan values from database to ensure no data is lost
+        $dbYears = Mahasiswa::select('angkatan')
             ->distinct()
-            ->orderBy('angkatan', 'desc')
             ->pluck('angkatan')
+            ->map(fn($y) => (int)$y)
             ->toArray();
+            
+        $mergedYears = array_unique(array_merge($years, $dbYears));
+        rsort($mergedYears);
+        
+        return array_map('strval', $mergedYears);
     }
 }
