@@ -28,9 +28,9 @@ export default function DosenCardView({
     onEdit
 }: DosenCardViewProps) {
     return (
-        <div className="row g-4" id="cardGrid">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" id="cardGrid">
             {dosens.length === 0 ? (
-                <div className="col-12 text-center py-4 text-slate-500">
+                <div className="col-span-full text-center py-4 text-slate-500">
                     Tidak ada data dosen yang sesuai dengan filter.
                 </div>
             ) : (
@@ -42,10 +42,7 @@ export default function DosenCardView({
                     const ratingFull = Math.floor(rating);
 
                     return (
-                        <div
-                            key={d.id || d.nidn}
-                            className="col-12 col-sm-6 col-lg-4 col-xl-3"
-                        >
+                        <div key={d.id || d.nidn}>
                             <div className="dosen-card" onClick={() => onViewDetail(d)}>
                                 <div className="dc-cover" style={{ background: coverBg }}></div>
                                 <div className="dc-avatar-wrap">
