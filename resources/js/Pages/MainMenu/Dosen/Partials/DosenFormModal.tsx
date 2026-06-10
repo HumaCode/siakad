@@ -223,16 +223,23 @@ export default function DosenFormModal({
                             {/* Status Dosen */}
                             <div className="col-span-1 md:col-span-4">
                                 <label className="form-label-c">Status Aktif Dosen</label>
-                                <select
-                                    className={`form-ctrl ${errors.status ? 'border-rose-500' : ''}`}
-                                    value={data.status}
-                                    onChange={e => setData('status', e.target.value)}
-                                    required
-                                >
-                                    <option value="Aktif">Aktif</option>
-                                    <option value="Cuti">Cuti</option>
-                                    <option value="Pensiun">Pensiun</option>
-                                </select>
+                                <div className="flex items-center gap-5 mt-2 h-11">
+                                    {['Aktif', 'Cuti', 'Pensiun'].map((statusOption) => (
+                                        <label key={statusOption} className="flex items-center gap-2 cursor-pointer group">
+                                            <input
+                                                type="radio"
+                                                name="status"
+                                                value={statusOption}
+                                                checked={data.status === statusOption}
+                                                onChange={() => setData('status', statusOption)}
+                                                className="w-4.5 h-4.5 text-primary border-gray-300 focus:ring-primary focus:ring-2 dark:border-gray-600 dark:bg-gray-700 cursor-pointer"
+                                            />
+                                            <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-primary transition-colors">
+                                                {statusOption}
+                                            </span>
+                                        </label>
+                                    ))}
+                                </div>
                                 {errors.status && <p className="text-rose-500 text-xs mt-1">{errors.status}</p>}
                             </div>
                         </div>
