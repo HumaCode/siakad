@@ -78,7 +78,7 @@ export default function DosenFormModal({
     };
 
     return (
-        <Modal show={isOpen} onClose={onClose} maxWidth="4xl">
+        <Modal show={isOpen} onClose={onClose} maxWidth="4xl" overflow="visible">
             <div className="modal-content" style={{ background: '#fff', border: 'none' }}>
                 <div className="modal-header flex justify-between items-center p-4 border-b border-gray-100">
                     <h5 className="modal-title font-poppins m-0">

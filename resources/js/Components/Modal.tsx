@@ -13,12 +13,14 @@ export default function Modal({
     closeable = true,
     onClose = () => {},
     unstyled = false,
+    overflow = 'hidden',
 }: PropsWithChildren<{
     show: boolean;
     maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl';
     closeable?: boolean;
     onClose: CallableFunction;
     unstyled?: boolean;
+    overflow?: 'hidden' | 'visible';
 }>) {
     const close = () => {
         if (closeable) {
@@ -67,7 +69,7 @@ export default function Modal({
                     leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                 >
                     <DialogPanel
-                        className={`relative mb-6 transform overflow-hidden transition-all sm:mx-auto sm:w-full ${unstyled ? '' : 'rounded-lg bg-white shadow-xl dark:bg-gray-800'} ${maxWidthClass}`}
+                        className={`relative mb-6 transform ${overflow === 'hidden' ? 'overflow-hidden' : 'overflow-visible'} transition-all sm:mx-auto sm:w-full ${unstyled ? '' : 'rounded-lg bg-white shadow-xl dark:bg-gray-800'} ${maxWidthClass}`}
                     >
                         {children}
                     </DialogPanel>
