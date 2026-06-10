@@ -225,9 +225,8 @@ export default function DosenDetailDrawer({
                                     return (
                                         <div className="jadwal-mini" key={idx}>
                                             <div className="jm-day" style={{ background: `${color}18`, color }}>
-                                                {dayShort}
-                                                <br />
-                                                <span style={{ fontSize: '.52rem' }}>{j.jam_mulai}</span>
+                                                <span>{dayShort}</span>
+                                                <span style={{ fontSize: '.55rem', fontWeight: 600, opacity: 0.95 }}>{j.jam_mulai}</span>
                                             </div>
                                             <div className="jm-info">
                                                 <div className="jm-name">{j.mk}</div>
