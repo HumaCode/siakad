@@ -89,8 +89,17 @@ export default function MahasiswaTable({ mahasiswas, onEdit, onDetail, onDelete 
                                 </tr>
                             )) : (
                                 <tr>
-                                    <td colSpan={7} className="text-center py-4 text-muted">
-                                        Tidak ada data mahasiswa.
+                                    <td colSpan={7}>
+                                        <div className="empty-state-wrap">
+                                            <div className="empty-state-icon-container">
+                                                <div className="empty-state-icon-bg"></div>
+                                                <i className="bi bi-mortarboard empty-state-icon"></i>
+                                            </div>
+                                            <div className="empty-state-title">Belum Ada Data Mahasiswa</div>
+                                            <div className="empty-state-desc">
+                                                Silakan tambahkan data mahasiswa baru melalui tombol <strong>Tambah Mahasiswa</strong> di atas untuk memulai manajemen civitas akademika.
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
                             )}

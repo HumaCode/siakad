@@ -126,8 +126,17 @@ export default function MahasiswaCardView({ mahasiswas, onEdit, onDetail, onDele
                         </div>
                     );
                 }) : (
-                    <div className="col-span-full text-center py-5 text-muted">
-                        Tidak ada data mahasiswa.
+                    <div className="col-span-full">
+                        <div className="empty-state-wrap">
+                            <div className="empty-state-icon-container">
+                                <div className="empty-state-icon-bg"></div>
+                                <i className="bi bi-mortarboard empty-state-icon"></i>
+                            </div>
+                            <div className="empty-state-title">Belum Ada Data Mahasiswa</div>
+                            <div className="empty-state-desc">
+                                Silakan tambahkan data mahasiswa baru melalui tombol <strong>Tambah Mahasiswa</strong> di atas untuk memulai manajemen civitas akademika.
+                            </div>
+                        </div>
                     </div>
                 )}
             </div>
