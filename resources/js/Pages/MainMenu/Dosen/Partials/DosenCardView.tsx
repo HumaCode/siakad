@@ -49,9 +49,18 @@ export default function DosenCardView({
                             <div className="dosen-card" onClick={() => onViewDetail(d)}>
                                 <div className="dc-cover" style={{ background: coverBg }}></div>
                                 <div className="dc-avatar-wrap">
-                                    <div className="dc-avatar" style={{ background: avatarBg }}>
-                                        {initials}
-                                    </div>
+                                    {d.foto_url ? (
+                                        <img
+                                            src={d.foto_url}
+                                            alt={d.nama}
+                                            className="dc-avatar"
+                                            style={{ objectFit: 'cover' }}
+                                        />
+                                    ) : (
+                                        <div className="dc-avatar" style={{ background: avatarBg }}>
+                                            {initials}
+                                        </div>
+                                    )}
                                     <div className="dc-badges">
                                         {statusBadge(d.status || d.status_dosen || 'Aktif')}
                                     </div>

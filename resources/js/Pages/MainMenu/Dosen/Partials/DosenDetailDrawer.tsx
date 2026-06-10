@@ -61,9 +61,18 @@ export default function DosenDetailDrawer({
 
                 {/* ── Avatar + CTA ── */}
                 <div className="drawer-avatar-row">
-                    <div className="drawer-avatar" style={{ background: avatarBg }}>
-                        {initials}
-                    </div>
+                    {dosen.foto_url ? (
+                        <img
+                            src={dosen.foto_url}
+                            alt={dosen.nama}
+                            className="drawer-avatar"
+                            style={{ objectFit: 'cover', border: '4px solid #fff', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }}
+                        />
+                    ) : (
+                        <div className="drawer-avatar" style={{ background: avatarBg }}>
+                            {initials}
+                        </div>
+                    )}
                     <div className="drawer-quick-btns">
                         <a href={`mailto:${dosen.email}`} className="dqb dqb-outline text-decoration-none">
                             <i className="bi bi-envelope-fill"></i> Email

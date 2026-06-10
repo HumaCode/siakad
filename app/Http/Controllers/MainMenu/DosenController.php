@@ -82,6 +82,7 @@ class DosenController extends Controller
                 'prodi'             => $d->prodi?->nama ?? '-',
                 'prodi_id'          => $d->prodi_id,
                 'status_dosen'      => $d->status_dosen === 'tetap' ? 'Aktif' : 'Cuti',
+                'foto_url'          => $d->foto_url,
                 'email'             => $d->user?->email ?? '-',
                 'hp'                => '-',
                 'sks'               => $sks,
@@ -132,6 +133,7 @@ class DosenController extends Controller
             'prodi' => 'required|string',
             'jabatan' => 'required|string',
             'status' => 'required|string',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
         $prodi = Prodi::where('nama', $validated['prodi'])->first();
@@ -150,7 +152,8 @@ class DosenController extends Controller
             'jabatan' => $validated['jabatan'],
         ];
 
-        $this->dosenService->createDosen($dosenData);
+        $dosen = $this->dosenService->createDosen($dosenData);
+        $this->handlePhotoUpload($dosen, $request);
 
         return redirect()->back()->with('success', 'Data dosen berhasil ditambahkan.');
     }
@@ -166,6 +169,7 @@ class DosenController extends Controller
             'prodi' => 'required|string',
             'jabatan' => 'required|string',
             'status' => 'required|string',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
         $prodi = Prodi::where('nama', $validated['prodi'])->first();
@@ -184,7 +188,8 @@ class DosenController extends Controller
             'jabatan' => $validated['jabatan'],
         ];
 
-        $this->dosenService->updateDosen($id, $dosenData);
+        $dosen = $this->dosenService->updateDosen($id, $dosenData);
+        $this->handlePhotoUpload($dosen, $request);
 
         return redirect()->back()->with('success', 'Data dosen berhasil diperbarui.');
     }
@@ -194,5 +199,48 @@ class DosenController extends Controller
         $this->dosenService->deleteDosen($id);
 
         return redirect()->back()->with('success', 'Data dosen berhasil dihapus.');
+    }
+
+    /**
+     * Handle photo upload with WebP conversion.
+     */
+    private function handlePhotoUpload(Dosen $dosen, Request $request): void
+    {
+        if ($request->hasFile('foto')) {
+            $file = $request->file('foto');
+            $image = null;
+            $mimeType = $file->getMimeType();
+            
+            if ($mimeType === 'image/jpeg' || $mimeType === 'image/jpg') {
+                $image = @imagecreatefromjpeg($file->getPathname());
+            } elseif ($mimeType === 'image/png') {
+                $image = @imagecreatefrompng($file->getPathname());
+            } elseif ($mimeType === 'image/webp') {
+                $image = @imagecreatefromwebp($file->getPathname());
+            }
+            
+            if ($image) {
+                $tempPath = tempnam(sys_get_temp_dir(), 'dosen_foto') . '.webp';
+                if (@imagewebp($image, $tempPath, 80)) {
+                    imagedestroy($image);
+                    
+                    $dosen->addMedia($tempPath)
+                        ->usingFileName($dosen->nidn . '.webp')
+                        ->usingName($dosen->nama)
+                        ->toMediaCollection('foto');
+                } else {
+                    imagedestroy($image);
+                    $dosen->addMediaFromRequest('foto')
+                        ->toMediaCollection('foto');
+                }
+                
+                if (file_exists($tempPath)) {
+                    @unlink($tempPath);
+                }
+            } else {
+                $dosen->addMediaFromRequest('foto')
+                    ->toMediaCollection('foto');
+            }
+        }
     }
 }

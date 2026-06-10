@@ -36,7 +36,9 @@ export default function DosenFormModal({
         hp: '',
         prodi: '',
         jabatan: 'Tenaga Pengajar',
-        status: 'Aktif'
+        status: 'Aktif',
+        foto: null as File | null,
+        _method: undefined as string | undefined
     });
 
     useEffect(() => {
@@ -50,7 +52,9 @@ export default function DosenFormModal({
                 hp: dosen.hp || '',
                 prodi: dosen.prodi?.nama || dosen.prodi || '',
                 jabatan: dosen.jabatan || 'Tenaga Pengajar',
-                status: dosen.status || dosen.status_dosen || 'Aktif'
+                status: dosen.status || dosen.status_dosen || 'Aktif',
+                foto: null,
+                _method: 'PUT'
             });
         } else {
             reset();
@@ -62,7 +66,7 @@ export default function DosenFormModal({
         e.preventDefault();
         
         if (dosen) {
-            put(`/dosen/${dosen.id}`, {
+            post(`/dosen/${dosen.id}`, {
                 onSuccess: () => {
                     onSuccess('Data dosen berhasil diperbarui.');
                     onClose();
@@ -242,6 +246,54 @@ export default function DosenFormModal({
                                     ))}
                                 </div>
                                 {errors.status && <p className="text-rose-500 text-xs mt-1">{errors.status}</p>}
+                            </div>
+
+                            {/* Foto Profil */}
+                            <div className="col-span-1 md:col-span-12">
+                                <label className="form-label-c">Foto Profil Dosen</label>
+                                <div className="flex items-center gap-6 p-4 border border-dashed border-gray-300 rounded-2xl bg-gray-50/50 hover:bg-gray-50 transition duration-200">
+                                    <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-slate-100 flex items-center justify-center border border-gray-200 flex-shrink-0">
+                                        {data.foto ? (
+                                            <img
+                                                src={URL.createObjectURL(data.foto)}
+                                                alt="Preview"
+                                                className="w-full h-full object-cover"
+                                            />
+                                        ) : dosen?.foto_url ? (
+                                            <img
+                                                src={dosen.foto_url}
+                                                alt="Current Profile"
+                                                className="w-full h-full object-cover"
+                                            />
+                                        ) : (
+                                            <i className="bi bi-person text-3xl text-gray-400"></i>
+                                        )}
+                                    </div>
+                                    <div className="flex-1">
+                                        <input
+                                            type="file"
+                                            id="foto-upload"
+                                            className="hidden"
+                                            accept="image/jpeg,image/png,image/jpg,image/webp"
+                                            onChange={(e) => {
+                                                const file = e.target.files?.[0];
+                                                if (file) {
+                                                    setData('foto', file);
+                                                }
+                                            }}
+                                        />
+                                        <label
+                                            htmlFor="foto-upload"
+                                            className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-xl text-xs font-bold text-gray-700 shadow-sm hover:bg-gray-50 cursor-pointer transition"
+                                        >
+                                            <i className="bi bi-cloud-upload"></i> Pilih Foto
+                                        </label>
+                                        <p className="text-xs text-gray-500 mt-1.5">
+                                            Mendukung PNG, JPG, JPEG, atau WEBP. Maksimal 2MB. Format akan dikonversi otomatis ke WebP.
+                                        </p>
+                                    </div>
+                                </div>
+                                {errors.foto && <p className="text-rose-500 text-xs mt-1">{errors.foto}</p>}
                             </div>
                         </div>
                     </div>

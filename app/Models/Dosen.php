@@ -30,6 +30,29 @@ class Dosen extends Model implements HasMedia
 
     protected $table = 'dosens';
 
+    protected $appends = ['foto_url'];
+
+    /**
+     * Get the photo URL from Spatie media library.
+     */
+    public function getFotoUrlAttribute(): ?string
+    {
+        $media = $this->getFirstMedia('foto');
+        if (!$media) {
+            return null;
+        }
+        return '/storage/' . $media->id . '/' . $media->file_name;
+    }
+
+    /**
+     * Register media collections.
+     */
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('foto')
+            ->singleFile();
+    }
+
     /**
      * Configure activity logging.
      */

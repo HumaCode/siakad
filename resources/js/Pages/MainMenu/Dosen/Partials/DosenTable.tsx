@@ -141,21 +141,35 @@ export default function DosenTable({
                                     </td>
                                     <td>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                            <div style={{
-                                                width: '36px',
-                                                height: '36px',
-                                                borderRadius: '10px',
-                                                background: avgColors[i % avgColors.length],
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                fontSize: '.7rem',
-                                                fontWeight: 800,
-                                                color: '#fff',
-                                                flexShrink: 0
-                                            }}>
-                                                {d.initials || d.nama.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase()}
-                                            </div>
+                                            {d.foto_url ? (
+                                                <img
+                                                    src={d.foto_url}
+                                                    alt={d.nama}
+                                                    style={{
+                                                        width: '36px',
+                                                        height: '36px',
+                                                        borderRadius: '10px',
+                                                        objectFit: 'cover',
+                                                        flexShrink: 0
+                                                    }}
+                                                />
+                                            ) : (
+                                                <div style={{
+                                                    width: '36px',
+                                                    height: '36px',
+                                                    borderRadius: '10px',
+                                                    background: avgColors[i % avgColors.length],
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    fontSize: '.7rem',
+                                                    fontWeight: 800,
+                                                    color: '#fff',
+                                                    flexShrink: 0
+                                                }}>
+                                                    {d.initials || d.nama.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase()}
+                                                </div>
+                                            )}
                                             <div>
                                                 <div style={{ fontWeight: 700, fontSize: '.83rem', color: 'var(--text-dark)' }}>
                                                     {d.nama_lengkap || d.nama}
