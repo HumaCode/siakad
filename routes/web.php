@@ -78,6 +78,12 @@ Route::middleware('auth')->group(function () {
     Route::put('/mahasiswa/{id}', [\App\Http\Controllers\MainMenu\MahasiswaController::class, 'update'])->name('mahasiswa.update');
     Route::delete('/mahasiswa/{id}', [\App\Http\Controllers\MainMenu\MahasiswaController::class, 'destroy'])->name('mahasiswa.destroy');
     Route::get('/mahasiswa/{mahasiswa}/document/{collection}', [\App\Http\Controllers\MainMenu\MahasiswaController::class, 'showDocument'])->name('mahasiswa.document');
+
+    // Dosen Module
+    Route::get('/dosen', [\App\Http\Controllers\MainMenu\DosenController::class, 'index'])->name('dosen.index');
+    Route::post('/dosen', [\App\Http\Controllers\MainMenu\DosenController::class, 'store'])->name('dosen.store');
+    Route::put('/dosen/{id}', [\App\Http\Controllers\MainMenu\DosenController::class, 'update'])->name('dosen.update');
+    Route::delete('/dosen/{id}', [\App\Http\Controllers\MainMenu\DosenController::class, 'destroy'])->name('dosen.destroy');
 });
 
 require __DIR__.'/auth.php';
