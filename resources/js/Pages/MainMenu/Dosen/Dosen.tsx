@@ -61,6 +61,10 @@ export default function Dosen({ dosens, stats, all_prodis }: any) {
     const [gelarFilter, setGelarFilter] = useState('');
     const [statusFilter, setStatusFilter] = useState('');
 
+    // Pagination
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 8;
+
     // Modals & Drawer state
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [editingDosen, setEditingDosen] = useState<any | null>(null);
@@ -105,6 +109,17 @@ export default function Dosen({ dosens, stats, all_prodis }: any) {
 
         return matchesSearch && matchesProdi && matchesGelar && matchesStatus;
     });
+
+    // Reset current page when filter values change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [search, prodiFilter, gelarFilter, statusFilter]);
+
+    const totalItems = filteredDosens.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+    const paginatedDosens = filteredDosens.slice(startIndex, endIndex);
 
     const handleOpenDetail = (dosen: any) => {
         setDetailedDosen(dosen);
@@ -225,17 +240,91 @@ export default function Dosen({ dosens, stats, all_prodis }: any) {
 
                         {viewMode === 'table' ? (
                             <DosenTable
-                                dosens={filteredDosens}
+                                dosens={paginatedDosens}
                                 onViewDetail={handleOpenDetail}
                                 onEdit={handleOpenEdit}
                                 onDelete={openDeleteConfirmation}
                             />
                         ) : (
                             <DosenCardView
-                                dosens={filteredDosens}
+                                dosens={paginatedDosens}
                                 onViewDetail={handleOpenDetail}
                                 onEdit={handleOpenEdit}
                             />
+                        )}
+
+                        {/* Pagination Controls */}
+                        {totalPages > 1 && (
+                            <div className="flex items-center justify-between border-t border-gray-100 bg-white px-4 py-4 sm:px-6 mt-4 rounded-b-xl shadow-xs">
+                                {/* Mobile view */}
+                                <div className="flex flex-1 justify-between sm:hidden">
+                                    <button
+                                        disabled={currentPage === 1}
+                                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                        className="relative inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                                    >
+                                        Sebelumnya
+                                    </button>
+                                    <button
+                                        disabled={currentPage === totalPages}
+                                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                        className="relative ml-3 inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                                    >
+                                        Berikutnya
+                                    </button>
+                                </div>
+                                {/* Desktop view */}
+                                <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+                                    <div>
+                                        <p className="text-sm text-gray-500">
+                                            Menampilkan <span className="font-semibold text-gray-800">{totalItems > 0 ? startIndex + 1 : 0}</span> sampai{' '}
+                                            <span className="font-semibold text-gray-800">{endIndex}</span> dari{' '}
+                                            <span className="font-semibold text-gray-800">{totalItems}</span> dosen
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <nav className="isolate inline-flex -space-x-px rounded-lg shadow-xs bg-gray-50 p-1" aria-label="Pagination">
+                                            {/* Prev Button */}
+                                            <button
+                                                disabled={currentPage === 1}
+                                                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                                className="relative inline-flex items-center rounded-md px-2.5 py-1.5 text-gray-500 hover:bg-white hover:text-blue-600 transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed me-1 font-medium"
+                                                title="Sebelumnya"
+                                            >
+                                                <i className="bi bi-chevron-left text-sm"></i>
+                                            </button>
+
+                                            {/* Page numbers */}
+                                            {Array.from({ length: totalPages }, (_, idx) => idx + 1).map((page) => {
+                                                const isCurrent = page === currentPage;
+                                                return (
+                                                    <button
+                                                        key={page}
+                                                        onClick={() => setCurrentPage(page)}
+                                                        className={`relative inline-flex items-center rounded-md px-3.5 py-1.5 text-sm font-semibold transition-all duration-200 mx-0.5 ${
+                                                            isCurrent
+                                                                ? 'bg-blue-600 text-white shadow-sm shadow-blue-200'
+                                                                : 'text-gray-600 hover:bg-white hover:text-blue-600 border border-transparent'
+                                                        }`}
+                                                    >
+                                                        {page}
+                                                    </button>
+                                                );
+                                            })}
+
+                                            {/* Next Button */}
+                                            <button
+                                                disabled={currentPage === totalPages}
+                                                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                                className="relative inline-flex items-center rounded-md px-2.5 py-1.5 text-gray-500 hover:bg-white hover:text-blue-600 transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed ms-1 font-medium"
+                                                title="Berikutnya"
+                                            >
+                                                <i className="bi bi-chevron-right text-sm"></i>
+                                            </button>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
                         )}
                     </div>
 
