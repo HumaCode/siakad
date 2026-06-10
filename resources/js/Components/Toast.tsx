@@ -31,7 +31,7 @@ export default function Toast({ toast, onClose, duration = 3000 }: ToastProps) {
         <div
             role="status"
             aria-live="polite"
-            className="flex items-center gap-3 fixed bottom-8 left-1/2 -translate-x-1/2 px-6 py-3.5 rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.15)] font-bold text-xs transition-all duration-300 font-poppins"
+            className="flex items-center gap-3 fixed bottom-8 left-1/2 px-6 py-3.5 rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.15)] font-bold text-xs transition-all duration-300 font-poppins"
             style={{
                 backgroundColor:      isSuccess ? 'rgba(16, 185, 129, 0.15)' : 'rgba(244, 63, 94, 0.15)',
                 border:               isSuccess ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid rgba(244, 63, 94, 0.4)',
@@ -42,6 +42,7 @@ export default function Toast({ toast, onClose, duration = 3000 }: ToastProps) {
                 backdropFilter:       'blur(12px)',
                 WebkitBackdropFilter: 'blur(12px)',
                 zIndex:               99999,
+                translate:            '-50% 0',
                 animation:            'toastIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
                 whiteSpace:           'nowrap',
             }}

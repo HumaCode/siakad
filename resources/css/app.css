@@ -1076,6 +1076,6 @@ body { font-family: 'Poppins', sans-serif !important; background: var(--soft-bg)
    TOAST NOTIFICATION — global animation
    ============================================================ */
 @keyframes toastIn {
-    from { opacity: 0; transform: translate(-50%, 100%) scale(0.9); }
-    to   { opacity: 1; transform: translate(-50%, 0) scale(1); }
+    from { opacity: 0; translate: -50% 100%; scale: 0.9; }
+    to   { opacity: 1; translate: -50% 0; scale: 1; }
 }
