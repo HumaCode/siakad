@@ -94,9 +94,10 @@ export default function DosenFormModal({
                     </button>
                 </div>
                 <form onSubmit={handleFormSubmit}>
-                    <div className="modal-body p-4">
-                        <div className="row g-3">
-                            <div className="col-12 col-md-6">
+                    <div className="modal-body p-6">
+                        <div className="grid grid-cols-1 md:grid-cols-12 gap-x-6 gap-y-5 my-2">
+                            {/* NIDN */}
+                            <div className="col-span-1 md:col-span-6">
                                 <label className="form-label-c">Nomor Induk Dosen Nasional (NIDN)</label>
                                 <input
                                     type="text"
@@ -108,7 +109,9 @@ export default function DosenFormModal({
                                     required
                                 />
                             </div>
-                            <div className="col-12 col-md-6">
+
+                            {/* Nama Lengkap */}
+                            <div className="col-span-1 md:col-span-6">
                                 <label className="form-label-c">Nama Lengkap (tanpa gelar)</label>
                                 <input
                                     type="text"
@@ -120,7 +123,9 @@ export default function DosenFormModal({
                                     required
                                 />
                             </div>
-                            <div className="col-12 col-md-6">
+
+                            {/* Gelar Depan */}
+                            <div className="col-span-1 md:col-span-6">
                                 <label className="form-label-c">Gelar Depan (jika ada)</label>
                                 <input
                                     type="text"
@@ -131,7 +136,9 @@ export default function DosenFormModal({
                                     onChange={handleChange}
                                 />
                             </div>
-                            <div className="col-12 col-md-6">
+
+                            {/* Gelar Belakang */}
+                            <div className="col-span-1 md:col-span-6">
                                 <label className="form-label-c">Gelar Belakang</label>
                                 <input
                                     type="text"
@@ -142,7 +149,9 @@ export default function DosenFormModal({
                                     onChange={handleChange}
                                 />
                             </div>
-                            <div className="col-12 col-md-6">
+
+                            {/* Email Kampus */}
+                            <div className="col-span-1 md:col-span-6">
                                 <label className="form-label-c">Email Kampus</label>
                                 <input
                                     type="email"
@@ -154,7 +163,9 @@ export default function DosenFormModal({
                                     required
                                 />
                             </div>
-                            <div className="col-12 col-md-6">
+
+                            {/* Nomor HP */}
+                            <div className="col-span-1 md:col-span-6">
                                 <label className="form-label-c">Nomor HP / WhatsApp</label>
                                 <input
                                     type="tel"
@@ -166,7 +177,9 @@ export default function DosenFormModal({
                                     required
                                 />
                             </div>
-                            <div className="col-12 col-md-4">
+
+                            {/* Program Studi */}
+                            <div className="col-span-1 md:col-span-4">
                                 <label className="form-label-c">Program Studi Homebase</label>
                                 <select
                                     className="form-ctrl"
@@ -183,7 +196,9 @@ export default function DosenFormModal({
                                     ))}
                                 </select>
                             </div>
-                            <div className="col-12 col-md-4">
+
+                            {/* Jabatan Fungsional */}
+                            <div className="col-span-1 md:col-span-4">
                                 <label className="form-label-c">Jabatan Fungsional Akademik</label>
                                 <select
                                     className="form-ctrl"
@@ -198,7 +213,9 @@ export default function DosenFormModal({
                                     <option value="Guru Besar">Guru Besar</option>
                                 </select>
                             </div>
-                            <div className="col-12 col-md-4">
+
+                            {/* Status Dosen */}
+                            <div className="col-span-1 md:col-span-4">
                                 <label className="form-label-c">Status Aktif Dosen</label>
                                 <select
                                     className="form-ctrl"
