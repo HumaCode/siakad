@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Modal from '@/Components/Modal';
+import SearchableSelect from '@/Components/SearchableSelect';
 
 interface DosenFormModalProps {
     isOpen: boolean;
@@ -178,23 +179,19 @@ export default function DosenFormModal({
                                 />
                             </div>
 
-                            {/* Program Studi */}
+                            {/* Program Studi (Searchable Select) */}
                             <div className="col-span-1 md:col-span-4">
-                                <label className="form-label-c">Program Studi Homebase</label>
-                                <select
-                                    className="form-ctrl"
-                                    name="prodi"
+                                <SearchableSelect
+                                    label="Program Studi Homebase"
+                                    placeholder="Pilih Program Studi"
                                     value={formData.prodi}
-                                    onChange={handleChange}
+                                    onChange={(val) => setFormData(prev => ({ ...prev, prodi: val }))}
+                                    options={allProdis.map((prodi) => ({
+                                        value: prodi,
+                                        label: prodi
+                                    }))}
                                     required
-                                >
-                                    <option value="">Pilih Program Studi</option>
-                                    {allProdis.map((prodi) => (
-                                        <option key={prodi} value={prodi}>
-                                            {prodi}
-                                        </option>
-                                    ))}
-                                </select>
+                                />
                             </div>
 
                             {/* Jabatan Fungsional */}
