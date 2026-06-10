@@ -11,93 +11,193 @@ export default function StatCards({ stats }: { stats?: any }) {
     };
 
     return (
-        <div className="row g-3 mb-4">
-            <div className="col-6 col-md-4 col-lg-2">
-                <div className="stat-mini">
-                    <div className="sm-icon" style={{ background: 'var(--primary-light)', color: 'var(--primary)' }}>
-                        <i className="bi bi-person-badge-fill"></i>
-                    </div>
-                    <div className="sm-num" style={{ color: 'var(--primary)' }}>
+        <div className="row g-3 mb-4 justify-content-center">
+            {/* Card 1 */}
+            <div className="col-12 col-sm-6 col-md-4 col-lg">
+                <div
+                    className="card-custom p-4 text-center d-flex flex-column align-items-center justify-content-center"
+                    style={{
+                        background: '#fff',
+                        borderRadius: '16px',
+                        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.02)',
+                        border: '1px solid rgba(0, 0, 0, 0.04)',
+                        minHeight: '135px',
+                        transition: 'transform 0.25s ease-in-out',
+                    }}
+                >
+                    <div style={{ fontSize: '2.3rem', fontWeight: '800', color: '#2563eb', lineHeight: 1.1, marginBottom: '6px' }}>
                         {data.totalDosen.toLocaleString('id-ID')}
                     </div>
-                    <div className="sm-lbl">Total Dosen</div>
-                    <div className="sm-badge" style={{ background: 'var(--green-light)', color: 'var(--green)' }}>
-                        <i className="bi bi-arrow-up-short"></i>+8 bulan ini
+                    <div style={{ fontSize: '.78rem', color: '#4b5563', fontWeight: '600', marginBottom: '8px' }}>
+                        Total Dosen
+                    </div>
+                    <div
+                        style={{
+                            background: '#eff6ff',
+                            color: '#2563eb',
+                            fontSize: '.68rem',
+                            fontWeight: '700',
+                            padding: '3px 12px',
+                            borderRadius: '20px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            border: '1px solid rgba(37, 99, 235, 0.08)'
+                        }}
+                    >
+                        <i className="bi bi-check-circle-fill" style={{ fontSize: '.65rem' }}></i> Aktif
                     </div>
                 </div>
             </div>
 
-            <div className="col-6 col-md-4 col-lg-2">
-                <div className="stat-mini">
-                    <div className="sm-icon" style={{ background: 'var(--green-light)', color: 'var(--green)' }}>
-                        <i className="bi bi-check-circle-fill"></i>
-                    </div>
-                    <div className="sm-num" style={{ color: 'var(--green)' }}>
+            {/* Card 2 */}
+            <div className="col-12 col-sm-6 col-md-4 col-lg">
+                <div
+                    className="card-custom p-4 text-center d-flex flex-column align-items-center justify-content-center"
+                    style={{
+                        background: '#fff',
+                        borderRadius: '16px',
+                        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.02)',
+                        border: '1px solid rgba(0, 0, 0, 0.04)',
+                        minHeight: '135px',
+                        transition: 'transform 0.25s ease-in-out',
+                    }}
+                >
+                    <div style={{ fontSize: '2.3rem', fontWeight: '800', color: '#0d9488', lineHeight: 1.1, marginBottom: '6px' }}>
                         {data.dosenAktif.toLocaleString('id-ID')}
                     </div>
-                    <div className="sm-lbl">Dosen Aktif</div>
-                    <div className="sm-badge" style={{ background: 'var(--green-light)', color: 'var(--green)' }}>
-                        95.6%
+                    <div style={{ fontSize: '.78rem', color: '#4b5563', fontWeight: '600', marginBottom: '8px' }}>
+                        Dosen Aktif
+                    </div>
+                    <div
+                        style={{
+                            background: '#f0fdfa',
+                            color: '#0d9488',
+                            fontSize: '.68rem',
+                            fontWeight: '700',
+                            padding: '3px 12px',
+                            borderRadius: '20px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            border: '1px solid rgba(13, 148, 136, 0.08)'
+                        }}
+                    >
+                        Semester ini
                     </div>
                 </div>
             </div>
 
-            <div className="col-6 col-md-4 col-lg-2">
-                <div className="stat-mini">
-                    <div className="sm-icon" style={{ background: 'var(--purple-light)', color: 'var(--purple)' }}>
-                        <i className="bi bi-award-fill"></i>
-                    </div>
-                    <div className="sm-num" style={{ color: 'var(--purple)' }}>
+            {/* Card 3 */}
+            <div className="col-12 col-sm-6 col-md-4 col-lg">
+                <div
+                    className="card-custom p-4 text-center d-flex flex-column align-items-center justify-content-center"
+                    style={{
+                        background: '#fff',
+                        borderRadius: '16px',
+                        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.02)',
+                        border: '1px solid rgba(0, 0, 0, 0.04)',
+                        minHeight: '135px',
+                        transition: 'transform 0.25s ease-in-out',
+                    }}
+                >
+                    <div style={{ fontSize: '2.3rem', fontWeight: '800', color: '#7c3aed', lineHeight: 1.1, marginBottom: '6px' }}>
                         {data.bergelarDoktor.toLocaleString('id-ID')}
                     </div>
-                    <div className="sm-lbl">Bergelar Doktor</div>
-                    <div className="sm-badge" style={{ background: 'var(--purple-light)', color: 'var(--purple)' }}>
-                        26.6%
+                    <div style={{ fontSize: '.78rem', color: '#4b5563', fontWeight: '600', marginBottom: '8px' }}>
+                        Bergelar Doktor
+                    </div>
+                    <div
+                        style={{
+                            background: '#f5f3ff',
+                            color: '#7c3aed',
+                            fontSize: '.68rem',
+                            fontWeight: '700',
+                            padding: '3px 12px',
+                            borderRadius: '20px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            border: '1px solid rgba(124, 58, 237, 0.08)'
+                        }}
+                    >
+                        S3 Pendidikan
                     </div>
                 </div>
             </div>
 
-            <div className="col-6 col-md-4 col-lg-2">
-                <div className="stat-mini">
-                    <div className="sm-icon" style={{ background: 'var(--accent-light)', color: '#b45309' }}>
-                        <i className="bi bi-journal-richtext"></i>
-                    </div>
-                    <div className="sm-num" style={{ color: '#b45309' }}>
+            {/* Card 4 */}
+            <div className="col-12 col-sm-6 col-md-4 col-lg">
+                <div
+                    className="card-custom p-4 text-center d-flex flex-column align-items-center justify-content-center"
+                    style={{
+                        background: '#fff',
+                        borderRadius: '16px',
+                        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.02)',
+                        border: '1px solid rgba(0, 0, 0, 0.04)',
+                        minHeight: '135px',
+                        transition: 'transform 0.25s ease-in-out',
+                    }}
+                >
+                    <div style={{ fontSize: '2.3rem', fontWeight: '800', color: '#ea580c', lineHeight: 1.1, marginBottom: '6px' }}>
                         {data.sesiMengajar.toLocaleString('id-ID')}
                     </div>
-                    <div className="sm-lbl">Sesi Mengajar</div>
-                    <div className="sm-badge" style={{ background: 'var(--accent-light)', color: '#b45309' }}>
-                        Per minggu
+                    <div style={{ fontSize: '.78rem', color: '#4b5563', fontWeight: '600', marginBottom: '8px' }}>
+                        Sesi Mengajar
+                    </div>
+                    <div
+                        style={{
+                            background: '#fffbeb',
+                            color: '#d97706',
+                            fontSize: '.68rem',
+                            fontWeight: '700',
+                            padding: '3px 12px',
+                            borderRadius: '20px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            border: '1px solid rgba(217, 119, 6, 0.08)'
+                        }}
+                    >
+                        Mingguan
                     </div>
                 </div>
             </div>
 
-            <div className="col-6 col-md-4 col-lg-2">
-                <div className="stat-mini">
-                    <div className="sm-icon" style={{ background: 'var(--teal-light)', color: 'var(--teal)' }}>
-                        <i className="bi bi-star-fill"></i>
-                    </div>
-                    <div className="sm-num" style={{ color: 'var(--teal)' }}>
-                        {data.rating.toFixed(2)}
-                    </div>
-                    <div className="sm-lbl">Rata-rata Rating</div>
-                    <div className="sm-badge" style={{ background: 'var(--teal-light)', color: 'var(--teal)' }}>
-                        <i className="bi bi-arrow-up-short"></i>+0.06
-                    </div>
-                </div>
-            </div>
-
-            <div className="col-6 col-md-4 col-lg-2">
-                <div className="stat-mini">
-                    <div className="sm-icon" style={{ background: 'var(--indigo-light)', color: 'var(--indigo)' }}>
-                        <i className="bi bi-file-earmark-text-fill"></i>
-                    </div>
-                    <div className="sm-num" style={{ color: 'var(--indigo)' }}>
+            {/* Card 5 */}
+            <div className="col-12 col-sm-6 col-md-4 col-lg">
+                <div
+                    className="card-custom p-4 text-center d-flex flex-column align-items-center justify-content-center"
+                    style={{
+                        background: '#fff',
+                        borderRadius: '16px',
+                        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.02)',
+                        border: '1px solid rgba(0, 0, 0, 0.04)',
+                        minHeight: '135px',
+                        transition: 'transform 0.25s ease-in-out',
+                    }}
+                >
+                    <div style={{ fontSize: '2.3rem', fontWeight: '800', color: '#16a34a', lineHeight: 1.1, marginBottom: '6px' }}>
                         {data.publikasi.toLocaleString('id-ID')}
                     </div>
-                    <div className="sm-lbl">Total Publikasi</div>
-                    <div className="sm-badge" style={{ background: 'var(--indigo-light)', color: 'var(--indigo)' }}>
-                        <i className="bi bi-arrow-up-short"></i>+84
+                    <div style={{ fontSize: '.78rem', color: '#4b5563', fontWeight: '600', marginBottom: '8px' }}>
+                        Total Publikasi
+                    </div>
+                    <div
+                        style={{
+                            background: '#f0fdf4',
+                            color: '#16a34a',
+                            fontSize: '.68rem',
+                            fontWeight: '700',
+                            padding: '3px 12px',
+                            borderRadius: '20px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            border: '1px solid rgba(22, 163, 74, 0.08)'
+                        }}
+                    >
+                        Tersedia
                     </div>
                 </div>
             </div>
