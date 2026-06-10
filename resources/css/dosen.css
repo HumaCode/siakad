@@ -653,13 +653,22 @@
 .drawer-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 30, 69, .4);
+  background: rgba(15, 30, 69, .5);
   z-index: 2000;
-  display: none;
-  backdrop-filter: blur(3px);
+  opacity: 0;
+  visibility: hidden;
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  transition:
+    opacity .38s cubic-bezier(.4, 0, .2, 1),
+    backdrop-filter .38s cubic-bezier(.4, 0, .2, 1),
+    visibility .38s;
 }
 .drawer-overlay.open {
-  display: block;
+  opacity: 1;
+  visibility: visible;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
 }
 .drawer {
   position: fixed;
@@ -669,15 +678,22 @@
   width: 460px;
   background: #fff;
   z-index: 2001;
-  transform: translateX(100%);
-  transition: transform .35s cubic-bezier(.4, 0, .2, 1);
+  transform: translateX(110%) scale(.97);
+  opacity: 0;
+  transition:
+    transform .48s cubic-bezier(.22, 1, .36, 1),
+    opacity   .38s cubic-bezier(.4, 0, .2, 1),
+    box-shadow .48s cubic-bezier(.22, 1, .36, 1);
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  box-shadow: -8px 0 48px rgba(26, 86, 219, .13);
+  box-shadow: -4px 0 12px rgba(26, 86, 219, .04);
+  will-change: transform, opacity;
 }
 .drawer.open {
-  transform: translateX(0);
+  transform: translateX(0) scale(1);
+  opacity: 1;
+  box-shadow: -12px 0 64px rgba(26, 86, 219, .18), -2px 0 8px rgba(0,0,0,.06);
 }
 .drawer-cover {
   height: 120px;
@@ -778,6 +794,40 @@
   padding: 0 24px 28px;
   flex: 1;
 }
+
+/* ── Stagger fade-up untuk konten drawer ── */
+@keyframes drawerFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Semua section langsung di-hide, baru tampil saat drawer open */
+.drawer:not(.open) .drawer-cover,
+.drawer:not(.open) .drawer-avatar-row,
+.drawer:not(.open) .drawer-body {
+  opacity: 0;
+}
+
+.drawer.open .drawer-cover {
+  animation: drawerFadeUp .4s cubic-bezier(.22, 1, .36, 1) .18s both;
+}
+.drawer.open .drawer-avatar-row {
+  animation: drawerFadeUp .4s cubic-bezier(.22, 1, .36, 1) .26s both;
+}
+.drawer.open .drawer-body {
+  animation: drawerFadeUp .42s cubic-bezier(.22, 1, .36, 1) .32s both;
+}
+/* Section-section di dalam body */
+.drawer.open .dw-section:nth-child(1) { animation: drawerFadeUp .38s cubic-bezier(.22,1,.36,1) .36s both; }
+.drawer.open .dw-section:nth-child(2) { animation: drawerFadeUp .38s cubic-bezier(.22,1,.36,1) .42s both; }
+.drawer.open .dw-section:nth-child(3) { animation: drawerFadeUp .38s cubic-bezier(.22,1,.36,1) .48s both; }
+.drawer.open .dw-section:nth-child(4) { animation: drawerFadeUp .38s cubic-bezier(.22,1,.36,1) .54s both; }
 .dw-name {
   font-family: 'Playfair Display', serif;
   font-size: 1.3rem;

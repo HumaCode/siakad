@@ -71,60 +71,62 @@ export default function DosenDetailDrawer({
                 </div>
 
                 <div className="drawer-body">
-                    <div className="dw-name">{dosen.nama_lengkap || dosen.nama}</div>
-                    <div>
-                        <span className="dw-nidn">{dosen.nidn}</span>
-                    </div>
-                    <div className="dw-title">
-                        {dosen.jabatan || 'Lektor'} · {dosen.prodi?.nama || dosen.prodi || '-'}
-                    </div>
-                    <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap', marginBottom: '16px' }}>
-                        {statusBadge(dosen.status || dosen.status_dosen || 'Aktif')}
-                        {gelarBadge(dosen.gelar || (dosen.gelar_depan === 'Prof.' ? 'Profesor' : dosen.gelar_depan === 'Dr.' ? 'Doktor' : 'Magister'))}
-                        <span className="bp bp-indigo">
-                            <i className="bi bi-mortarboard-fill me-1"></i>
-                            {dosen.keahlian?.split(',')[0].trim() || (Array.isArray(dosen.mk) ? dosen.mk[0] : '-')}
-                        </span>
-                    </div>
-
-                    {/* Rating + Stats */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px', padding: '14px', background: 'var(--soft-bg)', borderRadius: '14px' }}>
-                        <div style={{ textAlign: 'center' }}>
-                            <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.6rem', fontWeight: 800, color: '#b45309', lineHeight: 1 }}>
-                                {rating.toFixed(1)}
-                            </div>
-                            <div style={{ margin: '3px 0' }}>
-                                {ratingStars(rating)}
-                            </div>
-                            <div style={{ fontSize: '.62rem', color: 'var(--text-muted)', fontWeight: 600 }}>
-                                Rating Dosen
-                            </div>
+                    <div className="dw-section">
+                        <div className="dw-name">{dosen.nama_lengkap || dosen.nama}</div>
+                        <div>
+                            <span className="dw-nidn">{dosen.nidn}</span>
                         </div>
-                        <div style={{ flex: 1, borderLeft: '1px solid var(--border)', paddingLeft: '16px' }}>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-                                <div style={{ textAlign: 'center' }}>
-                                    <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', fontWeight: 800, color: 'var(--primary)', display: 'block' }}>
-                                        {dosen.sks || 0}
-                                    </span>
-                                    <span style={{ fontSize: '.6rem', color: 'var(--text-muted)', fontWeight: 600 }}>SKS/Smt</span>
+                        <div className="dw-title">
+                            {dosen.jabatan || 'Lektor'} · {dosen.prodi?.nama || dosen.prodi || '-'}
+                        </div>
+                        <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap', marginBottom: '16px' }}>
+                            {statusBadge(dosen.status || dosen.status_dosen || 'Aktif')}
+                            {gelarBadge(dosen.gelar || (dosen.gelar_depan === 'Prof.' ? 'Profesor' : dosen.gelar_depan === 'Dr.' ? 'Doktor' : 'Magister'))}
+                            <span className="bp bp-indigo">
+                                <i className="bi bi-mortarboard-fill me-1"></i>
+                                {dosen.keahlian?.split(',')[0].trim() || (Array.isArray(dosen.mk) ? dosen.mk[0] : '-')}
+                            </span>
+                        </div>
+
+                        {/* Rating + Stats */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '4px', padding: '14px', background: 'var(--soft-bg)', borderRadius: '14px' }}>
+                            <div style={{ textAlign: 'center' }}>
+                                <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.6rem', fontWeight: 800, color: '#b45309', lineHeight: 1 }}>
+                                    {rating.toFixed(1)}
                                 </div>
-                                <div style={{ textAlign: 'center' }}>
-                                    <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', fontWeight: 800, color: 'var(--teal)', display: 'block' }}>
-                                        {dosen.mhsBimbing || 0}
-                                    </span>
-                                    <span style={{ fontSize: '.6rem', color: 'var(--text-muted)', fontWeight: 600 }}>Mhs Wali</span>
+                                <div style={{ margin: '3px 0' }}>
+                                    {ratingStars(rating)}
                                 </div>
-                                <div style={{ textAlign: 'center' }}>
-                                    <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', fontWeight: 800, color: 'var(--purple)', display: 'block' }}>
-                                        {dosen.pub || 0}
-                                    </span>
-                                    <span style={{ fontSize: '.6rem', color: 'var(--text-muted)', fontWeight: 600 }}>Publikasi</span>
+                                <div style={{ fontSize: '.62rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+                                    Rating Dosen
                                 </div>
-                                <div style={{ textAlign: 'center' }}>
-                                    <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', fontWeight: 800, color: 'var(--accent)', display: 'block' }}>
-                                        {dosen.masaKerja?.replace(' tahun', '') || '10'}
-                                    </span>
-                                    <span style={{ fontSize: '.6rem', color: 'var(--text-muted)', fontWeight: 600 }}>Thn Mengajar</span>
+                            </div>
+                            <div style={{ flex: 1, borderLeft: '1px solid var(--border)', paddingLeft: '16px' }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                                    <div style={{ textAlign: 'center' }}>
+                                        <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', fontWeight: 800, color: 'var(--primary)', display: 'block' }}>
+                                            {dosen.sks || 0}
+                                        </span>
+                                        <span style={{ fontSize: '.6rem', color: 'var(--text-muted)', fontWeight: 600 }}>SKS/Smt</span>
+                                    </div>
+                                    <div style={{ textAlign: 'center' }}>
+                                        <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', fontWeight: 800, color: 'var(--teal)', display: 'block' }}>
+                                            {dosen.mhsBimbing || 0}
+                                        </span>
+                                        <span style={{ fontSize: '.6rem', color: 'var(--text-muted)', fontWeight: 600 }}>Mhs Wali</span>
+                                    </div>
+                                    <div style={{ textAlign: 'center' }}>
+                                        <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', fontWeight: 800, color: 'var(--purple)', display: 'block' }}>
+                                            {dosen.pub || 0}
+                                        </span>
+                                        <span style={{ fontSize: '.6rem', color: 'var(--text-muted)', fontWeight: 600 }}>Publikasi</span>
+                                    </div>
+                                    <div style={{ textAlign: 'center' }}>
+                                        <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', fontWeight: 800, color: 'var(--accent)', display: 'block' }}>
+                                            {dosen.masaKerja?.replace(' tahun', '') || '10'}
+                                        </span>
+                                        <span style={{ fontSize: '.6rem', color: 'var(--text-muted)', fontWeight: 600 }}>Thn Mengajar</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
