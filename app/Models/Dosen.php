@@ -81,4 +81,12 @@ class Dosen extends Model implements HasMedia
     {
         return $this->hasMany(MataKuliah::class, 'dosen_id');
     }
+
+    /**
+     * Get the teaching schedule for this lecturer.
+     */
+    public function jadwalKuliahs(): HasMany
+    {
+        return $this->hasMany(JadwalKuliah::class, 'dosen_id');
+    }
 }

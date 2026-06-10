@@ -22,54 +22,101 @@ class DosenController extends Controller
 
     public function index(Request $request): Response
     {
-        $dbDosens = Dosen::with(['user', 'prodi', 'mahasiswaBimbingan', 'mataKuliahs'])->get();
-        
-        $dosens = $dbDosens->map(function ($d) {
-            $sks = $d->mataKuliahs->sum('sks');
+        $dbDosens = Dosen::with([
+            'user',
+            'prodi',
+            'mahasiswaBimbingan.prodi',
+            'mataKuliahs',
+            'jadwalKuliahs.mataKuliah',
+            'jadwalKuliahs.ruangan',
+            'jadwalKuliahs.kelas',
+        ])->get();
+
+        $hariOrder = ['Senin' => 1, 'Selasa' => 2, 'Rabu' => 3, 'Kamis' => 4, 'Jumat' => 5, 'Sabtu' => 6];
+
+        $dosens = $dbDosens->map(function ($d) use ($hariOrder) {
+            $sks     = $d->mataKuliahs->sum('sks');
             $keahlian = $d->mataKuliahs->pluck('nama')->implode(', ') ?: '-';
 
+            // Jadwal mengajar — sorted by hari
+            $jadwal = $d->jadwalKuliahs
+                ->sortBy(fn($j) => $hariOrder[$j->hari] ?? 9)
+                ->values()
+                ->map(fn($j) => [
+                    'hari'       => $j->hari,
+                    'jam_mulai'  => $j->jam_mulai,
+                    'jam_selesai'=> $j->jam_selesai,
+                    'mk'         => $j->mataKuliah?->nama ?? '-',
+                    'sks_mk'     => $j->mataKuliah?->sks ?? 0,
+                    'ruangan'    => $j->ruangan?->nama_ruangan ?? '-',
+                    'kelas'      => $j->kelas?->nama ?? '-',
+                    'tipe'       => $j->tipe ?? 'Teori',
+                ])->values()->all();
+
+            // Matakuliah diampu
+            $mataKuliahs = $d->mataKuliahs->map(fn($mk) => [
+                'kode'   => $mk->kode,
+                'nama'   => $mk->nama,
+                'sks'    => $mk->sks,
+                'sem'    => $mk->sem,
+                'jenis'  => $mk->jenis,
+                'status' => $mk->status,
+            ])->values()->all();
+
+            // Mahasiswa bimbingan
+            $mahasiswaBimbingan = $d->mahasiswaBimbingan->map(fn($m) => [
+                'nim'     => $m->nim,
+                'nama'    => $m->nama,
+                'prodi'   => $m->prodi?->nama ?? '-',
+                'angkatan'=> $m->angkatan,
+                'status'  => $m->status_akademik,
+            ])->values()->all();
+
             return [
-                'id' => $d->id,
-                'nidn' => $d->nidn,
-                'nama' => $d->nama,
-                'nama_lengkap' => $d->nama_lengkap,
-                'gelar_depan' => $d->gelar_depan,
-                'gelar_belakang' => $d->gelar_belakang,
-                'prodi' => $d->prodi->nama ?? '-',
-                'status_dosen' => $d->status_dosen === 'tetap' ? 'Aktif' : 'Cuti',
-                'email' => $d->user->email ?? '-',
-                'hp' => '0812-3456-7890',
-                'sks' => $sks,
-                'mhsBimbing' => $d->mahasiswaBimbingan->count(),
-                'rating' => round(4.0 + (rand(0, 10) / 10), 1),
-                'pub' => rand(5, 50),
-                'initials' => collect(explode(' ', $d->nama))->map(fn($n) => mb_substr($n, 0, 1))->take(2)->implode(''),
-                'ttl' => 'Jakarta, 12 April 1980',
-                'pendidikan' => $d->gelar_depan === 'Dr.' || $d->gelar_depan === 'Prof.' ? 'S3 - Doktor' : 'S2 - Magister',
-                'keahlian' => $keahlian,
-                'jabatan' => $d->jabatan ?? 'Tenaga Pengajar',
-                'masaKerja' => rand(3, 20) . ' tahun',
-                'scopus' => rand(10000, 99999)
+                'id'                => $d->id,
+                'nidn'              => $d->nidn,
+                'nama'              => $d->nama,
+                'nama_lengkap'      => $d->nama_lengkap,
+                'gelar_depan'       => $d->gelar_depan,
+                'gelar_belakang'    => $d->gelar_belakang,
+                'prodi'             => $d->prodi?->nama ?? '-',
+                'prodi_id'          => $d->prodi_id,
+                'status_dosen'      => $d->status_dosen === 'tetap' ? 'Aktif' : 'Cuti',
+                'email'             => $d->user?->email ?? '-',
+                'hp'                => '-',
+                'sks'               => $sks,
+                'mhsBimbing'        => $d->mahasiswaBimbingan->count(),
+                'rating'            => round(4.0 + (rand(0, 10) / 10), 1),
+                'pub'               => rand(5, 50),
+                'initials'          => collect(explode(' ', $d->nama))->map(fn($n) => mb_substr($n, 0, 1))->take(2)->implode(''),
+                'ttl'               => '-',
+                'pendidikan'        => $d->gelar_depan === 'Dr.' || $d->gelar_depan === 'Prof.' ? 'S3 – Doktor' : 'S2 – Magister',
+                'keahlian'          => $keahlian,
+                'jabatan'           => $d->jabatan ?? 'Tenaga Pengajar',
+                'masaKerja'         => rand(3, 20) . ' tahun',
+                'scopus'            => rand(10000, 99999),
+                'jadwal'            => $jadwal,
+                'mataKuliahs'       => $mataKuliahs,
+                'mahasiswaBimbingan' => $mahasiswaBimbingan,
             ];
         });
 
-        // Use mock list if DB has no seed data
         if ($dosens->isEmpty()) {
             $dosens = null;
         }
 
         $stats = [
-            'totalDosen' => Dosen::count() ?: 482,
-            'dosenAktif' => Dosen::where('status_dosen', 'tetap')->count() ?: 461,
-            'bergelarDoktor' => Dosen::where('gelar_depan', 'like', '%Dr%')->orWhere('gelar_depan', 'like', '%Prof%')->count() ?: 128,
-            'sesiMengajar' => 892,
-            'rating' => 4.32,
-            'publikasi' => 1247
+            'totalDosen'      => Dosen::count() ?: 482,
+            'dosenAktif'      => Dosen::where('status_dosen', 'tetap')->count() ?: 461,
+            'bergelarDoktor'  => Dosen::where('gelar_depan', 'like', '%Dr%')->orWhere('gelar_depan', 'like', '%Prof%')->count() ?: 128,
+            'sesiMengajar'    => 892,
+            'rating'          => 4.32,
+            'publikasi'       => 1247,
         ];
 
         return Inertia::render('MainMenu/Dosen/Dosen', [
-            'dosens' => $dosens,
-            'stats' => $stats,
+            'dosens'     => $dosens,
+            'stats'      => $stats,
             'all_prodis' => Prodi::orderBy('nama')->pluck('nama')->toArray(),
         ]);
     }

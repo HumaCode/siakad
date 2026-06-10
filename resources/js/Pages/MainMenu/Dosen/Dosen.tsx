@@ -88,8 +88,16 @@ export default function Dosen({ dosens, stats, all_prodis }: any) {
             d.email.toLowerCase().includes(search.toLowerCase());
 
         const matchesProdi = !prodiFilter || d.prodi === prodiFilter;
-        const matchesGelar = !gelarFilter || d.gelar === gelarFilter;
-        const matchesStatus = !statusFilter || d.status === statusFilter;
+        
+        const dGelar = d.gelar || (
+            d.gelar_depan === 'Prof.' ? 'Profesor' :
+            d.gelar_depan === 'Dr.' ? 'Doktor' :
+            'Magister'
+        );
+        const matchesGelar = !gelarFilter || dGelar === gelarFilter;
+        
+        const dStatus = d.status_dosen || d.status || 'Aktif';
+        const matchesStatus = !statusFilter || dStatus === statusFilter;
 
         return matchesSearch && matchesProdi && matchesGelar && matchesStatus;
     });
