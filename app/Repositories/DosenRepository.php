@@ -71,4 +71,20 @@ class DosenRepository implements DosenRepositoryInterface
         $dosen = Dosen::findOrFail($id);
         return $dosen->delete();
     }
+
+    /**
+     * Get all dosens with relations needed for management view.
+     */
+    public function getAllWithRelations(): Collection
+    {
+        return Dosen::with([
+            'user',
+            'prodi',
+            'mahasiswaBimbingan.prodi',
+            'mataKuliahs',
+            'jadwalKuliahs.mataKuliah',
+            'jadwalKuliahs.ruangan',
+            'jadwalKuliahs.kelas',
+        ])->get();
+    }
 }

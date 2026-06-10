@@ -42,4 +42,9 @@ interface DosenRepositoryInterface
      * Delete a dosen record.
      */
     public function delete(string $id): bool;
+
+    /**
+     * Get all dosens with relations needed for management view.
+     */
+    public function getAllWithRelations(): Collection;
 }

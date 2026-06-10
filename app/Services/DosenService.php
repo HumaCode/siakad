@@ -100,4 +100,12 @@ class DosenService
             return $this->dosenRepository->delete($id);
         });
     }
+
+    /**
+     * Get all dosens with relations needed for management view.
+     */
+    public function getAllWithRelations(): Collection
+    {
+        return $this->dosenRepository->getAllWithRelations();
+    }
 }
