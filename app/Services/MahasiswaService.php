@@ -57,15 +57,15 @@ class MahasiswaService
             $mahasiswa = $this->mahasiswaRepository->create($data);
 
             if (isset($data['foto']) && $data['foto'] instanceof \Illuminate\Http\UploadedFile) {
-                $mahasiswa->addMedia($data['foto'])->toMediaCollection('foto');
+                $mahasiswa->addMedia($this->convertToWebp($data['foto']))->toMediaCollection('foto');
             }
 
             if (isset($data['ktp']) && $data['ktp'] instanceof \Illuminate\Http\UploadedFile) {
-                $mahasiswa->addMedia($data['ktp'])->toMediaCollection('ktp', 'local');
+                $mahasiswa->addMedia($this->convertToWebp($data['ktp']))->toMediaCollection('ktp', 'local');
             }
 
             if (isset($data['kk']) && $data['kk'] instanceof \Illuminate\Http\UploadedFile) {
-                $mahasiswa->addMedia($data['kk'])->toMediaCollection('kk', 'local');
+                $mahasiswa->addMedia($this->convertToWebp($data['kk']))->toMediaCollection('kk', 'local');
             }
 
             return $mahasiswa;
@@ -99,17 +99,17 @@ class MahasiswaService
 
             if (isset($data['foto']) && $data['foto'] instanceof \Illuminate\Http\UploadedFile) {
                 $updatedMahasiswa->clearMediaCollection('foto');
-                $updatedMahasiswa->addMedia($data['foto'])->toMediaCollection('foto');
+                $updatedMahasiswa->addMedia($this->convertToWebp($data['foto']))->toMediaCollection('foto');
             }
 
             if (isset($data['ktp']) && $data['ktp'] instanceof \Illuminate\Http\UploadedFile) {
                 $updatedMahasiswa->clearMediaCollection('ktp');
-                $updatedMahasiswa->addMedia($data['ktp'])->toMediaCollection('ktp', 'local');
+                $updatedMahasiswa->addMedia($this->convertToWebp($data['ktp']))->toMediaCollection('ktp', 'local');
             }
 
             if (isset($data['kk']) && $data['kk'] instanceof \Illuminate\Http\UploadedFile) {
                 $updatedMahasiswa->clearMediaCollection('kk');
-                $updatedMahasiswa->addMedia($data['kk'])->toMediaCollection('kk', 'local');
+                $updatedMahasiswa->addMedia($this->convertToWebp($data['kk']))->toMediaCollection('kk', 'local');
             }
 
             return $updatedMahasiswa;
@@ -155,5 +155,60 @@ class MahasiswaService
         rsort($mergedYears);
         
         return array_map('strval', $mergedYears);
+    }
+
+    /**
+     * Helper to convert image uploads to webp format using GD library.
+     */
+    private function convertToWebp(\Illuminate\Http\UploadedFile $file): \Illuminate\Http\UploadedFile
+    {
+        $mime = $file->getMimeType();
+
+        // Check if it's a supported image type and not already webp
+        if (!in_array($mime, ['image/jpeg', 'image/png', 'image/gif'])) {
+            return $file;
+        }
+
+        $image = null;
+        switch ($mime) {
+            case 'image/jpeg':
+                $image = @imagecreatefromjpeg($file->getRealPath());
+                break;
+            case 'image/png':
+                $image = @imagecreatefrompng($file->getRealPath());
+                if ($image) {
+                    imagealphablending($image, false);
+                    imagesavealpha($image, true);
+                }
+                break;
+            case 'image/gif':
+                $image = @imagecreatefromgif($file->getRealPath());
+                break;
+        }
+
+        if (!$image) {
+            return $file;
+        }
+
+        // Create a temporary file path
+        $tempPath = tempnam(sys_get_temp_dir(), 'webp_');
+        unlink($tempPath);
+        $tempPath .= '.webp';
+
+        // Save as WebP with 80% quality
+        if (imagewebp($image, $tempPath, 80)) {
+            imagedestroy($image);
+
+            return new \Illuminate\Http\UploadedFile(
+                $tempPath,
+                pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME) . '.webp',
+                'image/webp',
+                null,
+                true // Test mode so it doesn't fail upload validation checks
+            );
+        }
+
+        imagedestroy($image);
+        return $file;
     }
 }
