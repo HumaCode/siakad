@@ -15,7 +15,7 @@ export default function DosenImportModal({
     return (
         <Modal show={isOpen} onClose={onClose} maxWidth="lg">
             <div className="modal-content" style={{ background: '#fff', border: 'none' }}>
-                <div className="modal-header d-flex justify-content-between align-items-center p-4 border-b border-gray-100">
+                <div className="modal-header flex justify-between items-center p-4 border-b border-gray-100">
                     <h5 className="modal-title font-poppins m-0">
                         <i className="bi bi-file-earmark-excel-fill me-2 text-success"></i>
                         Import Data Dosen
@@ -69,7 +69,7 @@ export default function DosenImportModal({
                         </a>
                     </div>
                 </div>
-                <div className="modal-footer d-flex justify-content-between p-4 border-t border-gray-100">
+                <div className="modal-footer flex justify-between p-4 border-t border-gray-100">
                     <button className="btn-outline" onClick={onClose}>
                         <i className="bi bi-x-lg"></i> Batal
                     </button>
