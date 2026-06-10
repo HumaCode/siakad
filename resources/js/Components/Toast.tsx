@@ -42,7 +42,7 @@ export default function Toast({ toast, onClose, duration = 3000 }: ToastProps) {
                 backdropFilter:       'blur(12px)',
                 WebkitBackdropFilter: 'blur(12px)',
                 zIndex:               99999,
-                animation:            'toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                animation:            'toastIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
                 whiteSpace:           'nowrap',
             }}
         >
