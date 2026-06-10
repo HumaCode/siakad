@@ -1,20 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import Modal from '@/Components/Modal';
 import SearchableSelect from '@/Components/SearchableSelect';
+import { useForm } from '@inertiajs/react';
 
 interface DosenFormModalProps {
     isOpen: boolean;
     onClose: () => void;
     dosen: any | null;
-    onSubmit: (data: any) => void;
     allProdis?: string[];
+    onSuccess: (message: string) => void;
+    onError: (message: string) => void;
 }
 
 export default function DosenFormModal({
     isOpen,
     onClose,
     dosen,
-    onSubmit,
     allProdis = [
         'Teknik Informatika',
         'Sistem Informasi',
@@ -22,9 +23,11 @@ export default function DosenFormModal({
         'Ilmu Hukum',
         'Kedokteran Gigi',
         'Teknik Elektro'
-    ]
+    ],
+    onSuccess,
+    onError
 }: DosenFormModalProps) {
-    const [formData, setFormData] = useState({
+    const { data, setData, post, put, processing, errors, reset, clearErrors } = useForm({
         nidn: '',
         nama: '',
         gelar_depan: '',
@@ -38,7 +41,7 @@ export default function DosenFormModal({
 
     useEffect(() => {
         if (dosen) {
-            setFormData({
+            setData({
                 nidn: dosen.nidn || '',
                 nama: dosen.nama || '',
                 gelar_depan: dosen.gelar_depan || '',
@@ -50,36 +53,41 @@ export default function DosenFormModal({
                 status: dosen.status || dosen.status_dosen || 'Aktif'
             });
         } else {
-            setFormData({
-                nidn: '',
-                nama: '',
-                gelar_depan: '',
-                gelar_belakang: '',
-                email: '',
-                hp: '',
-                prodi: '',
-                jabatan: 'Asisten Ahli',
-                status: 'Aktif'
-            });
+            reset();
         }
+        clearErrors();
     }, [dosen, isOpen]);
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
-    };
 
     const handleFormSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        onSubmit(formData);
+        
+        if (dosen) {
+            put(`/dosen/${dosen.id}`, {
+                onSuccess: () => {
+                    onSuccess('Data dosen berhasil diperbarui.');
+                    onClose();
+                },
+                onError: (err) => {
+                    onError('Gagal memperbarui data dosen. Periksa kembali inputan Anda.');
+                }
+            });
+        } else {
+            post('/dosen', {
+                onSuccess: () => {
+                    onSuccess('Data dosen baru berhasil ditambahkan.');
+                    onClose();
+                    reset();
+                },
+                onError: (err) => {
+                    onError('Gagal menambahkan data dosen. Periksa kembali inputan Anda.');
+                }
+            });
+        }
     };
 
     return (
         <Modal show={isOpen} onClose={onClose} maxWidth="4xl" overflow="visible">
-            <div className="modal-content" style={{ background: '#fff', border: 'none' }}>
+            <div className="modal-content" style={{ background: '#fff', border: 'none', borderRadius: '16px' }}>
                 <div className="modal-header flex justify-between items-center p-4 border-b border-gray-100">
                     <h5 className="modal-title font-poppins m-0">
                         <i className="bi bi-person-plus-fill me-2 text-primary"></i>
@@ -102,13 +110,13 @@ export default function DosenFormModal({
                                 <label className="form-label-c">Nomor Induk Dosen Nasional (NIDN)</label>
                                 <input
                                     type="text"
-                                    className="form-ctrl"
+                                    className={`form-ctrl ${errors.nidn ? 'border-rose-500' : ''}`}
                                     placeholder="10 digit angka NIDN"
-                                    name="nidn"
-                                    value={formData.nidn}
-                                    onChange={handleChange}
+                                    value={data.nidn}
+                                    onChange={e => setData('nidn', e.target.value)}
                                     required
                                 />
+                                {errors.nidn && <p className="text-rose-500 text-xs mt-1">{errors.nidn}</p>}
                             </div>
 
                             {/* Nama Lengkap */}
@@ -116,13 +124,13 @@ export default function DosenFormModal({
                                 <label className="form-label-c">Nama Lengkap (tanpa gelar)</label>
                                 <input
                                     type="text"
-                                    className="form-ctrl"
+                                    className={`form-ctrl ${errors.nama ? 'border-rose-500' : ''}`}
                                     placeholder="Contoh: Agus Maulana"
-                                    name="nama"
-                                    value={formData.nama}
-                                    onChange={handleChange}
+                                    value={data.nama}
+                                    onChange={e => setData('nama', e.target.value)}
                                     required
                                 />
+                                {errors.nama && <p className="text-rose-500 text-xs mt-1">{errors.nama}</p>}
                             </div>
 
                             {/* Gelar Depan */}
@@ -130,12 +138,12 @@ export default function DosenFormModal({
                                 <label className="form-label-c">Gelar Depan (jika ada)</label>
                                 <input
                                     type="text"
-                                    className="form-ctrl"
+                                    className={`form-ctrl ${errors.gelar_depan ? 'border-rose-500' : ''}`}
                                     placeholder="Contoh: Prof. Dr."
-                                    name="gelar_depan"
-                                    value={formData.gelar_depan}
-                                    onChange={handleChange}
+                                    value={data.gelar_depan}
+                                    onChange={e => setData('gelar_depan', e.target.value)}
                                 />
+                                {errors.gelar_depan && <p className="text-rose-500 text-xs mt-1">{errors.gelar_depan}</p>}
                             </div>
 
                             {/* Gelar Belakang */}
@@ -143,12 +151,12 @@ export default function DosenFormModal({
                                 <label className="form-label-c">Gelar Belakang</label>
                                 <input
                                     type="text"
-                                    className="form-ctrl"
+                                    className={`form-ctrl ${errors.gelar_belakang ? 'border-rose-500' : ''}`}
                                     placeholder="Contoh: M.T., Ph.D"
-                                    name="gelar_belakang"
-                                    value={formData.gelar_belakang}
-                                    onChange={handleChange}
+                                    value={data.gelar_belakang}
+                                    onChange={e => setData('gelar_belakang', e.target.value)}
                                 />
+                                {errors.gelar_belakang && <p className="text-rose-500 text-xs mt-1">{errors.gelar_belakang}</p>}
                             </div>
 
                             {/* Email Kampus */}
@@ -156,13 +164,13 @@ export default function DosenFormModal({
                                 <label className="form-label-c">Email Kampus</label>
                                 <input
                                     type="email"
-                                    className="form-ctrl"
+                                    className={`form-ctrl ${errors.email ? 'border-rose-500' : ''}`}
                                     placeholder="dosen@universitas.ac.id"
-                                    name="email"
-                                    value={formData.email}
-                                    onChange={handleChange}
+                                    value={data.email}
+                                    onChange={e => setData('email', e.target.value)}
                                     required
                                 />
+                                {errors.email && <p className="text-rose-500 text-xs mt-1">{errors.email}</p>}
                             </div>
 
                             {/* Nomor HP */}
@@ -170,13 +178,13 @@ export default function DosenFormModal({
                                 <label className="form-label-c">Nomor HP / WhatsApp</label>
                                 <input
                                     type="tel"
-                                    className="form-ctrl"
+                                    className={`form-ctrl ${errors.hp ? 'border-rose-500' : ''}`}
                                     placeholder="Contoh: 08123456789"
-                                    name="hp"
-                                    value={formData.hp}
-                                    onChange={handleChange}
+                                    value={data.hp}
+                                    onChange={e => setData('hp', e.target.value)}
                                     required
                                 />
+                                {errors.hp && <p className="text-rose-500 text-xs mt-1">{errors.hp}</p>}
                             </div>
 
                             {/* Program Studi (Searchable Select) */}
@@ -184,12 +192,13 @@ export default function DosenFormModal({
                                 <SearchableSelect
                                     label="Program Studi Homebase"
                                     placeholder="Pilih Program Studi"
-                                    value={formData.prodi}
-                                    onChange={(val) => setFormData(prev => ({ ...prev, prodi: val }))}
+                                    value={data.prodi}
+                                    onChange={(val) => setData('prodi', val)}
                                     options={allProdis.map((prodi) => ({
                                         value: prodi,
                                         label: prodi
                                     }))}
+                                    error={errors.prodi}
                                     required
                                 />
                             </div>
@@ -198,10 +207,9 @@ export default function DosenFormModal({
                             <div className="col-span-1 md:col-span-4">
                                 <label className="form-label-c">Jabatan Fungsional Akademik</label>
                                 <select
-                                    className="form-ctrl"
-                                    name="jabatan"
-                                    value={formData.jabatan}
-                                    onChange={handleChange}
+                                    className={`form-ctrl ${errors.jabatan ? 'border-rose-500' : ''}`}
+                                    value={data.jabatan}
+                                    onChange={e => setData('jabatan', e.target.value)}
                                     required
                                 >
                                     <option value="Asisten Ahli">Asisten Ahli</option>
@@ -209,22 +217,23 @@ export default function DosenFormModal({
                                     <option value="Lektor Kepala">Lektor Kepala</option>
                                     <option value="Guru Besar">Guru Besar</option>
                                 </select>
+                                {errors.jabatan && <p className="text-rose-500 text-xs mt-1">{errors.jabatan}</p>}
                             </div>
 
                             {/* Status Dosen */}
                             <div className="col-span-1 md:col-span-4">
                                 <label className="form-label-c">Status Aktif Dosen</label>
                                 <select
-                                    className="form-ctrl"
-                                    name="status"
-                                    value={formData.status}
-                                    onChange={handleChange}
+                                    className={`form-ctrl ${errors.status ? 'border-rose-500' : ''}`}
+                                    value={data.status}
+                                    onChange={e => setData('status', e.target.value)}
                                     required
                                 >
                                     <option value="Aktif">Aktif</option>
                                     <option value="Cuti">Cuti</option>
                                     <option value="Pensiun">Pensiun</option>
                                 </select>
+                                {errors.status && <p className="text-rose-500 text-xs mt-1">{errors.status}</p>}
                             </div>
                         </div>
                     </div>
@@ -232,8 +241,17 @@ export default function DosenFormModal({
                         <button type="button" className="btn-outline" onClick={onClose}>
                             <i className="bi bi-x-lg"></i> Batal
                         </button>
-                        <button type="submit" className="btn-add">
-                            <i className="bi bi-check-lg"></i> Simpan Data
+                        <button type="submit" className="btn-add flex items-center gap-2" disabled={processing}>
+                            {processing ? (
+                                <>
+                                    <span className="spinner-border spinner-border-sm animate-spin inline-block w-4 h-4 border-2 rounded-full border-r-transparent" role="status" aria-hidden="true" />
+                                    Sedang Proses...
+                                </>
+                            ) : (
+                                <>
+                                    <i className="bi bi-check-lg"></i> Simpan Data
+                                </>
+                            )}
                         </button>
                     </div>
                 </form>

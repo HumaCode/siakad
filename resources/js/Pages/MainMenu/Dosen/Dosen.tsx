@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import '@/../css/dosen.css';
 
 // Partials
@@ -34,6 +34,12 @@ const defaultDosenData = [
 
 export default function Dosen({ dosens, stats, all_prodis }: any) {
     const [dosenList, setDosenList] = useState<any[]>(() => dosens || defaultDosenData);
+
+    useEffect(() => {
+        if (dosens) {
+            setDosenList(dosens);
+        }
+    }, [dosens]);
 
     const [activeTab, setActiveTab] = useState<'dosen' | 'beban' | 'jabatan' | 'staf'>('dosen');
     const [viewMode, setViewMode] = useState<'table' | 'card'>(() => {
@@ -105,48 +111,22 @@ export default function Dosen({ dosens, stats, all_prodis }: any) {
 
     const handleDeleteDosen = (dosen: any) => {
         if (confirm(`Apakah Anda yakin ingin menghapus data dosen ${dosen.nama}?`)) {
-            setDosenList(prev => prev.filter(item => item.id !== dosen.id));
-            triggerToast('Data dosen berhasil dihapus');
+            router.delete(`/dosen/${dosen.id}`, {
+                onSuccess: () => {
+                    triggerToast('Data dosen berhasil dihapus', 'success');
+                },
+                onError: () => {
+                    triggerToast('Gagal menghapus data dosen', 'danger');
+                }
+            });
         }
-    };
-
-    const handleFormSubmit = (data: any) => {
-        if (editingDosen) {
-            // Edit
-            setDosenList(prev =>
-                prev.map((item) =>
-                    item.id === editingDosen.id
-                        ? { ...item, ...data, initials: data.nama.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase() }
-                        : item
-                )
-            );
-            triggerToast('Data dosen berhasil diperbarui');
-        } else {
-            // Create
-            const newDosen = {
-                id: dosenList.length + 1,
-                ...data,
-                initials: data.nama.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase(),
-                sks: 0,
-                mhsBimbing: 0,
-                pub: 0,
-                rating: 5.0,
-                pendidikan: data.gelar_depan?.includes('Dr') || data.gelar_belakang?.includes('Ph.D') ? 'S3' : 'S2',
-                keahlian: 'Keahlian Baru',
-                masaKerja: '0 tahun',
-                ttl: 'Jakarta, 1 Januari 1990',
-                scopus: '-'
-            };
-            setDosenList(prev => [newDosen, ...prev]);
-            triggerToast('Data dosen baru berhasil ditambahkan');
-        }
-        setIsFormOpen(false);
     };
 
     const handleImportStart = () => {
         setIsImportOpen(false);
-        triggerToast('Import data dosen berhasil dimulai');
+        triggerToast('Import data dosen berhasil dimulai', 'success');
     };
+
 
     return (
         <AuthenticatedLayout header="Manajemen Dosen & Staf">
@@ -265,8 +245,9 @@ export default function Dosen({ dosens, stats, all_prodis }: any) {
                 isOpen={isFormOpen}
                 onClose={() => setIsFormOpen(false)}
                 dosen={editingDosen}
-                onSubmit={handleFormSubmit}
                 allProdis={all_prodis}
+                onSuccess={(msg) => triggerToast(msg, 'success')}
+                onError={(msg) => triggerToast(msg, 'danger')}
             />
 
             {/* IMPORT MODAL */}
@@ -277,7 +258,7 @@ export default function Dosen({ dosens, stats, all_prodis }: any) {
             />
 
             {/* TOAST NOTIFICATION */}
-            {toast && <Toast message={toast.message} type={toast.type} onClose={clearToast} />}
+            <Toast toast={toast} onClose={clearToast} />
 
             {/* SCROLL TOP BUTTON */}
             <button
