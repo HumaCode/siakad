@@ -38,10 +38,7 @@ class Dosen extends Model implements HasMedia
     public function getFotoUrlAttribute(): ?string
     {
         $media = $this->getFirstMedia('foto');
-        if (!$media) {
-            return null;
-        }
-        return '/storage/' . $media->id . '/' . $media->file_name;
+        return $media ? $media->getUrl() : null;
     }
 
     /**
