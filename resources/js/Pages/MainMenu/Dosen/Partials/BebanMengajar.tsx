@@ -1,14 +1,65 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { avgColors } from './DosenTable';
 
-export default function BebanMengajar({ dosens }: { dosens: any[] }) {
-    // We can filter dosens or use the default list from mock data if not provided
-    const overloadDosens = dosens.filter(d => (d.sks || 0) >= 12);
+export default function BebanMengajar({ dosens = [] }: { dosens: any[] }) {
+    const [searchTerm, setSearchTerm] = useState('');
+
+    // Dynamic database calculations
+    const totalDosenCount = dosens.length;
+    let totalSks = 0;
+    let totalMk = 0;
     
+    let ringanCount = 0;
+    let normalCount = 0;
+    let beratCount = 0;
+    let sangatBeratCount = 0;
+
+    dosens.forEach(d => {
+        const sks = d.sks || 0;
+        totalSks += sks;
+        
+        // Count mata kuliahs
+        if (Array.isArray(d.mataKuliahs)) {
+            totalMk += d.mataKuliahs.length;
+        } else if (Array.isArray(d.mk)) {
+            totalMk += d.mk.length;
+        } else if (d.mk) {
+            totalMk += 1;
+        }
+
+        if (sks <= 6) {
+            ringanCount++;
+        } else if (sks <= 9) {
+            normalCount++;
+        } else if (sks <= 12) {
+            beratCount++;
+        } else {
+            sangatBeratCount++;
+        }
+    });
+
+    // Percentages
+    const ringanPct = totalDosenCount > 0 ? Math.round((ringanCount / totalDosenCount) * 100) : 0;
+    const normalPct = totalDosenCount > 0 ? Math.round((normalCount / totalDosenCount) * 100) : 0;
+    const beratPct = totalDosenCount > 0 ? Math.round((beratCount / totalDosenCount) * 100) : 0;
+    const sangatBeratPct = totalDosenCount > 0 ? Math.round((sangatBeratCount / totalDosenCount) * 100) : 0;
+
+    // Filter overload dosen (SKS > 12)
+    const overloadDosens = dosens.filter(d => (d.sks || 0) > 12);
+
+    // Filtered list for detailed table
+    const filteredForTable = dosens.filter(d => {
+        const name = (d.nama_lengkap || d.nama || '').toLowerCase();
+        const nidn = (d.nidn || '');
+        const prodi = (d.prodi?.nama || d.prodi || '').toLowerCase();
+        const search = searchTerm.toLowerCase();
+        return name.includes(search) || nidn.includes(search) || prodi.includes(search);
+    });
+
     return (
         <div className="row g-4">
-            {/* LEFT COLUMN: STATS SUMMARY */}
-            <div className="col-12 col-lg-4" data-aos="fade-right">
+            {/* LEFT COLUMN: STATS SUMMARY (col-lg-6) */}
+            <div className="col-12 col-lg-6" data-aos="fade-right">
                 <div className="card-custom p-4" style={{ height: '100%' }}>
                     <h5 className="font-poppins mb-3" style={{ fontSize: '.9rem', fontWeight: 800, color: 'var(--text-dark)' }}>
                         <i className="bi bi-pie-chart-fill me-2 text-primary"></i>Distribusi Beban SKS
@@ -20,47 +71,47 @@ export default function BebanMengajar({ dosens }: { dosens: any[] }) {
                         </div>
                         <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', marginTop: '2px' }}>
                             <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '2.2rem', fontWeight: 900, color: 'var(--primary)', lineHeight: 1 }}>
-                                892
+                                {totalSks}
                             </span>
                             <span style={{ fontSize: '.95rem', fontWeight: 800, color: 'var(--primary)' }}>
                                 SKS
                             </span>
                         </div>
                         <div style={{ fontSize: '.7rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                            Terbagi dalam 294 Mata Kuliah aktif
+                            Terbagi dalam {totalMk} Mata Kuliah aktif
                         </div>
                     </div>
 
                     <div className="prog-row">
                         <div className="prog-label">Ringan (≤ 6 SKS)</div>
                         <div className="prog-bar-bg">
-                            <div className="prog-bar-fill" style={{ width: '26%', background: 'var(--green)' }}></div>
+                            <div className="prog-bar-fill" style={{ width: `${ringanPct}%`, background: 'var(--green)' }}></div>
                         </div>
-                        <div className="prog-val" style={{ color: 'var(--green)' }}>124 (26%)</div>
+                        <div className="prog-val" style={{ color: 'var(--green)' }}>{ringanCount} ({ringanPct}%)</div>
                     </div>
 
                     <div className="prog-row">
                         <div className="prog-label">Normal (7-9 SKS)</div>
                         <div className="prog-bar-bg">
-                            <div className="prog-bar-fill" style={{ width: '50%', background: 'var(--primary)' }}></div>
+                            <div className="prog-bar-fill" style={{ width: `${normalPct}%`, background: 'var(--primary)' }}></div>
                         </div>
-                        <div className="prog-val" style={{ color: 'var(--primary)' }}>242 (50%)</div>
+                        <div className="prog-val" style={{ color: 'var(--primary)' }}>{normalCount} ({normalPct}%)</div>
                     </div>
 
                     <div className="prog-row">
                         <div className="prog-label">Berat (10-12 SKS)</div>
                         <div className="prog-bar-bg">
-                            <div className="prog-bar-fill" style={{ width: '18%', background: 'var(--amber)' }}></div>
+                            <div className="prog-bar-fill" style={{ width: `${beratPct}%`, background: 'var(--amber)' }}></div>
                         </div>
-                        <div className="prog-val" style={{ color: 'var(--amber)' }}>86 (18%)</div>
+                        <div className="prog-val" style={{ color: 'var(--amber)' }}>{beratCount} ({beratPct}%)</div>
                     </div>
 
                     <div className="prog-row">
                         <div className="prog-label">Sangat Berat (&gt; 12 SKS)</div>
                         <div className="prog-bar-bg">
-                            <div className="prog-bar-fill" style={{ width: '6%', background: 'var(--rose)' }}></div>
+                            <div className="prog-bar-fill" style={{ width: `${sangatBeratPct}%`, background: 'var(--rose)' }}></div>
                         </div>
-                        <div className="prog-val" style={{ color: 'var(--rose)' }}>30 (6%)</div>
+                        <div className="prog-val" style={{ color: 'var(--rose)' }}>{sangatBeratCount} ({sangatBeratPct}%)</div>
                     </div>
 
                     <div style={{ marginTop: '22px', padding: '14px', border: '1.5px dashed var(--border)', borderRadius: '12px', background: 'rgba(255,255,255,.5)' }}>
@@ -74,8 +125,8 @@ export default function BebanMengajar({ dosens }: { dosens: any[] }) {
                 </div>
             </div>
 
-            {/* RIGHT COLUMN: BEBAN TABLE */}
-            <div className="col-12 col-lg-8" data-aos="fade-left">
+            {/* RIGHT COLUMN: BEBAN TABLE (col-lg-6) */}
+            <div className="col-12 col-lg-6" data-aos="fade-left">
                 <div className="card-custom" style={{ height: '100%' }}>
                     <div className="px-4 py-3 border-bottom d-flex align-items-center justify-content-between">
                         <h5 className="font-poppins m-0" style={{ fontSize: '.9rem', fontWeight: 800, color: 'var(--text-dark)' }}>
@@ -83,7 +134,14 @@ export default function BebanMengajar({ dosens }: { dosens: any[] }) {
                         </h5>
                         <div className="fi-wrap" style={{ maxWidth: '200px' }}>
                             <i className="bi bi-search fi-icon"></i>
-                            <input className="fi-input py-1.5" type="text" placeholder="Cari dosen..." style={{ fontSize: '.75rem' }} />
+                            <input
+                                className="fi-input py-1.5"
+                                type="text"
+                                placeholder="Cari dosen..."
+                                style={{ fontSize: '.75rem' }}
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
                         </div>
                     </div>
 
@@ -100,61 +158,69 @@ export default function BebanMengajar({ dosens }: { dosens: any[] }) {
                                 </tr>
                             </thead>
                             <tbody>
-                                {dosens.slice(0, 8).map((d, i) => {
-                                    const level = d.sks <= 6
-                                        ? { label: 'Ringan', cls: 'bp-green' }
-                                        : d.sks <= 9
-                                            ? { label: 'Normal', cls: 'bp-blue' }
-                                            : d.sks <= 12
-                                                ? { label: 'Berat', cls: 'bp-amber' }
-                                                : { label: 'Sangat Berat', cls: 'bp-rose' };
+                                {filteredForTable.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={6} className="text-center py-4 text-slate-500">
+                                            Tidak ada data dosen yang sesuai.
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    filteredForTable.slice(0, 8).map((d, i) => {
+                                        const level = d.sks <= 6
+                                            ? { label: 'Ringan', cls: 'bp-green' }
+                                            : d.sks <= 9
+                                                ? { label: 'Normal', cls: 'bp-blue' }
+                                                : d.sks <= 12
+                                                    ? { label: 'Berat', cls: 'bp-amber' }
+                                                    : { label: 'Sangat Berat', cls: 'bp-rose' };
 
-                                    return (
-                                        <tr key={d.id || d.nidn}>
-                                            <td>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
-                                                    <div style={{
-                                                        width: '30px',
-                                                        height: '30px',
-                                                        borderRadius: '8px',
-                                                        background: avgColors[i % avgColors.length],
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'center',
-                                                        fontSize: '.65rem',
-                                                        fontWeight: 800,
-                                                        color: '#fff',
-                                                        flexShrink: 0
-                                                    }}>
-                                                        {d.initials || d.nama.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase()}
+                                        return (
+                                            <tr key={d.id || d.nidn}>
+                                                <td>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
+                                                        <div style={{
+                                                            width: '30px',
+                                                            height: '30px',
+                                                            borderRadius: '8px',
+                                                            background: avgColors[i % avgColors.length],
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center',
+                                                            fontSize: '.65rem',
+                                                            fontWeight: 800,
+                                                            color: '#fff',
+                                                            flexShrink: 0
+                                                        }}>
+                                                            {d.initials || d.nama.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase()}
+                                                        </div>
+                                                        <div style={{ fontWeight: 700, fontSize: '.8rem', color: 'var(--text-dark)' }}>
+                                                            {(d.nama_lengkap || d.nama).length > 28 ? (d.nama_lengkap || d.nama).slice(0, 28) + '…' : (d.nama_lengkap || d.nama)}
+                                                        </div>
                                                     </div>
-                                                    <div style={{ fontWeight: 700, fontSize: '.8rem', color: 'var(--text-dark)' }}>
-                                                        {(d.nama_lengkap || d.nama).length > 28 ? (d.nama_lengkap || d.nama).slice(0, 28) + '…' : (d.nama_lengkap || d.nama)}
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td style={{ fontSize: '.72rem', color: 'var(--text-muted)' }}>
-                                                {d.prodi?.nama || d.prodi || '-'}
-                                            </td>
-                                            <td style={{ textAlign: 'center', fontWeight: 700 }}>
-                                                {Array.isArray(d.mk) ? d.mk.length : 1}
-                                            </td>
-                                            <td style={{ textAlign: 'center' }}>
-                                                <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '.95rem', fontWeight: 800, color: 'var(--primary)' }}>
-                                                    {d.sks || 0}
-                                                </span>
-                                            </td>
-                                            <td style={{ textAlign: 'center' }}>
-                                                {d.mhsBimbing || 0}
-                                            </td>
-                                            <td>
-                                                <span className={`bp ${level.cls}`}>
-                                                    {level.label}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
+                                                </td>
+                                                <td style={{ fontSize: '.72rem', color: 'var(--text-muted)' }}>
+                                                    {d.prodi?.nama || d.prodi || '-'}
+                                                </td>
+                                                <td style={{ textAlign: 'center', fontWeight: 700 }}>
+                                                    {Array.isArray(d.mataKuliahs) ? d.mataKuliahs.length : (Array.isArray(d.mk) ? d.mk.length : 1)}
+                                                </td>
+                                                <td style={{ textAlign: 'center' }}>
+                                                    <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '.95rem', fontWeight: 800, color: 'var(--primary)' }}>
+                                                        {d.sks || 0}
+                                                    </span>
+                                                </td>
+                                                <td style={{ textAlign: 'center' }}>
+                                                    {d.mhsBimbing || 0}
+                                                </td>
+                                                <td>
+                                                    <span className={`bp ${level.cls}`}>
+                                                        {level.label}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })
+                                )}
                             </tbody>
                         </table>
                     </div>
@@ -213,7 +279,7 @@ export default function BebanMengajar({ dosens }: { dosens: any[] }) {
                                         </div>
                                         <div style={{ textAlign: 'center', background: 'var(--primary-light)', borderRadius: '8px', padding: '8px' }}>
                                             <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.1rem', fontWeight: 800, color: 'var(--primary)' }}>
-                                                {Array.isArray(d.mk) ? d.mk.length : 1}
+                                                {Array.isArray(d.mataKuliahs) ? d.mataKuliahs.length : (Array.isArray(d.mk) ? d.mk.length : 1)}
                                             </div>
                                             <div style={{ fontSize: '.6rem', color: 'var(--primary)', fontWeight: 600 }}>MK</div>
                                         </div>
