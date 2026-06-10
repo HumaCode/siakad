@@ -35,7 +35,7 @@ export default function DosenFormModal({
         email: '',
         hp: '',
         prodi: '',
-        jabatan: 'Asisten Ahli',
+        jabatan: 'Tenaga Pengajar',
         status: 'Aktif'
     });
 
@@ -49,7 +49,7 @@ export default function DosenFormModal({
                 email: dosen.email || '',
                 hp: dosen.hp || '',
                 prodi: dosen.prodi?.nama || dosen.prodi || '',
-                jabatan: dosen.jabatan || 'Asisten Ahli',
+                jabatan: dosen.jabatan || 'Tenaga Pengajar',
                 status: dosen.status || dosen.status_dosen || 'Aktif'
             });
         } else {
@@ -212,6 +212,7 @@ export default function DosenFormModal({
                                     onChange={e => setData('jabatan', e.target.value)}
                                     required
                                 >
+                                    <option value="Tenaga Pengajar">Tenaga Pengajar</option>
                                     <option value="Asisten Ahli">Asisten Ahli</option>
                                     <option value="Lektor">Lektor</option>
                                     <option value="Lektor Kepala">Lektor Kepala</option>
