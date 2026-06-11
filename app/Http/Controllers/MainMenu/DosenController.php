@@ -78,16 +78,17 @@ class DosenController extends Controller
             $firstRole = $user->roles->first()?->name ?: 'admin';
 
             return [
-                'id' => $user->id,
-                'nip' => $nip,
-                'nama' => $user->name,
+                'id'       => $user->id,
+                'nip'      => $nip,
+                'nama'     => $user->name,
                 'initials' => $initials ?: 'ST',
-                'divisi' => $divisi,
-                'jabatan' => $jabatan,
-                'masaKerja' => $masaKerja,
-                'status' => 'Aktif',
-                'email' => $user->email,
-                'role' => $firstRole,
+                'divisi'   => $divisi,
+                'jabatan'  => $jabatan,
+                'masaKerja'=> $masaKerja,
+                'status'   => 'Aktif',
+                'email'    => $user->email,
+                'role'     => $firstRole,
+                'foto_url' => $user->foto_url,
             ];
         });
 
@@ -201,19 +202,22 @@ class DosenController extends Controller
     public function storeStaf(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'nama' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'role' => 'required|string|in:super_admin,dev,admin,akademik,keuangan',
-            'password' => 'nullable|string|min:8',
+            'nama'                  => 'required|string|max:255',
+            'email'                 => 'required|string|email|max:255|unique:users',
+            'role'                  => 'required|string|in:super_admin,dev,admin,akademik,keuangan',
+            'password'              => 'required|string|min:8|confirmed',
+            'password_confirmation' => 'required|string',
+            'foto'                  => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
         ]);
 
         $user = User::create([
-            'name' => $validated['nama'],
-            'email' => $validated['email'],
-            'password' => bcrypt($validated['password'] ?? 'password'),
+            'name'     => $validated['nama'],
+            'email'    => $validated['email'],
+            'password' => bcrypt($validated['password']),
         ]);
 
         $user->assignRole($validated['role']);
+        $this->handleStafPhotoUpload($user, $request);
 
         return redirect()->back()->with('success', 'Data staf non-dosen berhasil ditambahkan.');
     }
@@ -223,14 +227,16 @@ class DosenController extends Controller
         $user = User::findOrFail($id);
 
         $validated = $request->validate([
-            'nama' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $id,
-            'role' => 'required|string|in:super_admin,dev,admin,akademik,keuangan',
-            'password' => 'nullable|string|min:8',
+            'nama'                  => 'required|string|max:255',
+            'email'                 => 'required|string|email|max:255|unique:users,email,' . $id,
+            'role'                  => 'required|string|in:super_admin,dev,admin,akademik,keuangan',
+            'password'              => 'nullable|string|min:8|confirmed',
+            'password_confirmation' => 'nullable|string',
+            'foto'                  => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
         ]);
 
         $userData = [
-            'name' => $validated['nama'],
+            'name'  => $validated['nama'],
             'email' => $validated['email'],
         ];
 
@@ -239,8 +245,8 @@ class DosenController extends Controller
         }
 
         $user->update($userData);
-
         $user->syncRoles([$validated['role']]);
+        $this->handleStafPhotoUpload($user, $request);
 
         return redirect()->back()->with('success', 'Data staf non-dosen berhasil diperbarui.');
     }
@@ -248,8 +254,54 @@ class DosenController extends Controller
     public function destroyStaf(string $id): RedirectResponse
     {
         $user = User::findOrFail($id);
+        $user->clearMediaCollection('foto');
         $user->delete();
 
         return redirect()->back()->with('success', 'Data staf non-dosen berhasil dihapus.');
+    }
+
+    /**
+     * Handle staf photo upload with WebP conversion (reuses same GD logic as Dosen).
+     */
+    private function handleStafPhotoUpload(User $user, Request $request): void
+    {
+        if (!$request->hasFile('foto')) {
+            return;
+        }
+
+        $file     = $request->file('foto');
+        $mimeType = $file->getMimeType();
+        $image    = null;
+
+        if ($mimeType === 'image/jpeg' || $mimeType === 'image/jpg') {
+            $image = @imagecreatefromjpeg($file->getPathname());
+        } elseif ($mimeType === 'image/png') {
+            $image = @imagecreatefrompng($file->getPathname());
+        } elseif ($mimeType === 'image/webp') {
+            $image = @imagecreatefromwebp($file->getPathname());
+        }
+
+        if ($image) {
+            $tempPath = tempnam(sys_get_temp_dir(), 'staf_foto') . '.webp';
+
+            if (@imagewebp($image, $tempPath, 80)) {
+                imagedestroy($image);
+
+                $safeSlug = preg_replace('/[^a-zA-Z0-9_-]/', '_', mb_strtolower($user->name));
+
+                $user->addMedia($tempPath)
+                    ->usingFileName($safeSlug . '_' . $user->id . '.webp')
+                    ->usingName($user->name)
+                    ->toMediaCollection('foto');
+            } else {
+                imagedestroy($image);
+                $user->addMediaFromRequest('foto')
+                    ->toMediaCollection('foto');
+            }
+
+            if (file_exists($tempPath)) {
+                @unlink($tempPath);
+            }
+        }
     }
 }

@@ -14,13 +14,15 @@ use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 #[Fillable(['name', 'email', 'password'])]
 #[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable
+class User extends Authenticatable implements HasMedia
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, HasUlids, HasRoles, LogsActivity;
+    use HasFactory, Notifiable, HasUlids, HasRoles, LogsActivity, InteractsWithMedia;
 
     public function getActivitylogOptions(): LogOptions
     {
@@ -43,6 +45,24 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Register media collections for user profile photo.
+     */
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('foto')
+            ->singleFile();
+    }
+
+    /**
+     * Get the profile photo URL from Spatie media library.
+     */
+    public function getFotoUrlAttribute(): ?string
+    {
+        $media = $this->getFirstMedia('foto');
+        return $media ? '/storage/' . $media->getPathRelativeToRoot() : null;
     }
 
     /**
