@@ -84,6 +84,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/dosen', [\App\Http\Controllers\MainMenu\DosenController::class, 'store'])->name('dosen.store');
     Route::put('/dosen/{id}', [\App\Http\Controllers\MainMenu\DosenController::class, 'update'])->name('dosen.update');
     Route::delete('/dosen/{id}', [\App\Http\Controllers\MainMenu\DosenController::class, 'destroy'])->name('dosen.destroy');
+
+    // Staf Non-Dosen Module
+    Route::post('/dosen/staf', [\App\Http\Controllers\MainMenu\DosenController::class, 'storeStaf'])->name('dosen.staf.store');
+    Route::put('/dosen/staf/{id}', [\App\Http\Controllers\MainMenu\DosenController::class, 'updateStaf'])->name('dosen.staf.update');
+    Route::delete('/dosen/staf/{id}', [\App\Http\Controllers\MainMenu\DosenController::class, 'destroyStaf'])->name('dosen.staf.destroy');
 });
 
 require __DIR__.'/auth.php';

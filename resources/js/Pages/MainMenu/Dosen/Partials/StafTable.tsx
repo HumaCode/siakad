@@ -16,13 +16,15 @@ interface StafTableProps {
     onEdit?: (staf: StafItem) => void;
     onDelete?: (staf: StafItem) => void;
     onView?: (staf: StafItem) => void;
+    onAddClick?: () => void;
 }
 
 export default function StafTable({
     stafList,
     onEdit,
     onDelete,
-    onView
+    onView,
+    onAddClick
 }: StafTableProps) {
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -54,20 +56,31 @@ export default function StafTable({
 
     return (
         <div className="card-custom" data-aos="fade-up">
-            <div className="px-4 py-3 border-bottom d-flex align-items-center justify-content-between">
+            <div className="px-4 py-3 border-bottom flex items-center justify-between flex-wrap gap-2">
                 <h5 className="font-poppins m-0" style={{ fontSize: '.9rem', fontWeight: 800, color: 'var(--text-dark)' }}>
                     <i className="bi bi-people-fill me-2 text-teal"></i>Daftar Staf Non-Dosen
                 </h5>
-                <div className="fi-wrap" style={{ maxWidth: '200px' }}>
-                    <i className="bi bi-search fi-icon"></i>
-                    <input 
-                        className="fi-input py-1.5" 
-                        type="text" 
-                        placeholder="Cari staf..." 
-                        style={{ fontSize: '.75rem' }} 
-                        value={searchQuery}
-                        onChange={e => setSearchQuery(e.target.value)}
-                    />
+                <div className="flex items-center gap-2">
+                    {onAddClick && (
+                        <button 
+                            className="btn-add flex items-center gap-1"
+                            onClick={onAddClick}
+                            style={{ padding: '0.35rem 0.8rem', fontSize: '0.75rem', height: '32px', borderRadius: '8px', whiteSpace: 'nowrap' }}
+                        >
+                            <i className="bi bi-person-plus-fill"></i> Tambah Staf
+                        </button>
+                    )}
+                    <div className="fi-wrap" style={{ maxWidth: '200px' }}>
+                        <i className="bi bi-search fi-icon"></i>
+                        <input 
+                            className="fi-input py-1.5" 
+                            type="text" 
+                            placeholder="Cari staf..." 
+                            style={{ fontSize: '.75rem' }} 
+                            value={searchQuery}
+                            onChange={e => setSearchQuery(e.target.value)}
+                        />
+                    </div>
                 </div>
             </div>
 

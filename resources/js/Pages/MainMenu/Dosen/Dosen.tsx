@@ -13,6 +13,7 @@ import JabatanFungsional from './Partials/JabatanFungsional';
 import StafTable from './Partials/StafTable';
 import DosenDetailDrawer from './Partials/DosenDetailDrawer';
 import DosenFormModal from './Partials/DosenFormModal';
+import StafFormModal from './Partials/StafFormModal';
 import DosenImportModal from './Partials/DosenImportModal';
 import Toast, { useToast } from '@/Components/Toast';
 import ConfirmationModal from '@/Components/ConfirmationModal';
@@ -74,6 +75,13 @@ export default function Dosen({ dosens, stats, all_prodis, stafList }: any) {
     const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
     const [dosenToDelete, setDosenToDelete] = useState<any | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
+
+    // Staf Non-Dosen Modals & CRUD state
+    const [isStafFormOpen, setIsStafFormOpen] = useState(false);
+    const [editingStaf, setEditingStaf] = useState<any | null>(null);
+    const [isConfirmDeleteStafOpen, setIsConfirmDeleteStafOpen] = useState(false);
+    const [stafToDelete, setStafToDelete] = useState<any | null>(null);
+    const [isDeletingStaf, setIsDeletingStaf] = useState(false);
 
     // Toast
     const { toast, triggerToast, clearToast } = useToast();
@@ -158,6 +166,38 @@ export default function Dosen({ dosens, stats, all_prodis, stafList }: any) {
         });
     };
 
+    const handleOpenAddStaf = () => {
+        setEditingStaf(null);
+        setIsStafFormOpen(true);
+    };
+
+    const handleOpenEditStaf = (staf: any) => {
+        setEditingStaf(staf);
+        setIsStafFormOpen(true);
+    };
+
+    const openDeleteStafConfirmation = (staf: any) => {
+        setStafToDelete(staf);
+        setIsConfirmDeleteStafOpen(true);
+    };
+
+    const handleDeleteStaf = () => {
+        if (!stafToDelete) return;
+        setIsDeletingStaf(true);
+        router.delete(`/dosen/staf/${stafToDelete.id}`, {
+            onSuccess: () => {
+                setIsConfirmDeleteStafOpen(false);
+                setStafToDelete(null);
+                setIsDeletingStaf(false);
+                triggerToast('Data staf non-dosen berhasil dihapus', 'success');
+            },
+            onError: () => {
+                setIsDeletingStaf(false);
+                triggerToast('Gagal menghapus data staf', 'danger');
+            }
+        });
+    };
+
     const handleImportStart = () => {
         setIsImportOpen(false);
         triggerToast('Import data dosen berhasil dimulai', 'success');
@@ -177,9 +217,9 @@ export default function Dosen({ dosens, stats, all_prodis, stafList }: any) {
                         <button className="btn-ph btn-ph-white" onClick={() => setIsImportOpen(true)}>
                             <i className="bi bi-file-earmark-excel"></i> Import Excel
                         </button>
-                        <button className="btn-ph btn-ph-solid" onClick={handleOpenAdd}>
-                            <i className="bi bi-person-plus-fill"></i> Tambah Dosen
-                        </button>
+                        <div className="ph-academic-pill">
+                            <i className="bi bi-calendar3"></i> TA: 2025/2026 Ganjil
+                        </div>
                     </div>
                 </div>
 
@@ -337,7 +377,12 @@ export default function Dosen({ dosens, stats, all_prodis, stafList }: any) {
                     </div>
 
                     <div className={`tab-panel ${activeTab === 'staf' ? 'active' : ''}`}>
-                        <StafTable stafList={stafList} />
+                        <StafTable 
+                            stafList={stafList} 
+                            onAddClick={handleOpenAddStaf}
+                            onEdit={handleOpenEditStaf}
+                            onDelete={openDeleteStafConfirmation}
+                        />
                     </div>
                 </div>
             </div>
@@ -387,6 +432,37 @@ export default function Dosen({ dosens, stats, all_prodis, stafList }: any) {
                 }}
                 onConfirm={handleDeleteDosen}
                 processing={isDeleting}
+                variant="danger"
+            />
+
+            {/* STAF FORM MODAL */}
+            <StafFormModal
+                isOpen={isStafFormOpen}
+                onClose={() => setIsStafFormOpen(false)}
+                staf={editingStaf}
+                onSuccess={(msg) => triggerToast(msg, 'success')}
+                onError={(msg) => triggerToast(msg, 'danger')}
+            />
+
+            {/* CONFIRM DELETE STAF MODAL */}
+            <ConfirmationModal
+                show={isConfirmDeleteStafOpen}
+                title="Hapus Data Staf"
+                description={
+                    <span>
+                        Apakah Anda yakin ingin menghapus data staf{' '}
+                        <strong>{stafToDelete?.nama}</strong>? Tindakan ini tidak dapat dibatalkan.
+                    </span>
+                }
+                warningText="Menghapus data staf juga akan menghapus akun user yang terhubung dengan staf tersebut."
+                confirmText="Ya, Hapus Data"
+                cancelText="Batal"
+                onClose={() => {
+                    setIsConfirmDeleteStafOpen(false);
+                    setStafToDelete(null);
+                }}
+                onConfirm={handleDeleteStaf}
+                processing={isDeletingStaf}
                 variant="danger"
             />
 

@@ -75,8 +75,10 @@ class DosenController extends Controller
             
             $nip = '199' . (abs(crc32($user->email)) % 9) . '01202022100' . (abs(crc32($user->id)) % 90 + 10);
             $masaKerja = ((abs(crc32($user->email)) % 8) + 1) . ' tahun';
+            $firstRole = $user->roles->first()?->name ?: 'admin';
 
             return [
+                'id' => $user->id,
                 'nip' => $nip,
                 'nama' => $user->name,
                 'initials' => $initials ?: 'ST',
@@ -84,6 +86,8 @@ class DosenController extends Controller
                 'jabatan' => $jabatan,
                 'masaKerja' => $masaKerja,
                 'status' => 'Aktif',
+                'email' => $user->email,
+                'role' => $firstRole,
             ];
         });
 
@@ -190,10 +194,62 @@ class DosenController extends Controller
                 if (file_exists($tempPath)) {
                     @unlink($tempPath);
                 }
-            } else {
-                $dosen->addMediaFromRequest('foto')
-                    ->toMediaCollection('foto');
             }
         }
+    }
+
+    public function storeStaf(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'nama' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'role' => 'required|string|in:super_admin,dev,admin,akademik,keuangan',
+            'password' => 'nullable|string|min:8',
+        ]);
+
+        $user = User::create([
+            'name' => $validated['nama'],
+            'email' => $validated['email'],
+            'password' => bcrypt($validated['password'] ?? 'password'),
+        ]);
+
+        $user->assignRole($validated['role']);
+
+        return redirect()->back()->with('success', 'Data staf non-dosen berhasil ditambahkan.');
+    }
+
+    public function updateStaf(Request $request, string $id): RedirectResponse
+    {
+        $user = User::findOrFail($id);
+
+        $validated = $request->validate([
+            'nama' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $id,
+            'role' => 'required|string|in:super_admin,dev,admin,akademik,keuangan',
+            'password' => 'nullable|string|min:8',
+        ]);
+
+        $userData = [
+            'name' => $validated['nama'],
+            'email' => $validated['email'],
+        ];
+
+        if (!empty($validated['password'])) {
+            $userData['password'] = bcrypt($validated['password']);
+        }
+
+        $user->update($userData);
+
+        $user->syncRoles([$validated['role']]);
+
+        return redirect()->back()->with('success', 'Data staf non-dosen berhasil diperbarui.');
+    }
+
+    public function destroyStaf(string $id): RedirectResponse
+    {
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return redirect()->back()->with('success', 'Data staf non-dosen berhasil dihapus.');
     }
 }

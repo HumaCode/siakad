@@ -191,3 +191,83 @@ test('authenticated user can delete an existing dosen', function () {
         'id' => $dosenUser->id
     ]);
 });
+
+test('authenticated user can create a new staff member', function () {
+    Role::firstOrCreate(['name' => 'admin']);
+
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)
+        ->post('/dosen/staf', [
+            'nama' => 'Staf Baru IT',
+            'email' => 'stafit@siakad.ac.id',
+            'role' => 'admin',
+            'password' => 'password123'
+        ]);
+
+    $response->assertSessionHasNoErrors();
+    $response->assertRedirect();
+
+    $this->assertDatabaseHas('users', [
+        'name' => 'Staf Baru IT',
+        'email' => 'stafit@siakad.ac.id',
+    ]);
+
+    $newStaf = User::where('email', 'stafit@siakad.ac.id')->first();
+    expect($newStaf->hasRole('admin'))->toBeTrue();
+});
+
+test('authenticated user can update an existing staff member', function () {
+    Role::firstOrCreate(['name' => 'admin']);
+    Role::firstOrCreate(['name' => 'keuangan']);
+
+    $user = User::factory()->create();
+
+    $stafUser = User::create([
+        'name' => 'Staf IT Lama',
+        'email' => 'itold@siakad.ac.id',
+        'password' => bcrypt('password')
+    ]);
+    $stafUser->assignRole('admin');
+
+    $response = $this->actingAs($user)
+        ->put("/dosen/staf/{$stafUser->id}", [
+            'nama' => 'Staf IT Updated',
+            'email' => 'itupdated@siakad.ac.id',
+            'role' => 'keuangan',
+            'password' => 'newpassword123'
+        ]);
+
+    $response->assertSessionHasNoErrors();
+    $response->assertRedirect();
+
+    $this->assertDatabaseHas('users', [
+        'id' => $stafUser->id,
+        'name' => 'Staf IT Updated',
+        'email' => 'itupdated@siakad.ac.id',
+    ]);
+
+    $stafUser->refresh();
+    expect($stafUser->hasRole('keuangan'))->toBeTrue();
+    expect($stafUser->hasRole('admin'))->toBeFalse();
+});
+
+test('authenticated user can delete an existing staff member', function () {
+    $user = User::factory()->create();
+
+    $stafUser = User::create([
+        'name' => 'Staf Delete',
+        'email' => 'stafdelete@siakad.ac.id',
+        'password' => bcrypt('password')
+    ]);
+
+    $response = $this->actingAs($user)
+        ->delete("/dosen/staf/{$stafUser->id}");
+
+    $response->assertSessionHasNoErrors();
+    $response->assertRedirect();
+
+    $this->assertDatabaseMissing('users', [
+        'id' => $stafUser->id
+    ]);
+});

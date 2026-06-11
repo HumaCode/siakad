@@ -36,7 +36,7 @@
   z-index: 1;
 }
 .page-header h4 {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 1.35rem;
   font-weight: 800;
   margin-bottom: 4px;
@@ -65,7 +65,7 @@
   font-weight: 700;
   cursor: pointer;
   transition: var(--transition);
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Poppins', sans-serif;
   border: none;
 }
 .btn-ph-white {
@@ -82,6 +82,19 @@
 }
 .btn-ph-solid:hover {
   background: #f0f4ff;
+}
+.ph-academic-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  border-radius: 10px;
+  font-size: .82rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  font-family: 'Poppins', sans-serif;
 }
 
 /* STAT MINI */
@@ -110,7 +123,7 @@
   margin-bottom: 10px;
 }
 .sm-num {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 1.65rem;
   font-weight: 800;
   line-height: 1;
@@ -153,7 +166,7 @@
   color: var(--text-muted);
   cursor: pointer;
   transition: var(--transition);
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Poppins', sans-serif;
   display: flex;
   align-items: center;
   gap: 7px;
@@ -215,7 +228,7 @@
   border: 1.5px solid var(--border);
   border-radius: 10px;
   font-size: .82rem;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Poppins', sans-serif;
   background: rgba(255, 255, 255, .8);
   color: var(--text-dark);
   outline: none;
@@ -231,7 +244,7 @@
   border: 1.5px solid var(--border);
   border-radius: 10px;
   font-size: .82rem;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Poppins', sans-serif;
   background: rgba(255, 255, 255, .8);
   color: var(--text-dark);
   outline: none;
@@ -252,7 +265,7 @@
   border-radius: 10px;
   font-size: .82rem;
   font-weight: 700;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Poppins', sans-serif;
   cursor: pointer;
   transition: var(--transition);
 }
@@ -271,7 +284,7 @@
   border-radius: 10px;
   font-size: .82rem;
   font-weight: 600;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Poppins', sans-serif;
   cursor: pointer;
   transition: var(--transition);
 }
@@ -361,7 +374,7 @@
   padding-bottom: 4px;
 }
 .dc-name {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 1rem;
   font-weight: 700;
   color: var(--text-dark);
@@ -411,7 +424,7 @@
   text-align: center;
 }
 .dc-stat-num {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: .95rem;
   font-weight: 800;
   color: var(--text-dark);
@@ -759,7 +772,7 @@
   border-radius: 9px;
   font-size: .75rem;
   font-weight: 700;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Poppins', sans-serif;
   cursor: pointer;
   transition: var(--transition);
   border: none;
@@ -829,7 +842,7 @@
 .drawer.open .dw-section:nth-child(3) { animation: drawerFadeUp .38s cubic-bezier(.22,1,.36,1) .48s both; }
 .drawer.open .dw-section:nth-child(4) { animation: drawerFadeUp .38s cubic-bezier(.22,1,.36,1) .54s both; }
 .dw-name {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 1.3rem;
   font-weight: 800;
   color: var(--text-dark);
@@ -905,7 +918,7 @@
   text-align: center;
 }
 .sbn {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 1.05rem;
   font-weight: 800;
   color: var(--text-dark);
@@ -1005,7 +1018,7 @@
   justify-content: center;
 }
 .ring-num {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Poppins', sans-serif;
   font-size: .95rem;
   font-weight: 800;
   color: var(--text-dark);
@@ -1052,7 +1065,7 @@
   border: 1.5px solid var(--border);
   border-radius: 10px;
   font-size: .84rem;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Poppins', sans-serif;
   color: var(--text-dark);
   background: rgba(255, 255, 255, .8);
   outline: none;
