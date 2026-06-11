@@ -22,80 +22,148 @@ export default function JabatanFungsional({ dataProdi }: { dataProdi?: JabatanPr
     return (
         <div>
             {/* CARDS STATS */}
-            <div className="row g-3 mb-4" data-aos="fade-up">
-                <div className="col-12 col-sm-6 col-md-3">
-                    <div className="card-custom p-3 d-flex align-items-center justify-content-between" style={{ background: 'linear-gradient(135deg, #f5f3ff, #ede9fe)', border: '1.5px solid #ddd6fe' }}>
-                        <div>
-                            <span style={{ fontSize: '.73rem', fontWeight: 700, color: 'var(--purple)', textTransform: 'uppercase', letterSpacing: '.05em' }}>
-                                Guru Besar
-                            </span>
-                            <div style={{ fontSize: '1.75rem', fontWeight: 900, color: 'var(--purple)', marginTop: '2px', lineHeight: 1.1 }}>
-                                24
-                            </div>
-                            <span style={{ fontSize: '.65rem', color: 'var(--text-muted)', fontWeight: 600 }}>
-                                5.0% dari total dosen
-                            </span>
-                        </div>
-                        <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: '#ddd6fe', color: 'var(--purple)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem' }}>
-                            <i className="bi bi-award-fill"></i>
-                        </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4" data-aos="fade-up">
+                {/* Guru Besar */}
+                <div
+                    className="card-custom p-4 text-center d-flex flex-column align-items-center justify-content-center"
+                    style={{
+                        background: '#fff',
+                        borderRadius: '16px',
+                        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.02)',
+                        border: '1px solid rgba(0, 0, 0, 0.04)',
+                        minHeight: '135px',
+                        transition: 'transform 0.25s ease-in-out',
+                    }}
+                >
+                    <div style={{ fontSize: '2.3rem', fontWeight: '800', color: 'var(--purple)', lineHeight: 1.1, marginBottom: '6px' }}>
+                        24
+                    </div>
+                    <div style={{ fontSize: '.78rem', color: '#4b5563', fontWeight: '600', marginBottom: '8px' }}>
+                        Guru Besar
+                    </div>
+                    <div
+                        style={{
+                            background: '#f5f3ff',
+                            color: 'var(--purple)',
+                            fontSize: '.68rem',
+                            fontWeight: '700',
+                            padding: '3px 12px',
+                            borderRadius: '20px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            border: '1px solid rgba(124, 58, 237, 0.08)'
+                        }}
+                    >
+                        5.0% dari total dosen
                     </div>
                 </div>
 
-                <div className="col-12 col-sm-6 col-md-3">
-                    <div className="card-custom p-3 d-flex align-items-center justify-content-between" style={{ background: 'linear-gradient(135deg, #eff6ff, #dbeafe)', border: '1.5px solid #bfdbfe' }}>
-                        <div>
-                            <span style={{ fontSize: '.73rem', fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '.05em' }}>
-                                Lektor Kepala
-                            </span>
-                            <div style={{ fontSize: '1.75rem', fontWeight: 900, color: 'var(--primary)', marginTop: '2px', lineHeight: 1.1 }}>
-                                86
-                            </div>
-                            <span style={{ fontSize: '.65rem', color: 'var(--text-muted)', fontWeight: 600 }}>
-                                17.8% dari total dosen
-                            </span>
-                        </div>
-                        <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: '#bfdbfe', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem' }}>
-                            <i className="bi bi-mortarboard-fill"></i>
-                        </div>
+                {/* Lektor Kepala */}
+                <div
+                    className="card-custom p-4 text-center d-flex flex-column align-items-center justify-content-center"
+                    style={{
+                        background: '#fff',
+                        borderRadius: '16px',
+                        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.02)',
+                        border: '1px solid rgba(0, 0, 0, 0.04)',
+                        minHeight: '135px',
+                        transition: 'transform 0.25s ease-in-out',
+                    }}
+                >
+                    <div style={{ fontSize: '2.3rem', fontWeight: '800', color: 'var(--primary)', lineHeight: 1.1, marginBottom: '6px' }}>
+                        86
+                    </div>
+                    <div style={{ fontSize: '.78rem', color: '#4b5563', fontWeight: '600', marginBottom: '8px' }}>
+                        Lektor Kepala
+                    </div>
+                    <div
+                        style={{
+                            background: '#eff6ff',
+                            color: 'var(--primary)',
+                            fontSize: '.68rem',
+                            fontWeight: '700',
+                            padding: '3px 12px',
+                            borderRadius: '20px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            border: '1px solid rgba(37, 99, 235, 0.08)'
+                        }}
+                    >
+                        17.8% dari total dosen
                     </div>
                 </div>
 
-                <div className="col-12 col-sm-6 col-md-3">
-                    <div className="card-custom p-3 d-flex align-items-center justify-content-between" style={{ background: 'linear-gradient(135deg, #f0fdfa, #ccfbf1)', border: '1.5px solid #99f6e4' }}>
-                        <div>
-                            <span style={{ fontSize: '.73rem', fontWeight: 700, color: 'var(--teal)', textTransform: 'uppercase', letterSpacing: '.05em' }}>
-                                Lektor
-                            </span>
-                            <div style={{ fontSize: '1.75rem', fontWeight: 900, color: 'var(--teal)', marginTop: '2px', lineHeight: 1.1 }}>
-                                198
-                            </div>
-                            <span style={{ fontSize: '.65rem', color: 'var(--text-muted)', fontWeight: 600 }}>
-                                41.1% dari total dosen
-                            </span>
-                        </div>
-                        <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: '#99f6e4', color: 'var(--teal)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem' }}>
-                            <i className="bi bi-person-workspace"></i>
-                        </div>
+                {/* Lektor */}
+                <div
+                    className="card-custom p-4 text-center d-flex flex-column align-items-center justify-content-center"
+                    style={{
+                        background: '#fff',
+                        borderRadius: '16px',
+                        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.02)',
+                        border: '1px solid rgba(0, 0, 0, 0.04)',
+                        minHeight: '135px',
+                        transition: 'transform 0.25s ease-in-out',
+                    }}
+                >
+                    <div style={{ fontSize: '2.3rem', fontWeight: '800', color: 'var(--teal)', lineHeight: 1.1, marginBottom: '6px' }}>
+                        198
+                    </div>
+                    <div style={{ fontSize: '.78rem', color: '#4b5563', fontWeight: '600', marginBottom: '8px' }}>
+                        Lektor
+                    </div>
+                    <div
+                        style={{
+                            background: '#f0fdfa',
+                            color: 'var(--teal)',
+                            fontSize: '.68rem',
+                            fontWeight: '700',
+                            padding: '3px 12px',
+                            borderRadius: '20px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            border: '1px solid rgba(13, 148, 136, 0.08)'
+                        }}
+                    >
+                        41.1% dari total dosen
                     </div>
                 </div>
 
-                <div className="col-12 col-sm-6 col-md-3">
-                    <div className="card-custom p-3 d-flex align-items-center justify-content-between" style={{ background: 'linear-gradient(135deg, #fffbeb, #fef3c7)', border: '1.5px solid #fde68a' }}>
-                        <div>
-                            <span style={{ fontSize: '.73rem', fontWeight: 700, color: '#b45309', textTransform: 'uppercase', letterSpacing: '.05em' }}>
-                                Asisten Ahli
-                            </span>
-                            <div style={{ fontSize: '1.75rem', fontWeight: 900, color: '#b45309', marginTop: '2px', lineHeight: 1.1 }}>
-                                174
-                            </div>
-                            <span style={{ fontSize: '.65rem', color: 'var(--text-muted)', fontWeight: 600 }}>
-                                36.1% dari total dosen
-                            </span>
-                        </div>
-                        <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: '#fde68a', color: '#b45309', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem' }}>
-                            <i className="bi bi-journal-check"></i>
-                        </div>
+                {/* Asisten Ahli */}
+                <div
+                    className="card-custom p-4 text-center d-flex flex-column align-items-center justify-content-center"
+                    style={{
+                        background: '#fff',
+                        borderRadius: '16px',
+                        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.02)',
+                        border: '1px solid rgba(0, 0, 0, 0.04)',
+                        minHeight: '135px',
+                        transition: 'transform 0.25s ease-in-out',
+                    }}
+                >
+                    <div style={{ fontSize: '2.3rem', fontWeight: '800', color: '#b45309', lineHeight: 1.1, marginBottom: '6px' }}>
+                        174
+                    </div>
+                    <div style={{ fontSize: '.78rem', color: '#4b5563', fontWeight: '600', marginBottom: '8px' }}>
+                        Asisten Ahli
+                    </div>
+                    <div
+                        style={{
+                            background: '#fffbeb',
+                            color: '#b45309',
+                            fontSize: '.68rem',
+                            fontWeight: '700',
+                            padding: '3px 12px',
+                            borderRadius: '20px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            border: '1px solid rgba(217, 119, 6, 0.08)'
+                        }}
+                    >
+                        36.1% dari total dosen
                     </div>
                 </div>
             </div>
