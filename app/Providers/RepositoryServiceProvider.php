@@ -13,6 +13,8 @@ use App\Repositories\Interfaces\ProdiRepositoryInterface;
 use App\Repositories\ProdiRepository;
 use App\Repositories\Interfaces\MataKuliahRepositoryInterface;
 use App\Repositories\MataKuliahRepository;
+use App\Repositories\Interfaces\FakultasRepositoryInterface;
+use App\Repositories\FakultasRepository;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -26,6 +28,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(RoleRepositoryInterface::class, RoleRepository::class);
         $this->app->bind(ProdiRepositoryInterface::class, ProdiRepository::class);
         $this->app->bind(MataKuliahRepositoryInterface::class, MataKuliahRepository::class);
+        $this->app->bind(FakultasRepositoryInterface::class, FakultasRepository::class);
         $this->app->bind(\App\Repositories\Interfaces\KalenderAkademikRepositoryInterface::class, \App\Repositories\KalenderAkademikRepository::class);
     }
 

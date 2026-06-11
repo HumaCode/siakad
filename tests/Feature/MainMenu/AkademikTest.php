@@ -755,3 +755,65 @@ test('authenticated user can delete an existing kelas', function () {
         'id' => $kelas->id
     ]);
 });
+
+test('authenticated user can store a new fakultas', function () {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->post('/akademik/fakultas', [
+            'kode' => 'FSM_TEST',
+            'nama' => 'Fakultas Sains dan Matematika Test',
+            'dekan' => 'Prof. Dr. Dekan Sains'
+        ])
+        ->assertSessionHasNoErrors()
+        ->assertRedirect();
+
+    $this->assertDatabaseHas('fakultas', [
+        'kode' => 'FSM_TEST',
+        'nama' => 'Fakultas Sains dan Matematika Test',
+        'dekan' => 'Prof. Dr. Dekan Sains'
+    ]);
+});
+
+test('authenticated user can update an existing fakultas', function () {
+    $user = User::factory()->create();
+    $fakultas = Fakultas::create([
+        'kode' => 'FSM_TEST2',
+        'nama' => 'Fakultas Sains dan Matematika Test 2',
+        'dekan' => 'Prof. Dr. Dekan Sains 2'
+    ]);
+
+    $this->actingAs($user)
+        ->put("/akademik/fakultas/{$fakultas->id}", [
+            'kode' => 'FSM_TEST2_UPDATED',
+            'nama' => 'Fakultas Sains dan Matematika Updated',
+            'dekan' => 'Prof. Dr. Dekan Baru'
+        ])
+        ->assertSessionHasNoErrors()
+        ->assertRedirect();
+
+    $this->assertDatabaseHas('fakultas', [
+        'id' => $fakultas->id,
+        'kode' => 'FSM_TEST2_UPDATED',
+        'nama' => 'Fakultas Sains dan Matematika Updated',
+        'dekan' => 'Prof. Dr. Dekan Baru'
+    ]);
+});
+
+test('authenticated user can delete an existing fakultas', function () {
+    $user = User::factory()->create();
+    $fakultas = Fakultas::create([
+        'kode' => 'FSM_TEST3',
+        'nama' => 'Fakultas Sains dan Matematika Test 3',
+        'dekan' => 'Prof. Dr. Dekan Sains 3'
+    ]);
+
+    $this->actingAs($user)
+        ->delete("/akademik/fakultas/{$fakultas->id}")
+        ->assertSessionHasNoErrors()
+        ->assertRedirect();
+
+    $this->assertDatabaseMissing('fakultas', [
+        'id' => $fakultas->id
+    ]);
+});

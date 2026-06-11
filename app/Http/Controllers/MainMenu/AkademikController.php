@@ -16,6 +16,9 @@ use App\Http\Requests\UpdateMataKuliahRequest;
 use App\Http\Resources\ProdiResource;
 use App\Http\Resources\MataKuliahResource;
 use App\Models\MataKuliah;
+use App\Services\FakultasService;
+use App\Http\Requests\StoreFakultasRequest;
+use App\Http\Requests\UpdateFakultasRequest;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Http\RedirectResponse;
@@ -24,16 +27,21 @@ class AkademikController extends Controller
 {
     protected ProdiService $prodiService;
     protected MataKuliahService $mataKuliahService;
-
+    protected FakultasService $fakultasService;
     protected \App\Services\KalenderAkademikService $kalenderService;
 
     /**
      * AkademikController constructor.
      */
-    public function __construct(ProdiService $prodiService, MataKuliahService $mataKuliahService, \App\Services\KalenderAkademikService $kalenderService)
-    {
+    public function __construct(
+        ProdiService $prodiService,
+        MataKuliahService $mataKuliahService,
+        FakultasService $fakultasService,
+        \App\Services\KalenderAkademikService $kalenderService
+    ) {
         $this->prodiService = $prodiService;
         $this->mataKuliahService = $mataKuliahService;
+        $this->fakultasService = $fakultasService;
         $this->kalenderService = $kalenderService;
     }
 
@@ -78,7 +86,15 @@ class AkademikController extends Controller
             })->count(),
         ];
 
-        $fakultas = Fakultas::orderBy('nama')->get(['id', 'nama', 'kode']);
+        $fakultas = $this->fakultasService->getFakultasWithProdisCount()->map(function ($f) {
+            return [
+                'id' => $f->id,
+                'kode' => $f->kode,
+                'nama' => $f->nama,
+                'dekan' => $f->dekan,
+                'prodis_count' => $f->prodis_count,
+            ];
+        });
         
         $prodisResource = $paginatedProdis->through(function ($prodi) {
             return (new ProdiResource($prodi))->resolve();
@@ -455,6 +471,27 @@ class AkademikController extends Controller
     public function destroyKalender(\App\Models\KalenderAkademik $kalender): RedirectResponse
     {
         $this->kalenderService->deleteKalender($kalender);
+
+        return redirect()->back();
+    }
+
+    public function storeFakultas(StoreFakultasRequest $request): RedirectResponse
+    {
+        $this->fakultasService->storeFakultas($request->validated());
+
+        return redirect()->back();
+    }
+
+    public function updateFakultas(UpdateFakultasRequest $request, Fakultas $fakultas): RedirectResponse
+    {
+        $this->fakultasService->updateFakultas($fakultas, $request->validated());
+
+        return redirect()->back();
+    }
+
+    public function destroyFakultas(Fakultas $fakultas): RedirectResponse
+    {
+        $this->fakultasService->deleteFakultas($fakultas);
 
         return redirect()->back();
     }

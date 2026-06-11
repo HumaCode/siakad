@@ -57,6 +57,10 @@ Route::middleware('auth')->group(function () {
     Route::put('/akademik/prodi/{prodi}', [\App\Http\Controllers\MainMenu\AkademikController::class, 'update'])->name('akademik.prodi.update');
     Route::delete('/akademik/prodi/{prodi}', [\App\Http\Controllers\MainMenu\AkademikController::class, 'destroy'])->name('akademik.prodi.destroy');
 
+    Route::post('/akademik/fakultas', [\App\Http\Controllers\MainMenu\AkademikController::class, 'storeFakultas'])->name('akademik.fakultas.store');
+    Route::put('/akademik/fakultas/{fakultas}', [\App\Http\Controllers\MainMenu\AkademikController::class, 'updateFakultas'])->name('akademik.fakultas.update');
+    Route::delete('/akademik/fakultas/{fakultas}', [\App\Http\Controllers\MainMenu\AkademikController::class, 'destroyFakultas'])->name('akademik.fakultas.destroy');
+
     Route::post('/akademik/matakuliah', [\App\Http\Controllers\MainMenu\AkademikController::class, 'storeMataKuliah'])->name('akademik.matakuliah.store');
     Route::put('/akademik/matakuliah/{matakuliah}', [\App\Http\Controllers\MainMenu\AkademikController::class, 'updateMataKuliah'])->name('akademik.matakuliah.update');
     Route::delete('/akademik/matakuliah/{matakuliah}', [\App\Http\Controllers\MainMenu\AkademikController::class, 'destroyMataKuliah'])->name('akademik.matakuliah.destroy');

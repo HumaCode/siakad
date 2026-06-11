@@ -2,7 +2,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, router } from '@inertiajs/react';
 import React, { useState, useEffect } from 'react';
 import ConfirmationModal from '@/Components/ConfirmationModal';
-import { destroy as destroyProdi, destroyMataKuliah } from '@/actions/App/Http/Controllers/MainMenu/AkademikController';
+import { destroy as destroyProdi, destroyMataKuliah, destroyFakultas } from '@/actions/App/Http/Controllers/MainMenu/AkademikController';
 
 // Partials
 import KurikulumTab from './Partials/KurikulumTab';
@@ -10,6 +10,7 @@ import MataKuliahTab from './Partials/MataKuliahTab';
 import KelasTab from './Partials/KelasTab';
 import JadwalTab from './Partials/JadwalTab';
 import KalenderTab from './Partials/KalenderTab';
+import FakultasTab from './Partials/FakultasTab';
 
 // Modals
 import KurikulumModal from './Partials/KurikulumModal';
@@ -20,6 +21,7 @@ import KalenderModal from './Partials/KalenderModal';
 import KalenderDetailModal from './Partials/KalenderDetailModal';
 import KurikulumDetailModal from './Partials/KurikulumDetailModal';
 import MataKuliahDetailModal from './Partials/MataKuliahDetailModal';
+import FakultasModal from './Partials/FakultasModal';
 
 interface Stats {
     prodi_count: number;
@@ -84,9 +86,35 @@ interface PageProps {
 }
 
 export default function Akademik({ stats, fakultas, prodis, mata_kuliahs, all_prodis, all_prodis_with_years = [], all_dosens, all_ruangans = [], all_mata_kuliahs_raw = [], all_kelas = [], jadwals = [], kalender = [], filters }: PageProps) {
-    const [activeTab, setActiveTab] = useState<'kurikulum' | 'matakuliah' | 'kelas' | 'jadwal' | 'kalender'>('kurikulum');
+    const [activeTab, setActiveTab] = useState<'kurikulum' | 'matakuliah' | 'kelas' | 'jadwal' | 'kalender' | 'fakultas'>('kurikulum');
     
     // Modal Open states
+    const [isFakultasModalOpen, setIsFakultasModalOpen] = useState(false);
+    const [editingFakultas, setEditingFakultas] = useState<any | null>(null);
+    const [fakultasToDelete, setFakultasToDelete] = useState<any | null>(null);
+    const [isDeletingFakultas, setIsDeletingFakultas] = useState(false);
+
+    const handleOpenFakultasModal = (fakultas?: any) => {
+        setEditingFakultas(fakultas && fakultas.id ? fakultas : null);
+        setIsFakultasModalOpen(true);
+    };
+
+    const confirmDeleteFakultas = () => {
+        if (!fakultasToDelete) return;
+        setIsDeletingFakultas(true);
+        router.delete(destroyFakultas.url(fakultasToDelete.id), {
+            onSuccess: () => {
+                setFakultasToDelete(null);
+                setIsDeletingFakultas(false);
+                triggerToast('Fakultas berhasil dihapus.', 'success');
+            },
+            onError: () => {
+                setIsDeletingFakultas(false);
+                triggerToast('Gagal menghapus Fakultas.', 'danger');
+            }
+        });
+    };
+
     const [isKurikulumModalOpen, setIsKurikulumModalOpen] = useState(false);
     const [isMKModalOpen, setIsMKModalOpen] = useState(false);
     const [isJadwalModalOpen, setIsJadwalModalOpen] = useState(false);
@@ -236,11 +264,13 @@ export default function Akademik({ stats, fakultas, prodis, mata_kuliahs, all_pr
         setIsKelasModalOpen(false);
         setIsJadwalModalOpen(false);
         setIsKalenderModalOpen(false);
+        setIsFakultasModalOpen(false);
         setEditingProdi(null);
         setEditingMataKuliah(null);
         setEditingKelas(null);
         setEditingJadwal(null);
         setEditingKalender(null);
+        setEditingFakultas(null);
         setDetailKalender(null);
         triggerToast(msg, 'success');
     };
@@ -336,6 +366,13 @@ export default function Akademik({ stats, fakultas, prodis, mata_kuliahs, all_pr
                 {/* MAIN TABS */}
                 <div className="main-tabs">
                     <button 
+                        className={`main-tab cursor-pointer ${activeTab === 'fakultas' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('fakultas')}
+                    >
+                        <i className="bi bi-building-fill" /> Fakultas
+                        <span className="tab-count ms-1">{fakultas.length}</span>
+                    </button>
+                    <button 
                         className={`main-tab cursor-pointer ${activeTab === 'kurikulum' ? 'active' : ''}`}
                         onClick={() => setActiveTab('kurikulum')}
                     >
@@ -372,6 +409,13 @@ export default function Akademik({ stats, fakultas, prodis, mata_kuliahs, all_pr
                 </div>
 
                 {/* TAB PANELS */}
+                {activeTab === 'fakultas' && (
+                    <FakultasTab 
+                        fakultas={fakultas}
+                        onOpenModal={handleOpenFakultasModal}
+                        onDelete={(f) => setFakultasToDelete(f)}
+                    />
+                )}
                 {activeTab === 'kurikulum' && (
                     <KurikulumTab 
                         fakultas={fakultas} 
@@ -512,6 +556,15 @@ export default function Akademik({ stats, fakultas, prodis, mata_kuliahs, all_pr
                 tahun={filters.tahun || (new Date().getFullYear().toString())}
                 eventToEdit={editingKalender}
             />
+            <FakultasModal
+                isOpen={isFakultasModalOpen}
+                onClose={() => {
+                    setIsFakultasModalOpen(false);
+                    setEditingFakultas(null);
+                }}
+                onSave={handleSaveModal}
+                fakultas={editingFakultas}
+            />
             <KalenderDetailModal
                 isOpen={detailKalender !== null}
                 onClose={() => setDetailKalender(null)}
@@ -572,7 +625,7 @@ export default function Akademik({ stats, fakultas, prodis, mata_kuliahs, all_pr
                         Apakah Anda yakin ingin menghapus program studi <strong>{prodiToDelete?.prodi}</strong> ({prodiToDelete?.jenjang}) beserta seluruh data kurikulum terkait?
                     </>
                 }
-                warningText="Tindakan ini tidak dapat dibatalkan. Seluruh data kurikulum, mata kuliah, dan jadwal terkait program studi ini akan terpengaruh."
+                warningText="Tindakan ini tidak dapat dibatalkan. Seluruh data kurikulum, mata kuliah, and jadwal terkait program studi ini akan terpengaruh."
                 confirmText="Hapus Program Studi"
                 cancelText="Batal"
                 onClose={() => setProdiToDelete(null)}
@@ -596,6 +649,23 @@ export default function Akademik({ stats, fakultas, prodis, mata_kuliahs, all_pr
                 onClose={() => setJadwalToDelete(null)}
                 onConfirm={confirmDeleteJadwal}
                 processing={isDeletingJadwal}
+                variant="danger"
+            />
+
+            <ConfirmationModal
+                show={fakultasToDelete !== null}
+                title="Hapus Fakultas"
+                description={
+                    <>
+                        Apakah Anda yakin ingin menghapus fakultas <strong>{fakultasToDelete?.nama}</strong> ({fakultasToDelete?.kode})?
+                    </>
+                }
+                warningText="Tindakan ini tidak dapat dibatalkan. Seluruh program studi yang terafiliasi dengan fakultas ini akan kehilangan induk fakultasnya."
+                confirmText="Hapus Fakultas"
+                cancelText="Batal"
+                onClose={() => setFakultasToDelete(null)}
+                onConfirm={confirmDeleteFakultas}
+                processing={isDeletingFakultas}
                 variant="danger"
             />
 
