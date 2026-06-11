@@ -7,17 +7,78 @@ interface JabatanProdi {
     l: number;
     aa: number;
     total: number;
+    mhsCount?: number;
 }
 
-export default function JabatanFungsional({ dataProdi }: { dataProdi?: JabatanProdi[] }) {
-    const list = dataProdi || [
-        { p: 'Teknik Informatika', gb: 3, lk: 12, l: 28, aa: 18, total: 61 },
-        { p: 'Sistem Informasi', gb: 2, lk: 10, l: 24, aa: 14, total: 50 },
-        { p: 'Manajemen Bisnis', gb: 5, lk: 14, l: 32, aa: 22, total: 73 },
-        { p: 'Ilmu Hukum', gb: 6, lk: 18, l: 42, aa: 28, total: 94 },
-        { p: 'Kedokteran Gigi', gb: 4, lk: 16, l: 38, aa: 24, total: 82 },
-        { p: 'Teknik Elektro', gb: 4, lk: 16, l: 34, aa: 28, total: 82 },
+export default function JabatanFungsional({ dataProdi, dosens = [] }: { dataProdi?: JabatanProdi[]; dosens?: any[] }) {
+    // If dosens is provided and has records, calculate dynamically from database
+    const isDynamic = dosens && dosens.length > 0;
+    
+    let totalGb = 24;
+    let totalLk = 86;
+    let totalL = 198;
+    let totalAa = 174;
+    let totalDosenCount = 482; // Default mock total
+    
+    if (isDynamic) {
+        totalGb = 0;
+        totalLk = 0;
+        totalL = 0;
+        totalAa = 0;
+        totalDosenCount = dosens.length;
+        
+        dosens.forEach(d => {
+            const jab = d.jabatan || 'Tenaga Pengajar';
+            if (jab === 'Guru Besar') totalGb++;
+            else if (jab === 'Lektor Kepala') totalLk++;
+            else if (jab === 'Lektor') totalL++;
+            else if (jab === 'Asisten Ahli') totalAa++;
+        });
+    }
+
+    const gbPct = totalDosenCount > 0 ? ((totalGb / totalDosenCount) * 100).toFixed(1) : '0.0';
+    const lkPct = totalDosenCount > 0 ? ((totalLk / totalDosenCount) * 100).toFixed(1) : '0.0';
+    const lPct  = totalDosenCount > 0 ? ((totalL / totalDosenCount) * 100).toFixed(1) : '0.0';
+    const aaPct = totalDosenCount > 0 ? ((totalAa / totalDosenCount) * 100).toFixed(1) : '0.0';
+
+    let list: JabatanProdi[] = dataProdi || [
+        { p: 'Teknik Informatika', gb: 3, lk: 12, l: 28, aa: 18, total: 61, mhsCount: 0 },
+        { p: 'Sistem Informasi', gb: 2, lk: 10, l: 24, aa: 14, total: 50, mhsCount: 0 },
+        { p: 'Manajemen Bisnis', gb: 5, lk: 14, l: 32, aa: 22, total: 73, mhsCount: 0 },
+        { p: 'Ilmu Hukum', gb: 6, lk: 18, l: 42, aa: 28, total: 94, mhsCount: 0 },
+        { p: 'Kedokteran Gigi', gb: 4, lk: 16, l: 38, aa: 24, total: 82, mhsCount: 0 },
+        { p: 'Teknik Elektro', gb: 4, lk: 16, l: 34, aa: 28, total: 82, mhsCount: 0 },
     ];
+
+    if (isDynamic) {
+        const prodiMap: Record<string, { gb: number; lk: number; l: number; aa: number; total: number; mhsCount: number }> = {};
+        
+        dosens.forEach(d => {
+            const prodiName = d.prodi?.nama || d.prodi || 'Lainnya';
+            if (!prodiMap[prodiName]) {
+                prodiMap[prodiName] = { gb: 0, lk: 0, l: 0, aa: 0, total: 0, mhsCount: 0 };
+            }
+            
+            const jab = d.jabatan || 'Tenaga Pengajar';
+            if (jab === 'Guru Besar') prodiMap[prodiName].gb++;
+            else if (jab === 'Lektor Kepala') prodiMap[prodiName].lk++;
+            else if (jab === 'Lektor') prodiMap[prodiName].l++;
+            else if (jab === 'Asisten Ahli') prodiMap[prodiName].aa++;
+            
+            prodiMap[prodiName].total++;
+            prodiMap[prodiName].mhsCount += d.mahasiswaBimbingan?.length || d.mhsBimbing || 0;
+        });
+        
+        list = Object.entries(prodiMap).map(([p, stats]) => ({
+            p,
+            gb: stats.gb,
+            lk: stats.lk,
+            l: stats.l,
+            aa: stats.aa,
+            total: stats.total,
+            mhsCount: stats.mhsCount,
+        }));
+    }
 
     return (
         <div>
@@ -36,7 +97,7 @@ export default function JabatanFungsional({ dataProdi }: { dataProdi?: JabatanPr
                     }}
                 >
                     <div style={{ fontSize: '2.3rem', fontWeight: '800', color: 'var(--purple)', lineHeight: 1.1, marginBottom: '6px' }}>
-                        24
+                        {totalGb}
                     </div>
                     <div style={{ fontSize: '.78rem', color: '#4b5563', fontWeight: '600', marginBottom: '8px' }}>
                         Guru Besar
@@ -55,7 +116,7 @@ export default function JabatanFungsional({ dataProdi }: { dataProdi?: JabatanPr
                             border: '1px solid rgba(124, 58, 237, 0.08)'
                         }}
                     >
-                        5.0% dari total dosen
+                        {gbPct}% dari total dosen
                     </div>
                 </div>
 
@@ -72,7 +133,7 @@ export default function JabatanFungsional({ dataProdi }: { dataProdi?: JabatanPr
                     }}
                 >
                     <div style={{ fontSize: '2.3rem', fontWeight: '800', color: 'var(--primary)', lineHeight: 1.1, marginBottom: '6px' }}>
-                        86
+                        {totalLk}
                     </div>
                     <div style={{ fontSize: '.78rem', color: '#4b5563', fontWeight: '600', marginBottom: '8px' }}>
                         Lektor Kepala
@@ -91,7 +152,7 @@ export default function JabatanFungsional({ dataProdi }: { dataProdi?: JabatanPr
                             border: '1px solid rgba(37, 99, 235, 0.08)'
                         }}
                     >
-                        17.8% dari total dosen
+                        {lkPct}% dari total dosen
                     </div>
                 </div>
 
@@ -108,7 +169,7 @@ export default function JabatanFungsional({ dataProdi }: { dataProdi?: JabatanPr
                     }}
                 >
                     <div style={{ fontSize: '2.3rem', fontWeight: '800', color: 'var(--teal)', lineHeight: 1.1, marginBottom: '6px' }}>
-                        198
+                        {totalL}
                     </div>
                     <div style={{ fontSize: '.78rem', color: '#4b5563', fontWeight: '600', marginBottom: '8px' }}>
                         Lektor
@@ -127,7 +188,7 @@ export default function JabatanFungsional({ dataProdi }: { dataProdi?: JabatanPr
                             border: '1px solid rgba(13, 148, 136, 0.08)'
                         }}
                     >
-                        41.1% dari total dosen
+                        {lPct}% dari total dosen
                     </div>
                 </div>
 
@@ -144,7 +205,7 @@ export default function JabatanFungsional({ dataProdi }: { dataProdi?: JabatanPr
                     }}
                 >
                     <div style={{ fontSize: '2.3rem', fontWeight: '800', color: '#b45309', lineHeight: 1.1, marginBottom: '6px' }}>
-                        174
+                        {totalAa}
                     </div>
                     <div style={{ fontSize: '.78rem', color: '#4b5563', fontWeight: '600', marginBottom: '8px' }}>
                         Asisten Ahli
@@ -163,7 +224,7 @@ export default function JabatanFungsional({ dataProdi }: { dataProdi?: JabatanPr
                             border: '1px solid rgba(217, 119, 6, 0.08)'
                         }}
                     >
-                        36.1% dari total dosen
+                        {aaPct}% dari total dosen
                     </div>
                 </div>
             </div>
@@ -191,9 +252,10 @@ export default function JabatanFungsional({ dataProdi }: { dataProdi?: JabatanPr
                         </thead>
                         <tbody>
                             {list.map((j) => {
-                                // Rasio calculation as done in the html template
-                                const rasio = (12480 / 482 / j.total).toFixed(1);
-                                const rasioVal = parseFloat(rasio);
+                                // Rasio calculation
+                                const avgBimbingan = j.mhsCount ? (j.mhsCount / j.total) : 0;
+                                const rasioVal = avgBimbingan > 0 ? avgBimbingan : (12480 / 482 / j.total);
+                                const rasio = rasioVal.toFixed(1);
                                 const rasioColor = rasioVal < 20 ? 'var(--green)' : rasioVal < 30 ? 'var(--primary)' : 'var(--rose)';
 
                                 return (

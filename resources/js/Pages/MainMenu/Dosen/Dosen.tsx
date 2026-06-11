@@ -333,7 +333,7 @@ export default function Dosen({ dosens, stats, all_prodis }: any) {
                     </div>
 
                     <div className={`tab-panel ${activeTab === 'jabatan' ? 'active' : ''}`}>
-                        <JabatanFungsional />
+                        <JabatanFungsional dosens={dosenList} />
                     </div>
 
                     <div className={`tab-panel ${activeTab === 'staf' ? 'active' : ''}`}>
