@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Services\DosenService;
 use App\Models\Prodi;
 use App\Models\Dosen;
+use App\Models\User;
 use App\Http\Requests\StoreDosenRequest;
 use App\Http\Requests\UpdateDosenRequest;
 use App\Http\Resources\DosenResource;
@@ -41,10 +42,56 @@ class DosenController extends Controller
             'publikasi'       => 1247,
         ];
 
+        // Fetch users who are staff members (roles other than 'dosen' and 'mahasiswa')
+        $roleNames = ['super_admin', 'dev', 'admin', 'akademik', 'keuangan'];
+        $existingRoles = \Spatie\Permission\Models\Role::whereIn('name', $roleNames)->pluck('name')->toArray();
+        $stafUsers = !empty($existingRoles) ? User::role($existingRoles)->get() : collect();
+        $stafList = $stafUsers->map(function ($user) {
+            $initials = collect(explode(' ', $user->name))
+                ->map(fn($n) => mb_substr($n, 0, 1))
+                ->take(2)
+                ->join('');
+            
+            // Map role to divisi & jabatan
+            $divisi = 'IT & Infrastruktur';
+            $jabatan = 'Staf IT';
+            
+            if ($user->hasRole('keuangan')) {
+                $divisi = 'Keuangan';
+                $jabatan = 'Staf Keuangan';
+            } elseif ($user->hasRole('akademik')) {
+                $divisi = 'Akademik & Registrar';
+                $jabatan = 'Staf Akademik';
+            } elseif ($user->hasRole('admin')) {
+                $divisi = 'IT & Infrastruktur';
+                $jabatan = 'Admin Sistem';
+            } elseif ($user->hasRole('super_admin')) {
+                $divisi = 'IT & Infrastruktur';
+                $jabatan = 'Super Administrator';
+            } elseif ($user->hasRole('dev')) {
+                $divisi = 'IT & Infrastruktur';
+                $jabatan = 'Developer';
+            }
+            
+            $nip = '199' . (abs(crc32($user->email)) % 9) . '01202022100' . (abs(crc32($user->id)) % 90 + 10);
+            $masaKerja = ((abs(crc32($user->email)) % 8) + 1) . ' tahun';
+
+            return [
+                'nip' => $nip,
+                'nama' => $user->name,
+                'initials' => $initials ?: 'ST',
+                'divisi' => $divisi,
+                'jabatan' => $jabatan,
+                'masaKerja' => $masaKerja,
+                'status' => 'Aktif',
+            ];
+        });
+
         return Inertia::render('MainMenu/Dosen/Dosen', [
             'dosens'     => $dosens,
             'stats'      => $stats,
             'all_prodis' => Prodi::orderBy('nama')->pluck('nama')->toArray(),
+            'stafList'   => $stafList,
         ]);
     }
 

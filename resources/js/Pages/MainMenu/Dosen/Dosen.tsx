@@ -33,7 +33,7 @@ const defaultDosenData = [
     { id: 12, nidn: '3132333435', nama: 'Ir. Baskoro Aji, M.M', initials: 'BA', gelar: 'Magister', jabatan: 'Lektor', prodi: 'Teknik Elektro', mk: ['Sistem Tenaga Listrik', 'Elektronika Daya'], sks: 9, mhsBimbing: 16, rating: 4.2, pub: 11, status: 'Cuti', email: 'baskoro.a@univ.ac.id', hp: '0822-2345-6789', ttl: 'Semarang, 25 Dec 1979', pendidikan: 'S2 - ITS (2007)', keahlian: 'Power Systems, Power Electronics', masaKerja: '16 tahun', scopus: '-' },
 ];
 
-export default function Dosen({ dosens, stats, all_prodis }: any) {
+export default function Dosen({ dosens, stats, all_prodis, stafList }: any) {
     const [dosenList, setDosenList] = useState<any[]>(() => dosens || defaultDosenData);
 
     useEffect(() => {
@@ -337,7 +337,7 @@ export default function Dosen({ dosens, stats, all_prodis }: any) {
                     </div>
 
                     <div className={`tab-panel ${activeTab === 'staf' ? 'active' : ''}`}>
-                        <StafTable />
+                        <StafTable stafList={stafList} />
                     </div>
                 </div>
             </div>

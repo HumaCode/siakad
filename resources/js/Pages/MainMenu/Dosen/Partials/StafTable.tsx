@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { avgColors, statusBadge } from './DosenTable';
 
 interface StafItem {
@@ -24,6 +24,8 @@ export default function StafTable({
     onDelete,
     onView
 }: StafTableProps) {
+    const [searchQuery, setSearchQuery] = useState('');
+
     const list = stafList || [
         { nip: '199001202019022001', nama: 'Dewi Kartika, S.E', initials: 'DK', divisi: 'Keuangan', jabatan: 'Kepala Bagian Keuangan', masaKerja: '7 tahun', status: 'Aktif' },
         { nip: '198812152018031002', nama: 'Rudi Santoso, A.Md', initials: 'RS', divisi: 'Akademik & Registrar', jabatan: 'Staff Registrasi', masaKerja: '8 tahun', status: 'Aktif' },
@@ -34,6 +36,13 @@ export default function StafTable({
         { nip: '199112082022011007', nama: 'Dita Pratiwi, S.Akt', initials: 'DP', divisi: 'Keuangan', jabatan: 'Staf Keuangan', masaKerja: '4 tahun', status: 'Aktif' },
         { nip: '198706202015041008', nama: 'Haryono, S.E.', initials: 'HY', divisi: 'Akademik & Registrar', jabatan: 'Kepala Administrasi', masaKerja: '11 tahun', status: 'Aktif' },
     ];
+
+    const filteredList = list.filter(s => 
+        s.nama.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        s.nip.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        s.divisi.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        s.jabatan.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     const divisiColor: Record<string, string> = {
         'Keuangan': 'bp-green',
@@ -51,7 +60,14 @@ export default function StafTable({
                 </h5>
                 <div className="fi-wrap" style={{ maxWidth: '200px' }}>
                     <i className="bi bi-search fi-icon"></i>
-                    <input className="fi-input py-1.5" type="text" placeholder="Cari staf..." style={{ fontSize: '.75rem' }} />
+                    <input 
+                        className="fi-input py-1.5" 
+                        type="text" 
+                        placeholder="Cari staf..." 
+                        style={{ fontSize: '.75rem' }} 
+                        value={searchQuery}
+                        onChange={e => setSearchQuery(e.target.value)}
+                    />
                 </div>
             </div>
 
@@ -69,81 +85,89 @@ export default function StafTable({
                         </tr>
                     </thead>
                     <tbody>
-                        {list.map((s, i) => (
-                            <tr key={s.nip}>
-                                <td>
-                                    <span style={{
-                                        fontFamily: 'monospace',
-                                        fontSize: '.72rem',
-                                        fontWeight: 700,
-                                        color: 'var(--teal)',
-                                        background: 'var(--teal-light)',
-                                        padding: '2px 7px',
-                                        borderRadius: '5px'
-                                    }}>
-                                        {s.nip.slice(-8)}
-                                    </span>
-                                </td>
-                                <td>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                        <div style={{
-                                            width: '34px',
-                                            height: '34px',
-                                            borderRadius: '9px',
-                                            background: avgColors[i % avgColors.length],
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            fontSize: '.68rem',
-                                            fontWeight: 800,
-                                            color: '#fff'
+                        {filteredList.length > 0 ? (
+                            filteredList.map((s, i) => (
+                                <tr key={s.nip}>
+                                    <td>
+                                        <span style={{
+                                            fontFamily: 'monospace',
+                                            fontSize: '.72rem',
+                                            fontWeight: 700,
+                                            color: 'var(--teal)',
+                                            background: 'var(--teal-light)',
+                                            padding: '2px 7px',
+                                            borderRadius: '5px'
                                         }}>
-                                            {s.initials}
+                                            {s.nip.slice(-8)}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                            <div style={{
+                                                width: '34px',
+                                                height: '34px',
+                                                borderRadius: '9px',
+                                                background: avgColors[i % avgColors.length],
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                fontSize: '.68rem',
+                                                fontWeight: 800,
+                                                color: '#fff'
+                                            }}>
+                                                {s.initials}
+                                            </div>
+                                            <div style={{ fontWeight: 700, fontSize: '.82rem' }}>
+                                                {s.nama}
+                                            </div>
                                         </div>
-                                        <div style={{ fontWeight: 700, fontSize: '.82rem' }}>
-                                            {s.nama}
+                                    </td>
+                                    <td>
+                                        <span className={`bp ${divisiColor[s.divisi] || 'bp-gray'}`}>
+                                            {s.divisi}
+                                        </span>
+                                    </td>
+                                    <td style={{ fontSize: '.78rem', color: 'var(--text-dark)' }}>
+                                        {s.jabatan}
+                                    </td>
+                                    <td style={{ fontSize: '.75rem', color: 'var(--text-muted)' }}>
+                                        {s.masaKerja}
+                                    </td>
+                                    <td>{statusBadge(s.status)}</td>
+                                    <td>
+                                        <div style={{ display: 'flex', gap: '4px' }}>
+                                            <button
+                                                className="btn-icon bi-view"
+                                                title="Detail"
+                                                onClick={() => onView && onView(s)}
+                                            >
+                                                <i className="bi bi-eye"></i>
+                                            </button>
+                                            <button
+                                                className="btn-icon bi-edit"
+                                                title="Edit"
+                                                onClick={() => onEdit && onEdit(s)}
+                                            >
+                                                <i className="bi bi-pencil"></i>
+                                            </button>
+                                            <button
+                                                className="btn-icon bi-del"
+                                                title="Hapus"
+                                                onClick={() => onDelete && onDelete(s)}
+                                            >
+                                                <i className="bi bi-trash"></i>
+                                            </button>
                                         </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span className={`bp ${divisiColor[s.divisi] || 'bp-gray'}`}>
-                                        {s.divisi}
-                                    </span>
-                                </td>
-                                <td style={{ fontSize: '.78rem', color: 'var(--text-dark)' }}>
-                                    {s.jabatan}
-                                </td>
-                                <td style={{ fontSize: '.75rem', color: 'var(--text-muted)' }}>
-                                    {s.masaKerja}
-                                </td>
-                                <td>{statusBadge(s.status)}</td>
-                                <td>
-                                    <div style={{ display: 'flex', gap: '4px' }}>
-                                        <button
-                                            className="btn-icon bi-view"
-                                            title="Detail"
-                                            onClick={() => onView && onView(s)}
-                                        >
-                                            <i className="bi bi-eye"></i>
-                                        </button>
-                                        <button
-                                            className="btn-icon bi-edit"
-                                            title="Edit"
-                                            onClick={() => onEdit && onEdit(s)}
-                                        >
-                                            <i className="bi bi-pencil"></i>
-                                        </button>
-                                        <button
-                                            className="btn-icon bi-del"
-                                            title="Hapus"
-                                            onClick={() => onDelete && onDelete(s)}
-                                        >
-                                            <i className="bi bi-trash"></i>
-                                        </button>
-                                    </div>
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan={7} className="text-center py-4 text-gray-500 font-poppins">
+                                    Tidak ada data staf yang cocok.
                                 </td>
                             </tr>
-                        ))}
+                        )}
                     </tbody>
                 </table>
             </div>
