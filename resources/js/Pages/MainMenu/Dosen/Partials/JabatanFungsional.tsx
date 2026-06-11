@@ -29,7 +29,7 @@ export default function JabatanFungsional({ dataProdi }: { dataProdi?: JabatanPr
                             <span style={{ fontSize: '.73rem', fontWeight: 700, color: 'var(--purple)', textTransform: 'uppercase', letterSpacing: '.05em' }}>
                                 Guru Besar
                             </span>
-                            <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.75rem', fontWeight: 900, color: 'var(--purple)', marginTop: '2px', lineHeight: 1.1 }}>
+                            <div style={{ fontSize: '1.75rem', fontWeight: 900, color: 'var(--purple)', marginTop: '2px', lineHeight: 1.1 }}>
                                 24
                             </div>
                             <span style={{ fontSize: '.65rem', color: 'var(--text-muted)', fontWeight: 600 }}>
@@ -48,7 +48,7 @@ export default function JabatanFungsional({ dataProdi }: { dataProdi?: JabatanPr
                             <span style={{ fontSize: '.73rem', fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '.05em' }}>
                                 Lektor Kepala
                             </span>
-                            <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.75rem', fontWeight: 900, color: 'var(--primary)', marginTop: '2px', lineHeight: 1.1 }}>
+                            <div style={{ fontSize: '1.75rem', fontWeight: 900, color: 'var(--primary)', marginTop: '2px', lineHeight: 1.1 }}>
                                 86
                             </div>
                             <span style={{ fontSize: '.65rem', color: 'var(--text-muted)', fontWeight: 600 }}>
@@ -67,7 +67,7 @@ export default function JabatanFungsional({ dataProdi }: { dataProdi?: JabatanPr
                             <span style={{ fontSize: '.73rem', fontWeight: 700, color: 'var(--teal)', textTransform: 'uppercase', letterSpacing: '.05em' }}>
                                 Lektor
                             </span>
-                            <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.75rem', fontWeight: 900, color: 'var(--teal)', marginTop: '2px', lineHeight: 1.1 }}>
+                            <div style={{ fontSize: '1.75rem', fontWeight: 900, color: 'var(--teal)', marginTop: '2px', lineHeight: 1.1 }}>
                                 198
                             </div>
                             <span style={{ fontSize: '.65rem', color: 'var(--text-muted)', fontWeight: 600 }}>
@@ -86,7 +86,7 @@ export default function JabatanFungsional({ dataProdi }: { dataProdi?: JabatanPr
                             <span style={{ fontSize: '.73rem', fontWeight: 700, color: '#b45309', textTransform: 'uppercase', letterSpacing: '.05em' }}>
                                 Asisten Ahli
                             </span>
-                            <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.75rem', fontWeight: 900, color: '#b45309', marginTop: '2px', lineHeight: 1.1 }}>
+                            <div style={{ fontSize: '1.75rem', fontWeight: 900, color: '#b45309', marginTop: '2px', lineHeight: 1.1 }}>
                                 174
                             </div>
                             <span style={{ fontSize: '.65rem', color: 'var(--text-muted)', fontWeight: 600 }}>

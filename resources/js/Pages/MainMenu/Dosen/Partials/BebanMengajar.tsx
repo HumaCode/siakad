@@ -57,9 +57,9 @@ export default function BebanMengajar({ dosens = [] }: { dosens: any[] }) {
     });
 
     return (
-        <div className="row g-4">
-            {/* LEFT COLUMN: STATS SUMMARY (col-lg-6) */}
-            <div className="col-12 col-lg-6" data-aos="fade-right">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* LEFT COLUMN: STATS SUMMARY */}
+            <div data-aos="fade-right">
                 <div className="card-custom p-4" style={{ height: '100%' }}>
                     <h5 className="font-poppins mb-3" style={{ fontSize: '.9rem', fontWeight: 800, color: 'var(--text-dark)' }}>
                         <i className="bi bi-pie-chart-fill me-2 text-primary"></i>Distribusi Beban SKS
@@ -70,7 +70,7 @@ export default function BebanMengajar({ dosens = [] }: { dosens: any[] }) {
                             Total Beban Diampu
                         </div>
                         <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', marginTop: '2px' }}>
-                            <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '2.2rem', fontWeight: 900, color: 'var(--primary)', lineHeight: 1 }}>
+                            <span style={{ fontSize: '2.2rem', fontWeight: 900, color: 'var(--primary)', lineHeight: 1 }}>
                                 {totalSks}
                             </span>
                             <span style={{ fontSize: '.95rem', fontWeight: 800, color: 'var(--primary)' }}>
@@ -125,8 +125,8 @@ export default function BebanMengajar({ dosens = [] }: { dosens: any[] }) {
                 </div>
             </div>
 
-            {/* RIGHT COLUMN: BEBAN TABLE (col-lg-6) */}
-            <div className="col-12 col-lg-6" data-aos="fade-left">
+            {/* RIGHT COLUMN: BEBAN TABLE */}
+            <div data-aos="fade-left">
                 <div className="card-custom" style={{ height: '100%' }}>
                     <div className="px-4 py-3 border-bottom d-flex align-items-center justify-content-between">
                         <h5 className="font-poppins m-0" style={{ fontSize: '.9rem', fontWeight: 800, color: 'var(--text-dark)' }}>
@@ -205,7 +205,7 @@ export default function BebanMengajar({ dosens = [] }: { dosens: any[] }) {
                                                     {Array.isArray(d.mataKuliahs) ? d.mataKuliahs.length : (Array.isArray(d.mk) ? d.mk.length : 1)}
                                                 </td>
                                                 <td style={{ textAlign: 'center' }}>
-                                                    <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '.95rem', fontWeight: 800, color: 'var(--primary)' }}>
+                                                    <span style={{ fontSize: '.95rem', fontWeight: 800, color: 'var(--primary)' }}>
                                                         {d.sks || 0}
                                                     </span>
                                                 </td>
@@ -228,7 +228,7 @@ export default function BebanMengajar({ dosens = [] }: { dosens: any[] }) {
             </div>
 
             {/* OVERLOAD WARNING SECTION */}
-            <div className="col-12 mt-4" data-aos="fade-up">
+            <div className="md:col-span-2 mt-4" data-aos="fade-up">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
                     <i className="bi bi-exclamation-triangle-fill text-rose" style={{ fontSize: '18px' }}></i>
                     <h6 className="font-poppins m-0" style={{ fontSize: '.85rem', fontWeight: 800, color: 'var(--text-dark)' }}>
@@ -236,14 +236,14 @@ export default function BebanMengajar({ dosens = [] }: { dosens: any[] }) {
                     </h6>
                 </div>
                 
-                <div className="row g-3" id="overloadGrid">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="overloadGrid">
                     {overloadDosens.length === 0 ? (
-                        <div className="col-12 text-slate-500 font-medium text-xs">
+                        <div className="col-span-full text-slate-500 font-medium text-xs">
                             Tidak ada dosen dengan beban mengajar berlebih.
                         </div>
                     ) : (
                         overloadDosens.map((d, i) => (
-                            <div key={d.id || d.nidn} className="col-12 col-md-6 col-lg-4">
+                            <div key={d.id || d.nidn}>
                                 <div className="beban-card">
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
                                         <div style={{
@@ -272,19 +272,19 @@ export default function BebanMengajar({ dosens = [] }: { dosens: any[] }) {
                                     </div>
                                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px' }}>
                                         <div style={{ textAlign: 'center', background: 'var(--rose-light)', borderRadius: '8px', padding: '8px' }}>
-                                            <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.1rem', fontWeight: 800, color: 'var(--rose)' }}>
+                                            <div style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--rose)' }}>
                                                 {d.sks}
                                             </div>
                                             <div style={{ fontSize: '.6rem', color: 'var(--rose)', fontWeight: 600 }}>SKS</div>
                                         </div>
                                         <div style={{ textAlign: 'center', background: 'var(--primary-light)', borderRadius: '8px', padding: '8px' }}>
-                                            <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.1rem', fontWeight: 800, color: 'var(--primary)' }}>
+                                            <div style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--primary)' }}>
                                                 {Array.isArray(d.mataKuliahs) ? d.mataKuliahs.length : (Array.isArray(d.mk) ? d.mk.length : 1)}
                                             </div>
                                             <div style={{ fontSize: '.6rem', color: 'var(--primary)', fontWeight: 600 }}>MK</div>
                                         </div>
                                         <div style={{ textAlign: 'center', background: 'var(--accent-light)', borderRadius: '8px', padding: '8px' }}>
-                                            <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.1rem', fontWeight: 800, color: '#b45309' }}>
+                                            <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#b45309' }}>
                                                 {d.mhsBimbing}
                                             </div>
                                             <div style={{ fontSize: '.6rem', color: '#b45309', fontWeight: 600 }}>Mhs Wali</div>

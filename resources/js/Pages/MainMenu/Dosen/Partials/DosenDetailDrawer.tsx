@@ -113,7 +113,7 @@ export default function DosenDetailDrawer({
                         {/* Stats grid */}
                         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '4px', padding: '14px', background: 'var(--soft-bg)', borderRadius: '14px' }}>
                             <div style={{ textAlign: 'center' }}>
-                                <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.6rem', fontWeight: 800, color: '#b45309', lineHeight: 1 }}>
+                                <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#b45309', lineHeight: 1 }}>
                                     {rating.toFixed(1)}
                                 </div>
                                 <div style={{ margin: '3px 0' }}>{ratingStars(rating)}</div>
@@ -128,7 +128,7 @@ export default function DosenDetailDrawer({
                                         { val: jadwal.length || 0,       lbl: 'Sesi/Pekan',  color: 'var(--accent)' },
                                     ].map(({ val, lbl, color }) => (
                                         <div key={lbl} style={{ textAlign: 'center' }}>
-                                            <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '1rem', fontWeight: 800, color, display: 'block' }}>
+                                            <span style={{ fontSize: '1rem', fontWeight: 800, color, display: 'block' }}>
                                                 {val}
                                             </span>
                                             <span style={{ fontSize: '.6rem', color: 'var(--text-muted)', fontWeight: 600 }}>{lbl}</span>
